@@ -7,7 +7,7 @@ import ConsoleNavbar from "./components/layout/console-navbar";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./pages/home";
 import NotFound from "./pages/not-found";
-import WorkspaceHome from "./pages/workspace/workspace-home";
+import ClusterHome from "./pages/cluster/cluster-home";
 
 function App() {
     return (
@@ -20,7 +20,7 @@ function App() {
 
                         <Routes>
                             <Route path="/" element={<Home/>}></Route>
-                            <Route path="/workspace/:workspaceId" element={<WorkspaceHome/>}></Route>
+                            <Route path="/cluster/:clusterId" element={<ClusterHome/>}></Route>
                             {/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
                             <Route path="*" element={<NotFound/>}></Route>
                         </Routes>
