@@ -1,2 +1,3 @@
-# cassdio
-Cassandra Studio
+# cadio
+- `Ca`ssandra Stu`dio`
+
