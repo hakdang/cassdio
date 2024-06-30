@@ -1,0 +1,18 @@
+dependencies {
+    // Spring Boot
+    implementation("org.springframework.boot:spring-boot-starter")
+
+    implementation("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
+    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
+    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
+
+    // CommonsLang3
+    api("org.apache.commons:commons-lang3")
+}
+
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}

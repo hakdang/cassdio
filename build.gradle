@@ -1,0 +1,58 @@
+buildscript {
+    ext {
+        datastaxJavaDriverVersion = "4.17.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id "application"
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.5'
+}
+
+allprojects {
+    group = 'kr.hakdang.cadio'
+    version = '0.0.1'
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply {
+        plugin "idea"
+        plugin "java-library"
+        plugin "org.springframework.boot"
+        plugin "io.spring.dependency-management"
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        // Lombok
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
+
+        testCompileOnly("org.projectlombok:lombok")
+        testAnnotationProcessor("org.projectlombok:lombok")
+
+        // Test
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}
