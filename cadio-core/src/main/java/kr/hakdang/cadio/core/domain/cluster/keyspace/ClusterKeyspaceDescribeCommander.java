@@ -40,7 +40,7 @@ public class ClusterKeyspaceDescribeCommander
                 .build();
 
         } catch (Exception e) {
-            log.info("error : {}", e.getMessage(), e);
+            log.error("error : {}", e.getMessage(), e);
             throw e;
         }
     }
