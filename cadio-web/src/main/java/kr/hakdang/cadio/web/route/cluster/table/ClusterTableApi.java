@@ -2,6 +2,9 @@ package kr.hakdang.cadio.web.route.cluster.table;
 
 import jakarta.validation.Valid;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTable;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetArgs;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetCommander;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListResult;
@@ -25,11 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClusterTableApi {
 
     private final ClusterTableListCommander clusterTableListCommander;
+    private final ClusterTableGetCommander clusterTableGetCommander;
 
     public ClusterTableApi(
-        ClusterTableListCommander clusterTableListCommander
+        ClusterTableListCommander clusterTableListCommander,
+        ClusterTableGetCommander clusterTableGetCommander
     ) {
         this.clusterTableListCommander = clusterTableListCommander;
+        this.clusterTableGetCommander = clusterTableGetCommander;
     }
 
     @GetMapping("/tables")
@@ -44,6 +50,20 @@ public class ClusterTableApi {
             .nextPageState(cursorRequest.getCursor())
             .build());
         return ApiResponse.ok(ItemListWithCursorResponse.of(result.getTables(), CursorResponse.withNext(result.getNextPageState())));
+    }
+
+    @GetMapping("/tables/{table}")
+    public ApiResponse<ClusterTableGetResult> getTable(
+        @PathVariable String clusterId,
+        @PathVariable String keyspace,
+        @PathVariable String table
+    ) {
+        ClusterTableGetResult result = clusterTableGetCommander.getTable(ClusterTableGetArgs.builder()
+            .keyspace(keyspace)
+            .table(table)
+            .build());
+
+        return ApiResponse.ok(result);
     }
 
 }

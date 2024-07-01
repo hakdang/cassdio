@@ -1,13 +1,12 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace.table;
 
-import kr.hakdang.cadio.core.domain.cluster.keyspace.table.column.Column;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ClusterTableListResult
@@ -15,6 +14,7 @@ import java.util.Map;
  * @author seungh0
  * @since 2024-07-01
  */
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClusterTableListResult {
@@ -27,8 +27,8 @@ public class ClusterTableListResult {
         this.nextPageState = nextPageState;
     }
 
-    public static ClusterTableListResult of(Map<ClusterTable, List<Column>> tables, ByteBuffer pagingState) {
-        return new ClusterTableListResult(tables.keySet().stream().toList(), pagingState == null ? null : pagingState.toString());
+    public static ClusterTableListResult of(List<ClusterTable> tables, ByteBuffer pagingState) {
+        return new ClusterTableListResult(tables, pagingState == null ? null : pagingState.toString());
     }
 
 }

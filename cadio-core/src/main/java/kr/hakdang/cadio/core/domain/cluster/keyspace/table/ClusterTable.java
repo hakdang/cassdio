@@ -30,7 +30,7 @@ public class ClusterTable {
     private Map<String, Object> options;
 
     @Builder
-    public ClusterTable(UUID id, String tableName, String comment, Map<String, Object> options) {
+    private ClusterTable(UUID id, String tableName, String comment, Map<String, Object> options) {
         this.id = id;
         this.tableName = tableName;
         this.comment = comment;
@@ -38,7 +38,7 @@ public class ClusterTable {
     }
 
     public static ClusterTable from(Row row) {
-        Map<String, Object> options = Arrays.stream(ClusterTableOptions.values())
+        Map<String, Object> options = Arrays.stream(ClusterTableOption.values())
             .collect(Collectors.toMap(option -> option.name().toLowerCase(Locale.ROOT), option -> option.extract(row)));
 
         return ClusterTable.builder()
