@@ -2,9 +2,13 @@ dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter")
 
-    implementation("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
-    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
-    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
+    //TODO ClusterFactory 만들어지면 변경
+    api("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
+    api("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
+    api("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
+//    implementation("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
+//    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
+//    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
 
     // CommonsLang3
     api("org.apache.commons:commons-lang3")

@@ -11,6 +11,8 @@ import ClusterView from "./pages/cluster/cluster-view";
 import KeyspaceHome from "./pages/cluster/components/keyspace/keyspace-home";
 import ClusterHome from "./pages/cluster/components/cluster-home";
 import TableHome from "./pages/cluster/components/keyspace/table/table-home";
+import QueryHome from "./pages/cluster/components/query-home";
+import MetricsHome from "./pages/cluster/components/metrics-home";
 
 function App() {
     return (
@@ -25,6 +27,12 @@ function App() {
                             <Route path="/" element={<Home/>}></Route>
                             <Route path="/cluster/:clusterId"
                                    element={<ClusterView><ClusterHome/></ClusterView>}></Route>
+
+                            <Route path="/cluster/:clusterId/query"
+                                   element={<ClusterView><QueryHome/></ClusterView>}></Route>
+                            <Route path="/cluster/:clusterId/metrics"
+                                   element={<ClusterView><MetricsHome/></ClusterView>}></Route>
+
                             <Route path="/cluster/:clusterId/keyspace/:keyspaceName"
                                    element={<ClusterView><KeyspaceHome/></ClusterView>}></Route>
                             <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName"

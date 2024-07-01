@@ -1,5 +1,5 @@
 import {Link, useParams} from "react-router-dom";
-import QueryEditor from "../../query-editor";
+import QueryEditor from "./query/query-editor";
 import {useClusterState} from "../context/clusterContext";
 import {useEffect} from "react";
 
@@ -30,7 +30,7 @@ const ClusterHome = () => {
                 <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item active">
-                            <Link to={`/cluster/${routeParams.clusterId}`}>
+                            <Link to={`/cluster/${routeParams.clusterId}`} className={"link-body-emphasis text-decoration-none"}>
                                 Cluster {routeParams.clusterId}
                             </Link>
                         </li>
@@ -79,7 +79,7 @@ const ClusterHome = () => {
                                             <Link
                                                 to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center gap-2`}>
-                                                {info.keyspaceName}
+                                                <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
                                         </th>
                                         <td className={"text-center"}>
@@ -96,10 +96,6 @@ const ClusterHome = () => {
                     </tbody>
                 </table>
             </div>
-
-            <h2>Sample Query Editor</h2>
-
-            <QueryEditor/>
         </>
     )
 }

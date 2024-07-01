@@ -1,5 +1,6 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
+import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.IntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,12 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
 
     @Test
     void runTest() {
-        ClusterKeyspaceDescribeResult describeResult = clusterKeyspaceCommander.describe(ClusterKeyspaceDescribeArgs.builder()
+        try (CqlSession session = makeSession()) {
+            log.info("describeResult : {}", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
                 .keyspace("demodb")
                 .withChildren(true)
                 .pretty(true)
-                .build());
-
-        log.info("describeResult : {}", describeResult);
+                .build()));
+        }
     }
 }

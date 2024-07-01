@@ -41,7 +41,9 @@ const TableHome = () => {
                             </Link>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`}>
+                            <Link
+                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`}
+                                className={"link-body-emphasis text-decoration-none"}>
                                 {routeParams.tableName}
                             </Link>
                         </li>
@@ -62,6 +64,69 @@ const TableHome = () => {
                 {/*        This week*/}
                 {/*    </button>*/}
                 {/*</div>*/}
+            </div>
+
+            <ul className="nav nav-tabs">
+                <li className="nav-item">
+                    <a className="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" aria-current="page" href="#">Detail</a>
+                </li>
+                <li className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                       aria-expanded="false">Data</a>
+                    <ul className="dropdown-menu">
+                        <li><a className="dropdown-item" href="#">Export</a></li>
+                        <li><a className="dropdown-item" href="#">Import</a></li>
+                        <li><a className="dropdown-item" href="#">Something else here</a></li>
+                        <li>
+                            <hr className="dropdown-divider"/>
+                        </li>
+                        <li><a className="dropdown-item" href="#">Separated link</a></li>
+                    </ul>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" href="#">Link</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link disabled" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+
+            <div className="table-responsive small">
+                <table className="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Header</th>
+                        <th scope="col">Header</th>
+                        <th scope="col">Header</th>
+                        <th scope="col">Header</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        new Array(1000).fill({
+                            t1: "test",
+                            t2: "value",
+                            t3: "tttt",
+                            t4: "adfasdfasd"
+                        }).map((info, infoIndex) => {
+                            return (
+                                <tr>
+                                    <td>{info.t1}</td>
+                                    <td>{info.t2}</td>
+                                    <td>{info.t3}</td>
+                                    <td>{info.t4}</td>
+                                    <td></td>
+                                </tr>
+                            )
+                        })
+                    }
+
+                    </tbody>
+                </table>
             </div>
 
 

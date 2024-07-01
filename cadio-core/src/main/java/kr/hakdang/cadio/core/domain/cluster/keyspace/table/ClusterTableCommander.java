@@ -22,26 +22,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClusterTableCommander extends BaseClusterCommander {
 
-    public ClusterTablePureSelectResult pureSelect(ClusterTablePureSelectArgs args) {
-        try (CqlSession session = makeSession()) {
-            SimpleStatement statement = QueryBuilder
-                .selectFrom(args.getKeyspace(), args.getTable())
-                .all()
-                .build()
-                .setPageSize(args.getLimit());
+    public ClusterTablePureSelectResult pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
+        SimpleStatement statement = QueryBuilder
+            .selectFrom(args.getKeyspace(), args.getTable())
+            .all()
+            .build()
+            .setPageSize(args.getLimit());
 
-            if (StringUtils.isNotBlank(args.getNextPageState())) {
-                statement = statement.setPagingState(Bytes.fromHexString(args.getNextPageState()));
-            }
-
-            ResultSet rs = session.execute(statement);
-            //rs.wasApplied()
-
-            return null;
-
-        } catch (Exception e) {
-            log.error("error : {}", e.getMessage(), e);
-            throw e;
+        if (StringUtils.isNotBlank(args.getNextPageState())) {
+            statement = statement.setPagingState(Bytes.fromHexString(args.getNextPageState()));
         }
+
+        ResultSet rs = session.execute(statement);
+        //rs.wasApplied()
+
+        return null;
+
+
     }
 }
