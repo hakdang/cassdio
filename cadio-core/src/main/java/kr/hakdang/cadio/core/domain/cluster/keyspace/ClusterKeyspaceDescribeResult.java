@@ -1,6 +1,5 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
-import kr.hakdang.cadio.core.domain.cluster.ClusterCommandResult;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClusterKeyspaceDescribeResult implements ClusterCommandResult {
+public class ClusterKeyspaceDescribeResult {
 
     private String describe;
 

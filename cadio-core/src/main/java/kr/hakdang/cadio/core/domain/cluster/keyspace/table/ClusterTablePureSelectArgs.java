@@ -1,7 +1,7 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace.table;
 
-import kr.hakdang.cadio.core.domain.cluster.ClusterCommandArgs;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,11 +13,20 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClusterTablePureSelectArgs
-    implements ClusterCommandArgs {
+public class ClusterTablePureSelectArgs {
 
     private String keyspace;
     private String table;
 
-    private long limit; //TODO : max check
+    private int limit; //TODO : max check
+
+    private String nextPageState;
+
+    @Builder
+    public ClusterTablePureSelectArgs(String keyspace, String table, int limit, String nextPageState) {
+        this.keyspace = keyspace;
+        this.table = table;
+        this.limit = limit;
+        this.nextPageState = nextPageState;
+    }
 }

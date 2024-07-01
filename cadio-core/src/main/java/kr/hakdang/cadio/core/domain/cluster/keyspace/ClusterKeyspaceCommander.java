@@ -2,9 +2,7 @@ package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
-import kr.hakdang.cadio.core.domain.cluster.ClusterArgs;
-import kr.hakdang.cadio.core.domain.cluster.ClusterCommandPreExecuteResult;
-import kr.hakdang.cadio.core.domain.cluster.ClusterCommander;
+import kr.hakdang.cadio.core.domain.cluster.BaseClusterCommander;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +14,10 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class ClusterKeyspaceDescribeCommander
-    extends ClusterCommander<ClusterKeyspaceDescribeArgs, ClusterKeyspaceDescribeResult> {
+public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
-    @Override
-    protected void doArgValid(ClusterArgs cluster, ClusterKeyspaceDescribeArgs args) {
 
-    }
-
-    @Override
-    protected ClusterKeyspaceDescribeResult doExecute(ClusterArgs cluster, ClusterKeyspaceDescribeArgs args, ClusterCommandPreExecuteResult preResult) {
+    public ClusterKeyspaceDescribeResult describe(ClusterKeyspaceDescribeArgs args) {
         try (CqlSession session = makeSession()) {
 
             KeyspaceMetadata keyspaceMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
