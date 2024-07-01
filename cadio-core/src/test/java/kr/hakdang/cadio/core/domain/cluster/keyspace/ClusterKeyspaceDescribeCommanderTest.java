@@ -1,13 +1,12 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
+import kr.hakdang.cadio.IntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 
 @Slf4j
-@SpringBootConfiguration
-class ClusterKeyspaceDescribeCommanderTest {
+class ClusterKeyspaceDescribeCommanderTest extends IntegrationTest {
 
     @Autowired
     private ClusterKeyspaceDescribeCommander clusterKeyspaceDescribeCommander;
