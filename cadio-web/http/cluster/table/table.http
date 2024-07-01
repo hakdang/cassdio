@@ -1,0 +1,1 @@
+GET {{api}}/api/cassandra/cluster/123/keyspace/demodb/tables?size=1
