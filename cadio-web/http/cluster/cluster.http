@@ -1,0 +1,2 @@
+### List Tables
+GET {{api}}/api/cassandra/cluster/123/keyspace
