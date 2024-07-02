@@ -20,6 +20,7 @@ const QueryHome = () => {
             </div>
 
             <QueryEditor/>
+
         </>
     )
 }
