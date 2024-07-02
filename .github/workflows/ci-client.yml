@@ -16,7 +16,7 @@ env:
   CI: ''
 jobs:
   ci:
-    name: Build
+    name: Build on Node
     runs-on: ubuntu-latest
     strategy:
       matrix:
