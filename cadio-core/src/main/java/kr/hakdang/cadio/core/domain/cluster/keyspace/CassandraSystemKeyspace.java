@@ -1,15 +1,15 @@
-package kr.hakdang.cadio.core.domain.system;
+package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
 import lombok.Getter;
 
 /**
- * SystemKeyspace
+ * CassandraSystemKeyspace
  *
  * @author seungh0
  * @since 2024-07-02
  */
 @Getter
-public enum SystemKeyspace {
+public enum CassandraSystemKeyspace {
 
     SYSTEM_SCHEMA("system_schema"),
     SYSTEM("system"),
@@ -22,7 +22,7 @@ public enum SystemKeyspace {
 
     private final String keyspaceName;
 
-    SystemKeyspace(String keyspaceName) {
+    CassandraSystemKeyspace(String keyspaceName) {
         this.keyspaceName = keyspaceName;
     }
 

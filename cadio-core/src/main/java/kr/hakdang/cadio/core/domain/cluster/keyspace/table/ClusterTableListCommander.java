@@ -8,9 +8,8 @@ import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cadio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
-import kr.hakdang.cadio.core.domain.system.SystemKeyspace;
-import kr.hakdang.cadio.core.domain.system.schema.SystemSchemaTable;
-import kr.hakdang.cadio.core.domain.system.schema.table.SystemSchemaTablesColumn;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,9 +28,9 @@ public class ClusterTableListCommander extends BaseClusterCommander {
 
     public ClusterTableListResult listTables(CqlSession session, ClusterTableListArgs args) {
         SimpleStatement statement = QueryBuilder
-            .selectFrom(SystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), SystemSchemaTable.TABLES.getTableName())
+            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
             .all()
-            .whereColumn(SystemSchemaTablesColumn.KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
             .limit(args.getLimit())
             .build(args.getKeyspace())
             .setPagingState(StringUtils.isBlank(args.getNextPageState()) ? null : Bytes.fromHexString(args.getNextPageState()));
