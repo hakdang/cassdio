@@ -3,9 +3,11 @@ package kr.hakdang.cadio.core.domain.cluster;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
+import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.TraceEvent;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
@@ -35,6 +37,7 @@ public class ClusterQueryCommander {
             .setPageSize(2)                    // 10 per pages
             .setTimeout(Duration.ofSeconds(3))  // 3s timeout
             .setPagingState(StringUtils.isNotBlank(nextTokenParam) ? Bytes.fromHexString(nextTokenParam) : null)
+            .setTracing(false)
             .build();
         //.setConsistencyLevel(ConsistencyLevel.ONE);
 
@@ -55,6 +58,12 @@ public class ClusterQueryCommander {
         List<String> columnNames = new ArrayList<>();
         for (ColumnDefinition definition : definitions) {
             columnNames.add(definition.getName().asCql(true));
+        }
+
+        QueryTrace queryTrace = resultSet.getExecutionInfo().getQueryTrace();
+        log.info("query Trace : {}", queryTrace.getTracingId());
+        for (TraceEvent event : queryTrace.getEvents()) {
+            log.info("event : {}", event);
         }
 
         return ClusterQueryCommanderResult.builder()
