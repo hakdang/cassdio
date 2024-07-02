@@ -45,3 +45,4 @@ bin/
 .idea
 
 node_modules/
+**/build/
