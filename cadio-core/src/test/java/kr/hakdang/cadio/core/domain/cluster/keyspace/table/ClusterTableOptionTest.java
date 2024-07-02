@@ -5,9 +5,8 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cadio.IntegrationTest;
-import kr.hakdang.cadio.core.domain.system.SystemKeyspace;
-import kr.hakdang.cadio.core.domain.system.schema.SystemSchemaTable;
-import kr.hakdang.cadio.core.domain.system.schema.table.SystemSchemaTablesColumn;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import org.junit.jupiter.api.Test;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
@@ -24,10 +23,10 @@ class ClusterTableOptionTest extends IntegrationTest {
     void extra_table_options() {
         // given
         SimpleStatement statement = QueryBuilder
-            .selectFrom(SystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), SystemSchemaTable.TABLES.getTableName())
+            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
             .all()
-            .whereColumn(SystemSchemaTablesColumn.KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-            .whereColumn(SystemSchemaTablesColumn.TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
             .limit(1)
             .build(keyspaceName, "test_table_1");
 
