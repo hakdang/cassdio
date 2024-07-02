@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        cassandra-version: [ '4.0', '4.1', '5.0' ]
+        cassandra-version: [ '4.0', '4.1', '5.0' ] # TODO: Add 3.11
     steps:
       - name: checkout@v4
         uses: actions/checkout@v4

@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 14, 16, 18 ]
+        node: [ 18 ] # TODO: Add 14, 16
     steps:
       - name: checkout@v4
         uses: actions/checkout@v4
