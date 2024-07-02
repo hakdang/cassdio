@@ -1,6 +1,6 @@
 ### List Tables
-GET {{api}}/api/cassandra/clusters/123/keyspaces/demodb/tables?size=1
+GET {{api}}/api/cassandra/cluster/123/keyspaces/demodb/table?size=1
 
 
 ### Get Table
-GET {{api}}/api/cassandra/clusters/123/keyspaces/demodb/tables/event_history_v1
+GET {{api}}/api/cassandra/cluster/123/keyspaces/demodb/table/event_history_v1

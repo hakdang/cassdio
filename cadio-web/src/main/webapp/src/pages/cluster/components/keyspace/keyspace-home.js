@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import KeyspaceDetailDescribe from "./keyspace-detail-describe";
 import Spinner from "../../../../components/spinner";
+import TableList from "./table/table-list";
 
 const KeyspaceHome = () => {
 
@@ -17,14 +18,16 @@ const KeyspaceHome = () => {
 
     const [detailLoading, setDetailLoading] = useState(false);
     const [describe, setDescribe] = useState('');
+    const [tableLoading, setTableLoading] = useState(false);
+    const [tableCursor, setTableCursor] = useState(null)
+    const [tableList, setTableList] = useState([]);
 
     useEffect(() => {
         //show component
-
-        console.log("routeParams ", routeParams.clusterId)
-        console.log("routeParams ", routeParams.keyspaceName)
         setDescribe('');
         setDetailLoading(true)
+        setTableLoading(true)
+        setTableList([]);
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
@@ -35,8 +38,27 @@ const KeyspaceHome = () => {
         }).catch((error) => {
             //TODO : error catch
         }).finally(() => {
-            console.log("finally")
             setDetailLoading(false)
+        });
+
+        axios({
+            method: "GET",
+            url: `/api/cassandra/clusters/${routeParams.clusterId}/keyspaces/${routeParams.keyspaceName}/tables`,
+            params: {
+                size: 50,
+                cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
+            }
+        }).then((response) => {
+            console.log("res ", response);
+            setTableList(response.data.result.items)
+            if (response.data.result.cursor.hasNext) {
+                setTableCursor(response.data.result.cursor.next)
+            }
+        }).catch((error) => {
+            console.log(error)
+            //TODO : error catch
+        }).finally(() => {
+            setTableLoading(false)
         });
 
         return () => {
@@ -84,16 +106,17 @@ const KeyspaceHome = () => {
             <Spinner loading={detailLoading}>
                 <KeyspaceDetailDescribe describe={describe}/>
 
-                
             </Spinner>
 
-
             <br/>
-            <hr/>
-            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/testTable`}>Table
-                Example</Link>
+            <div
+                className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2 className="h2">Tables</h2>
+            </div>
 
-
+            <Spinner loading={tableLoading}>
+                <TableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName} tableList={tableList}/>
+            </Spinner>
         </>
     )
 }
