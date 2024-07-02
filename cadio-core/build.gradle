@@ -13,6 +13,8 @@ dependencies {
 
     // CommonsLang3
     api("org.apache.commons:commons-lang3")
+    api("com.google.guava:guava:33.0.0-jre")
+    api("org.apache.commons:commons-collections4:4.4")
 }
 
 bootJar {
