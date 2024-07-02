@@ -55,7 +55,7 @@ public class ClusterKeyspaceApi extends BaseSample {
         try (CqlSession session = makeSession()) { //TODO : interface 작업할 때 facade layer 로 변경 예정
             result.put("describe", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
                 .keyspace(keyspace)
-                .withChildren(true)
+                .withChildren(false)
                 .pretty(true)
                 .build()));
 

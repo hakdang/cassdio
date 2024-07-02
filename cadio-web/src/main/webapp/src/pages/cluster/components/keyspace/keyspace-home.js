@@ -43,7 +43,7 @@ const KeyspaceHome = () => {
 
         axios({
             method: "GET",
-            url: `/api/cassandra/clusters/${routeParams.clusterId}/keyspaces/${routeParams.keyspaceName}/tables`,
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
             params: {
                 size: 50,
                 cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
