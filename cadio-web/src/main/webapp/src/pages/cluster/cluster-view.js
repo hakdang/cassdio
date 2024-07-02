@@ -1,6 +1,5 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
-import QueryEditor from "./components/query/query-editor";
 import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
 
@@ -39,20 +38,30 @@ const ClusterView = (props) => {
                     <div className="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <ul className="nav flex-column">
                             <li className="nav-item">
-                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                      to={`/cluster/${routeParams.clusterId}`}>
+                                <Link
+                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                    to={`/cluster/${routeParams.clusterId}`}>
                                     <i className="bi bi-house"></i> Cluster Home
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                      to={`/cluster/${routeParams.clusterId}/query`}>
+                                <Link
+                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                    to={`/cluster/${routeParams.clusterId}/nodes`}>
+                                    <i className="bi bi-server"></i> Node List
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                    to={`/cluster/${routeParams.clusterId}/query`}>
                                     <i className="bi bi-journal-code"></i> Query Editor
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                      to={`/cluster/${routeParams.clusterId}/metrics`}>
+                                <Link
+                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                    to={`/cluster/${routeParams.clusterId}/metrics`}>
                                     <i className="bi bi-laptop"></i> Metrics
                                 </Link>
                             </li>
