@@ -2,6 +2,7 @@ package kr.hakdang.cadio;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.schema.CreateKeyspace;
@@ -40,10 +41,12 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
 
             SimpleStatement createTable1 = SchemaBuilder.createTable("test_table_1")
                 .withPartitionKey("partition_key_1", DataTypes.TEXT)
-                .withPartitionKey("partition_key_2", DataTypes.TEXT)
+                .withPartitionKey("partition_key_2", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_1", DataTypes.BIGINT)
-                .withClusteringColumn("clustering_key_2", DataTypes.BIGINT)
+                .withClusteringColumn("clustering_key_2", DataTypes.TEXT)
                 .withColumn("column_1", DataTypes.TEXT)
+                .withClusteringOrder("clustering_key_1", ClusteringOrder.DESC)
+                .withClusteringOrder("clustering_key_2", ClusteringOrder.ASC)
                 .withComment("test_table_one")
                 .withBloomFilterFpChance(0.01)
                 .build()
@@ -52,9 +55,9 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
 
             SimpleStatement createTable2 = SchemaBuilder.createTable("test_table_2")
                 .withPartitionKey("partition_key_11", DataTypes.TEXT)
-                .withPartitionKey("partition_key_12", DataTypes.TEXT)
+                .withPartitionKey("partition_key_12", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_11", DataTypes.BIGINT)
-                .withClusteringColumn("clustering_key_12", DataTypes.BIGINT)
+                .withClusteringColumn("clustering_key_12", DataTypes.TEXT)
                 .withColumn("column_11", DataTypes.TEXT)
                 .withComment("test_table_two")
                 .withBloomFilterFpChance(0.001)
@@ -78,7 +81,7 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
             );
         }
 
-        log.info("Database initialization complete.....");
+        log.info("Database cleanup complete.....");
     }
 
 }
