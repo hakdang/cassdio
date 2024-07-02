@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-07-01
  */
 @RestController
-@RequestMapping("/api/cassandra/clusters/{clusterId}/keyspaces/{keyspace}")
+@RequestMapping("/api/cassandra/cluster/{clusterId}/keyspace/{keyspace}")
 public class ClusterTableApi extends BaseSample {
 
     private final ClusterTableListCommander clusterTableListCommander;
@@ -40,7 +40,7 @@ public class ClusterTableApi extends BaseSample {
         this.clusterTableGetCommander = clusterTableGetCommander;
     }
 
-    @GetMapping("/tables")
+    @GetMapping("/table")
     public ApiResponse<ItemListWithCursorResponse<ClusterTable, String>> listTables(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
@@ -56,7 +56,7 @@ public class ClusterTableApi extends BaseSample {
         }
     }
 
-    @GetMapping("/tables/{table}")
+    @GetMapping("/table/{table}")
     public ApiResponse<ClusterTableGetResult> getTable(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
