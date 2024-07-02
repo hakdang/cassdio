@@ -12,4 +12,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ClusterCommander {
+
+    /**
+     * 클러스터에 접근가능한지 확인
+     */
+    public void validation() {
+
+    }
 }
