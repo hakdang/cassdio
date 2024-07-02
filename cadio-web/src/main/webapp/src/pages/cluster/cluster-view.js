@@ -1,6 +1,6 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
-import QueryEditor from "../query-editor";
+import QueryEditor from "./components/query/query-editor";
 import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
 
@@ -24,7 +24,7 @@ const ClusterView = (props) => {
             //hide component
 
         };
-    }, []);
+    }, [routeParams.clusterId]);
 
     return (
         <>
@@ -39,20 +39,22 @@ const ClusterView = (props) => {
                     <div className="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                         <ul className="nav flex-column">
                             <li className="nav-item">
-                                <Link className={`nav-link d-flex align-items-center gap-2 active`}
+                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
                                       to={`/cluster/${routeParams.clusterId}`}>
-                                    Cluster Home
+                                    <i className="bi bi-house"></i> Cluster Home
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center gap-2" href="#">
-                                    Query Editor
-                                </a>
+                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                      to={`/cluster/${routeParams.clusterId}/query`}>
+                                    <i className="bi bi-journal-code"></i> Query Editor
+                                </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center gap-2" href="#">
-                                    Metrics
-                                </a>
+                                <Link className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                      to={`/cluster/${routeParams.clusterId}/metrics`}>
+                                    <i className="bi bi-laptop"></i> Metrics
+                                </Link>
                             </li>
                         </ul>
 
@@ -74,8 +76,8 @@ const ClusterView = (props) => {
                                             <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                                 <Link
                                                     to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
-                                                    className={`nav-link d-flex align-items-center gap-2`}>
-                                                    {info.keyspaceName}
+                                                    className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
+                                                    <i className="bi bi-database"></i> {info.keyspaceName}
                                                 </Link>
                                             </li>
                                         )
@@ -88,12 +90,12 @@ const ClusterView = (props) => {
 
                         <ul className="nav flex-column mb-auto">
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center gap-2" href="#">
+                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2" href="#">
                                     Settings
                                 </a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center gap-2" href="#">
+                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2" href="#">
                                     Sign out
                                 </a>
                             </li>

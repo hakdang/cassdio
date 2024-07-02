@@ -1,20 +1,17 @@
-package kr.hakdang.cadio;
+package kr.hakdang.cadio.web.route;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.InetSocketAddress;
 
 /**
- * IntegrationTest
+ * BaseSample
  *
- * @author seungh0
- * @since 2024-07-01
+ * @author akageun
+ * @since 2024-07-02
  */
-@SpringBootTest(classes = {CoreRoot.class})
-public abstract class IntegrationTest extends BaseTest {
+public abstract class BaseSample {
 
-//    TODO : 샘플코드
     protected CqlSession makeSession() {
         return CqlSession.builder()
             .addContactPoint(new InetSocketAddress("127.0.0.1", 29042))

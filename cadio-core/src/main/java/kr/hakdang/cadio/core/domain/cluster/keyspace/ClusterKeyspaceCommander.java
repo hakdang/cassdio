@@ -24,55 +24,39 @@ import java.util.List;
 @Service
 public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
-    public ClusterKeyspaceListResult keyspaceList() {
-        try (CqlSession session = makeSession()) {
+    public ClusterKeyspaceListResult keyspaceList(CqlSession session) {
+        ResultSet resultSet = session.execute(QueryBuilder.selectFrom(
+            "system_schema",
+            "keyspaces"
+        ).all().build());
 
-            ResultSet resultSet = session.execute(QueryBuilder.selectFrom(
-                "system_schema",
-                "keyspaces"
-            ).all().build());
-
-            boolean wasApplied = resultSet.wasApplied();
-            List<KeyspaceResult> keyspaceList = new ArrayList<>();
-            for (Row row : resultSet.all()) {
-                log.info("row :{}", row.getFormattedContents());
-                keyspaceList.add(
-                    KeyspaceResult.builder()
-                        .keyspaceName(row.getString("keyspace_name"))
-                        .durableWrites(row.getBoolean("durable_writes"))
-                        .replication(row.getMap("replication", String.class, String.class))
-                        .build()
-                );
-            }
-
-            return ClusterKeyspaceListResult.builder()
-                .wasApplied(wasApplied)
-                .keyspaceList(keyspaceList)
-                .build();
-
-        } catch (Exception e) {
-            log.error("error : {}", e.getMessage(), e);
-            throw e;
+        boolean wasApplied = resultSet.wasApplied();
+        List<KeyspaceResult> keyspaceList = new ArrayList<>();
+        for (Row row : resultSet.all()) {
+            log.info("row :{}", row.getFormattedContents());
+            keyspaceList.add(
+                KeyspaceResult.builder()
+                    .keyspaceName(row.getString("keyspace_name"))
+                    .durableWrites(row.getBoolean("durable_writes"))
+                    .replication(row.getMap("replication", String.class, String.class))
+                    .build()
+            );
         }
+
+        return ClusterKeyspaceListResult.builder()
+            .wasApplied(wasApplied)
+            .keyspaceList(keyspaceList)
+            .build();
     }
 
-    public ClusterKeyspaceDescribeResult describe(ClusterKeyspaceDescribeArgs args) {
-        try (CqlSession session = makeSession()) {
+    public String describe(CqlSession session, ClusterKeyspaceDescribeArgs args) {
+        //TODO : system keyspace 는 접근 못함.
+        KeyspaceMetadata keyspaceMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
+            .orElseThrow(() -> new RuntimeException("not found keyspace"));
 
-            KeyspaceMetadata keyspaceMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
-                .orElseThrow(() -> new RuntimeException("not found keyspace"));
+        return args.isWithChildren() ?
+            keyspaceMetadata.describeWithChildren(args.isPretty()) :
+            keyspaceMetadata.describe(args.isPretty());
 
-            String describe = args.isWithChildren() ?
-                keyspaceMetadata.describeWithChildren(args.isPretty()) :
-                keyspaceMetadata.describe(args.isPretty());
-
-            return ClusterKeyspaceDescribeResult.builder()
-                .describe(describe)
-                .build();
-
-        } catch (Exception e) {
-            log.error("error : {}", e.getMessage(), e);
-            throw e;
-        }
     }
 }

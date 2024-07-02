@@ -1,6 +1,9 @@
 import {Link, useParams} from "react-router-dom";
 import {useClusterState} from "../../context/clusterContext";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import KeyspaceDetailDescribe from "./keyspace-detail-describe";
+import Spinner from "../../../../components/spinner";
 
 const KeyspaceHome = () => {
 
@@ -12,17 +15,35 @@ const KeyspaceHome = () => {
         keyspaceListLoading,
     } = useClusterState();
 
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [describe, setDescribe] = useState('');
+
     useEffect(() => {
         //show component
 
         console.log("routeParams ", routeParams.clusterId)
         console.log("routeParams ", routeParams.keyspaceName)
+        setDescribe('');
+        setDetailLoading(true)
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
+            params: {}
+        }).then((response) => {
+            console.log("res ", response);
+            setDescribe(response.data.describe)
+        }).catch((error) => {
+            //TODO : error catch
+        }).finally(() => {
+            console.log("finally")
+            setDetailLoading(false)
+        });
 
         return () => {
             //hide component
 
         };
-    }, []);
+    }, [routeParams.clusterId, routeParams.keyspaceName]);
 
     return (
         <>
@@ -30,12 +51,14 @@ const KeyspaceHome = () => {
                 <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item">
-                            <Link to={`/cluster/${routeParams.clusterId}`}>
+                            <Link to={`/cluster/${routeParams.clusterId}`}
+                                  className={"link-body-emphasis text-decoration-none"}>
                                 Cluster {routeParams.clusterId}
                             </Link>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}>
+                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}
+                                  className={"link-body-emphasis text-decoration-none"}>
                                 {routeParams.keyspaceName}
                             </Link>
                         </li>
@@ -58,7 +81,19 @@ const KeyspaceHome = () => {
                 {/*</div>*/}
             </div>
 
-            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/testTable`}>Table Example</Link>
+            <Spinner loading={detailLoading}>
+                <KeyspaceDetailDescribe describe={describe}/>
+
+                
+            </Spinner>
+
+
+            <br/>
+            <hr/>
+            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/testTable`}>Table
+                Example</Link>
+
+
         </>
     )
 }
