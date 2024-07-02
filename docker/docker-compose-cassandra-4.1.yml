@@ -18,7 +18,7 @@ services:
       - cadio_cassandra_data_1:/var/lib/cassandra
       - ./conf/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "[ $$(nodetool statusgossip) = running ]" ]
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
       interval: 30s
       timeout: 10s
       retries: 10
