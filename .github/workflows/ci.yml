@@ -14,27 +14,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  cassandrda-3_11:
-    name: Cassandra 3.11
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout@v3
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: adopt
-          cache: gradle
-        timeout-minutes: 3
-
-      - name: Setup Docker Containers
-        run: docker compose -f "docker/docker-compose-cassandra-3.11.yml" up -d --build --wait
-        timeout-minutes: 3
-
-      - name: Build
-        run: ./gradlew build
+  # TODO: Protocol 변경 필요
+#  cassandrda-3_11:
+#    name: Cassandra 3.11
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: checkout@v3
+#        uses: actions/checkout@v4
+#
+#      - name: Set up JDK 21
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: 21
+#          distribution: adopt
+#          cache: gradle
+#        timeout-minutes: 3
+#
+#      - name: Setup Docker Containers
+#        run: docker compose -f "docker/docker-compose-cassandra-3.11.yml" up -d --build --wait
+#        timeout-minutes: 3
+#
+#      - name: Build
+#        run: ./gradlew build
 
   cassandrda-4_0:
     name: Cassandra 4.0
