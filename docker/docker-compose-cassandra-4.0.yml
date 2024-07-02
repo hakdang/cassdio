@@ -1,6 +1,6 @@
 services:
   cassandra:
-    image: cassandra:4.1
+    image: cassandra:4.0
     container_name: cadio-cassandra
     ports:
       - "29042:9042"
@@ -16,6 +16,12 @@ services:
       - cadio-network
     volumes:
       - cadio_cassandra_data_1:/var/lib/cassandra
+      - ./conf/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "[ $$(nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
 
 volumes:
   cadio_cassandra_data_1:

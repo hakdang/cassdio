@@ -1,6 +1,7 @@
 package kr.hakdang.cadio;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.InetSocketAddress;
@@ -14,7 +15,10 @@ import java.net.InetSocketAddress;
 @SpringBootTest(classes = {CoreRoot.class})
 public abstract class IntegrationTest extends BaseTest {
 
-//    TODO : 샘플코드
+    @Value("${cadio.test-cassandra.keyspace}")
+    protected String keyspaceName;
+
+    //    TODO : 샘플코드
     protected CqlSession makeSession() {
         return CqlSession.builder()
             .addContactPoint(new InetSocketAddress("127.0.0.1", 29042))

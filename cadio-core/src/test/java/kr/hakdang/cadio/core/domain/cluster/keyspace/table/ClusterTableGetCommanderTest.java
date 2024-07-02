@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * ClusterTableGetCommanderTest
  *
@@ -20,13 +22,19 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
 
     @Test
     void getTable() {
-        // when
-        ClusterTableGetResult sut = clusterTableGetCommander.getTable(makeSession(), ClusterTableGetArgs.builder()
-            .keyspace("demodb")
-            .table("event_history_v1")
-            .build());
+        // given
+        ClusterTableGetArgs args = ClusterTableGetArgs.builder()
+            .keyspace(keyspaceName)
+            .table("test_table_1")
+            .build();
 
-        log.info("{}", sut);
+        // when
+        ClusterTableGetResult sut = clusterTableGetCommander.getTable(makeSession(), args);
+
+        // then
+        assertThat(sut.getTable().getTableName()).isEqualTo("test_table_1");
+        assertThat(sut.getTable().getComment()).isEqualTo("test_table_one");
+        assertThat(sut.getTable().getOptions()).containsEntry("bloom_filter_fp_chance", 0.01);
     }
 
 }

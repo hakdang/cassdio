@@ -16,7 +16,7 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
     void runTest() {
         try (CqlSession session = makeSession()) {
             log.info("describeResult : {}", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
-                .keyspace("demodb")
+                .keyspace(keyspaceName)
                 .withChildren(true)
                 .pretty(true)
                 .build()));
