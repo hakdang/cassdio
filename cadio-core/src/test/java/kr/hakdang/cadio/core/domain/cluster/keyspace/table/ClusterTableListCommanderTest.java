@@ -20,7 +20,7 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
     @Test
     void listTables() {
         // given
-        ClusterTableListResult sut = clusterTableListCommander.listTables(ClusterTableListArgs.builder()
+        ClusterTableListResult sut = clusterTableListCommander.listTables(makeSession(), ClusterTableArgs.ClusterTableListArgs.builder()
             .keyspace("demodb")
             .limit(50)
             .build());
