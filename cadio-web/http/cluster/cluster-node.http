@@ -1,0 +1,6 @@
+### List Cluster Nodes
+GET {{api}}/api/cassandra/cluster/cadio/node
+
+
+### Get Cluster Nodes
+GET {{api}}/api/cassandra/cluster/cadio/node/3939e90a-8a47-45c7-a841-de8583ab6bed
