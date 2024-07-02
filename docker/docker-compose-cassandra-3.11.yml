@@ -1,0 +1,33 @@
+services:
+  cassandra:
+    image: cassandra:3.11
+    container_name: cadio-cassandra
+    ports:
+      - "29042:9042"
+    environment:
+      - "MAX_HEAP_SIZE=2048M"
+      - "HEAP_NEWSIZE=512M"
+      - "CASSANDRA_CLUSTER_NAME=cadio"
+      - "CASSANDRA_DC=dc1"
+      - "CASSANDRA_RACK=rack1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    restart: unless-stopped
+    networks:
+      - cadio-network
+    volumes:
+      - cadio_cassandra_data_1:/var/lib/cassandra
+      - ./conf/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  cadio_cassandra_data_1:
+    driver: local
+
+networks:
+  cadio-network:
+    driver: bridge

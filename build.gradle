@@ -54,5 +54,11 @@ subprojects {
 
     tasks.named('test') {
         useJUnitPlatform()
+        testLogging {
+            showExceptions = true
+            exceptionFormat = 'FULL'
+            showCauses = true
+            events = ['FAILED']
+        }
     }
 }

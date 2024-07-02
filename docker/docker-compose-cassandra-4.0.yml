@@ -1,12 +1,12 @@
 services:
   cassandra:
-    image: cassandra:4.1
+    image: cassandra:4.0
     container_name: cadio-cassandra
     ports:
       - "29042:9042"
     environment:
-      - "MAX_HEAP_SIZE=512M"
-      - "HEAP_NEWSIZE=256M"
+      - "MAX_HEAP_SIZE=2048M"
+      - "HEAP_NEWSIZE=512M"
       - "CASSANDRA_CLUSTER_NAME=cadio"
       - "CASSANDRA_DC=dc1"
       - "CASSANDRA_RACK=rack1"
@@ -16,6 +16,13 @@ services:
       - cadio-network
     volumes:
       - cadio_cassandra_data_1:/var/lib/cassandra
+      - ./conf/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
 volumes:
   cadio_cassandra_data_1:
