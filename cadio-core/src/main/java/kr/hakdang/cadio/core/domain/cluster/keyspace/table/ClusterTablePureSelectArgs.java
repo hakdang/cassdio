@@ -20,13 +20,13 @@ public class ClusterTablePureSelectArgs {
 
     private int limit; //TODO : max check
 
-    private String nextPageState;
+    private String cursor;
 
     @Builder
-    public ClusterTablePureSelectArgs(String keyspace, String table, int limit, String nextPageState) {
+    public ClusterTablePureSelectArgs(String keyspace, String table, int limit, String cursor) {
         this.keyspace = keyspace;
         this.table = table;
         this.limit = limit;
-        this.nextPageState = nextPageState;
+        this.cursor = cursor;
     }
 }
