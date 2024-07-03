@@ -5,7 +5,6 @@ import kr.hakdang.cadio.core.domain.cluster.ClusterQueryCommander;
 import kr.hakdang.cadio.core.domain.cluster.ClusterQueryCommanderResult;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
-import kr.hakdang.cadio.web.route.BaseSample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +24,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/cassandra/cluster")
-public class ClusterQueryApi extends BaseSample {
+public class ClusterQueryApi {
 
     private final TempClusterConnector tempClusterConnector;
     private final ClusterQueryCommander clusterQueryCommander;

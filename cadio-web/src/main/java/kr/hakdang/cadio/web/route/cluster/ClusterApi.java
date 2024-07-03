@@ -9,12 +9,7 @@ import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoManager;
 import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoProvider;
 import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoRegisterArgs;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
-import kr.hakdang.cadio.web.route.BaseSample;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +34,7 @@ import static java.util.Collections.emptyMap;
 @Slf4j
 @RestController
 @RequestMapping("/api/cassandra/cluster")
-public class ClusterApi extends BaseSample {
+public class ClusterApi {
 
     private final BootstrapProvider bootstrapProvider;
     private final ClusterInfoProvider clusterInfoProvider;
@@ -83,12 +77,7 @@ public class ClusterApi extends BaseSample {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-        try (CqlSession session = makeSession()) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            //session.getMetadata().getNodes()
-        } catch (Exception e) {
-            log.error("error : {}", e.getMessage(), e);
-            throw e;
-        }
+
         return ApiResponse.ok(emptyMap());
     }
 
