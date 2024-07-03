@@ -6,7 +6,11 @@ import kr.hakdang.cadio.core.domain.cluster.ClusterQueryCommanderResult;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cadio.web.route.BaseSample;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +50,7 @@ public class ClusterQueryApi extends BaseSample {
         Map<String, Object> map = new HashMap<>();
 
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.makeArgs());
+            ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.getQuery(), request.getNextCursor());
 
             map.put("wasApplied", result1.isWasApplied());
             map.put("nextCursor", result1.getNextCursor());
