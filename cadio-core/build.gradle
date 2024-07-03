@@ -11,6 +11,8 @@ dependencies {
 //    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
 //    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
 
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+
     // CommonsLang3
     api("org.apache.commons:commons-lang3")
     api("com.google.guava:guava:33.0.0-jre")
