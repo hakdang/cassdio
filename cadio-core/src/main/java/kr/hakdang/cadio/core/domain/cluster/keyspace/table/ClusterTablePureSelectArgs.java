@@ -18,15 +18,15 @@ public class ClusterTablePureSelectArgs {
     private String keyspace;
     private String table;
 
-    private int limit; //TODO : max check
+    private int pageSize; //TODO : max check
 
     private String cursor;
 
     @Builder
-    public ClusterTablePureSelectArgs(String keyspace, String table, int limit, String cursor) {
+    public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, String cursor) {
         this.keyspace = keyspace;
         this.table = table;
-        this.limit = limit;
+        this.pageSize = pageSize;
         this.cursor = cursor;
     }
 }

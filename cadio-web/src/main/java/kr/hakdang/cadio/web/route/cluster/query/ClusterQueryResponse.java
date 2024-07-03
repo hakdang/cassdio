@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * ClusterQueryResponse
+ * TODO : 변경필요
  *
  * @author akageun
  * @since 2024-07-03
