@@ -12,7 +12,7 @@ dependencies {
 //    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
 
     // CommonsLang3
-    api("org.apache.commons:commons-lang3")
+    api("org.apache.commons:commons-lang3:3.13.0")
     api("com.google.guava:guava:33.0.0-jre")
     api("org.apache.commons:commons-collections4:4.4")
 }
