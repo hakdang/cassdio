@@ -17,6 +17,7 @@ import {useEffect} from "react";
 import useCadio from "./pages/commons/hooks/useCadio";
 import {useCadioState} from "./pages/commons/context/cadioContext";
 import InitializeView from "./pages/commons/initialize-view";
+import SystemView from "./pages/system/system-view";
 
 function App() {
     const {doBootstrap} = useCadio();
@@ -65,6 +66,9 @@ function App() {
                                                element={<ClusterView><KeyspaceHome/></ClusterView>}></Route>
                                         <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName"
                                                element={<ClusterView><TableHome/></ClusterView>}></Route>
+
+                                        <Route path="/system"
+                                               element={<SystemView/>}></Route>
                                         {/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
                                         <Route path="*" element={<NotFound/>}></Route>
                                     </Routes>
