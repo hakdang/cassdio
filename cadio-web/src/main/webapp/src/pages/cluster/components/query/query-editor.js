@@ -1,8 +1,9 @@
-import {Link} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
+import {useParams} from "react-router-dom";
 
 const QueryEditor = () => {
+    const routeParams = useParams();
 
     const [queryLoading, setQueryLoading] = useState(false)
 
@@ -37,7 +38,7 @@ const QueryEditor = () => {
 
         axios({
             method: "POST",
-            url: "/api/cassandra/cluster/query",
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/query`,
             data: {
                 query: queryParam.query,
                 pageSize: 2,

@@ -1,6 +1,34 @@
 import {Link} from "react-router-dom";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 const Home = () => {
+
+    const [clustersLoading, setClustersLoading] = useState(false);
+    const [clusters, setClusters] = useState([]);
+
+    useEffect(() => {
+        //show component
+
+        setClustersLoading(true)
+
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster`,
+            params: {}
+        }).then((response) => {
+            setClusters(response.data.result.clusters)
+        }).catch((error) => {
+            //TODO : error catch
+        }).finally(() => {
+            setClustersLoading(false)
+        });
+
+        return () => {
+            //hide component
+
+        };
+    }, []);
 
     return (
         <>
@@ -23,34 +51,55 @@ const Home = () => {
                     {/*</div>*/}
                 </div>
 
+                <h4 className="h4">Clusters</h4>
+
                 <div className="table-responsive small">
                     <table className="table table-striped table-sm">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Header</th>
-                            <th scope="col">Header</th>
-                            <th scope="col">Header</th>
-                            <th scope="col">Header</th>
+                            <th scope="col">Cluster Name</th>
+                            <th scope="col">ContactPoints</th>
+                            <th scope="col">Port</th>
+                            <th scope="col">Local Datacenter</th>
+                            <th scope="col">Link</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>1,001</td>
-                            <td>random</td>
-                            <td>data</td>
-                            <td>placeholder</td>
-                            <td>
-                                <Link className={"btn btn-sm btn-primary"}
-                                      to={"/cluster/1"}>
-                                    바로가기
-                                </Link>
-                            </td>
-                        </tr>
+                        {
+                            clustersLoading ? <tr>
+                                <td colSpan={6}>
+                                    <div className="text-center">
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr> : <>
+                                {
+                                    clusters && clusters.length > 0 && clusters.map((info, infoIndex) => {
+                                        return (
+                                            <tr key={infoIndex}>
+                                                <td>{info.clusterName}</td>
+                                                <td>{info.contactPoints}</td>
+                                                <td>{info.port}</td>
+                                                <td>{info.localDatacenter}</td>
+                                                <td>
+                                                    <Link className={"btn btn-sm btn-primary"}
+                                                          to={`/cluster/${info.clusterId}`}>
+                                                        바로가기
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+
+
+                            </>
+                        }
                         </tbody>
                     </table>
                 </div>
-
 
                 <Link className={"btn btn-sm btn-outline-secondary"}
                       to={"/system"}>

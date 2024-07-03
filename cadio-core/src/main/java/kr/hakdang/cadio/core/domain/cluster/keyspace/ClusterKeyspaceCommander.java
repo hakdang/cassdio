@@ -33,7 +33,6 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
         boolean wasApplied = resultSet.wasApplied();
         List<KeyspaceResult> keyspaceList = new ArrayList<>();
         for (Row row : resultSet.all()) {
-            log.info("row :{}", row.getFormattedContents());
             keyspaceList.add(
                 KeyspaceResult.builder()
                     .keyspaceName(row.getString("keyspace_name"))

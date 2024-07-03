@@ -1,5 +1,6 @@
 package kr.hakdang.cadio.web.route.cluster.query;
 
+import jakarta.validation.constraints.NotBlank;
 import kr.hakdang.cadio.core.domain.cluster.ClusterQueryCommanderArgs;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,12 +16,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClusterQueryRequest {
+    @NotBlank
     private String query;
     private String cursor;
     private int pageSize;
     private int timeoutSeconds;
     private boolean trace = false;
 
+    private String nextCursor;
     @Builder
     public ClusterQueryRequest(String query, String cursor, int pageSize, int timeoutSeconds, boolean trace) {
         this.query = query;

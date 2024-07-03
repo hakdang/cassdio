@@ -2,8 +2,12 @@ package kr.hakdang.cadio.web.route.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.validation.Valid;
+import kr.hakdang.cadio.core.domain.bootstrap.BootstrapProvider;
+import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoManager;
 import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoProvider;
+import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoRegisterArgs;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cadio.web.route.BaseSample;
 import lombok.AccessLevel;
@@ -16,11 +20,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Collections.emptyMap;
 
@@ -35,19 +42,44 @@ import static java.util.Collections.emptyMap;
 @RequestMapping("/api/cassandra/cluster")
 public class ClusterApi extends BaseSample {
 
-    @Autowired
-    private ClusterInfoProvider clusterInfoProvider;
+    private final BootstrapProvider bootstrapProvider;
+    private final ClusterInfoProvider clusterInfoProvider;
 
-    @Autowired
-    private ClusterInfoManager clusterInfoManager;
+    private final ClusterInfoManager clusterInfoManager;
+
+    private final TempClusterConnector tempClusterConnector;
+
+    public ClusterApi(
+        BootstrapProvider bootstrapProvider,
+        ClusterInfoProvider clusterInfoProvider,
+        ClusterInfoManager clusterInfoManager,
+        TempClusterConnector tempClusterConnector
+    ) {
+        this.bootstrapProvider = bootstrapProvider;
+        this.clusterInfoProvider = clusterInfoProvider;
+        this.clusterInfoManager = clusterInfoManager;
+        this.tempClusterConnector = tempClusterConnector;
+    }
 
     @GetMapping("")
-    public Map<String, Object> getCassandraClusterList() {
-        return emptyMap();
+    public ApiResponse<Map<String, Object>> getCassandraClusterList(
+        @RequestParam(required = false, defaultValue = "false") boolean withPassword
+    ) {
+        Map<String, Object> result = new HashMap<>();
+        List<ClusterInfo> clusters = clusterInfoProvider.getList();
+        if (!withPassword) {
+            clusters = clusters.stream()
+                .map(info -> info.toBuilder().password(null).build())
+                .toList();
+        }
+
+        result.put("clusters", clusters);
+
+        return ApiResponse.ok(result);
     }
 
     @GetMapping("/{clusterId}")
-    public Map<String, Object> getCassandraClusterDetail(
+    public ApiResponse<Map<String, Object>> getCassandraClusterDetail(
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
@@ -57,27 +89,28 @@ public class ClusterApi extends BaseSample {
             log.error("error : {}", e.getMessage(), e);
             throw e;
         }
-        return emptyMap();
+        return ApiResponse.ok(emptyMap());
     }
 
     @PostMapping("")
     public ApiResponse<Map<String, Object>> clusterRegister(
-        @RequestBody ClusterRegisterRequest request
+        @Valid @RequestBody ClusterRegisterRequest request
     ) {
-        clusterInfoManager.register(
-            request.contactPoints, request.port, request.localDatacenter, request.username, request.password
-        );
+        try (
+            CqlSession session = tempClusterConnector.makeSession(request.makeClusterConnector());
+        ) {
+            String clusterName = session.getMetadata().getClusterName()
+                .orElse(UUID.randomUUID().toString());
+
+            ClusterInfoRegisterArgs args = request.makeArgs(clusterName);
+            //실행 안되면 exception
+
+            clusterInfoManager.register(args);
+
+            bootstrapProvider.updateMinClusterCountCheck(clusterInfoProvider.checkMinClusterCount());
+        }
 
         return ApiResponse.ok(emptyMap());
     }
 
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class ClusterRegisterRequest {
-        private String contactPoints;
-        private int port;
-        private String localDatacenter;
-        private String username;
-        private String password;
-    }
 }

@@ -15,8 +15,6 @@ const ClusterView = (props) => {
     useEffect(() => {
         //show component
 
-        console.log("routeParams ", routeParams.clusterId)
-
         doGetKeyspaceList();
 
         return () => {
@@ -80,7 +78,7 @@ const ClusterView = (props) => {
                                             <span className="visually-hidden">Loading...</span>
                                         </div>
                                     </li> :
-                                    keyspaceList.map((info, infoIndex) => {
+                                    keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
                                         return (
                                             <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                                 <Link
@@ -99,12 +97,14 @@ const ClusterView = (props) => {
 
                         <ul className="nav flex-column mb-auto">
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2" href="#">
+                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2"
+                                   href="#">
                                     Settings
                                 </a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2" href="#">
+                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2"
+                                   href="#">
                                     Sign out
                                 </a>
                             </li>

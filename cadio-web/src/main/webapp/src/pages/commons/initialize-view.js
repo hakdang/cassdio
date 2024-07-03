@@ -7,13 +7,21 @@ const InitializeView = (props) => {
 
     const [clusterInfo, setClusterInfo] = useState(
         {
-            contactPoints: "",
-            port: 0,
-            clusterLocalDataCenter: "",
+            contactPoints: "127.0.0.1",
+            port: 29042,
+            localDatacenter: "dc1",
             clusterAuthCredentials: false,
             username: "",
             password: "",
         }
+        // {
+        //     contactPoints: "",
+        //     port: 0,
+        //     localDatacenter: "",
+        //     clusterAuthCredentials: false,
+        //     username: "",
+        //     password: "",
+        // }
     );
 
     const [saveLoading, setSaveLoading] = useState(false);
@@ -29,8 +37,8 @@ const InitializeView = (props) => {
             return;
         }
 
-        if (!clusterInfo.clusterLocalDataCenter) {
-            alert("clusterLocalDataCenter 를 입력해주세요.");
+        if (!clusterInfo.localDatacenter) {
+            alert("localDatacenter 를 입력해주세요.");
             return;
         }
 
@@ -114,9 +122,9 @@ const InitializeView = (props) => {
                             <div className="input-group">
                                 <input type="text" className="form-control" id="clusterLocalDataCenter"
                                        placeholder="Local Datacenter"
-                                       value={clusterInfo.clusterLocalDataCenter || ''}
+                                       value={clusterInfo.localDatacenter || ''}
                                        onChange={evt => setClusterInfo(t => {
-                                           return {...t, clusterLocalDataCenter: evt.target.value}
+                                           return {...t, localDatacenter: evt.target.value}
                                        })}/>
                             </div>
                         </div>
@@ -176,7 +184,15 @@ const InitializeView = (props) => {
                     <div className="col-lg-6 col-xxl-4  mx-auto">
                         <div className="d-grid gap-2">
                             {/*<button className="btn btn-danger" type="button">Validation</button>*/}
-                            <button className="btn btn-primary" type="button" onClick={save}>Save</button>
+                            <button className="btn btn-primary" type="button" onClick={save}>
+                                Save
+                                {
+                                    saveLoading &&
+                                    <div className="ms-2 spinner-border spinner-border-sm" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                }
+                            </button>
                         </div>
                     </div>
                 </div>

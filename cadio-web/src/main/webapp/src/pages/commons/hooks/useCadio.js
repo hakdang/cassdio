@@ -1,5 +1,6 @@
 import axios from "axios";
 import {useCadioDispatch, useCadioState} from "../context/cadioContext";
+import {axiosCatch} from "../../../utils/axiosUtils";
 
 
 export default function useCadio() {
@@ -17,20 +18,20 @@ export default function useCadio() {
         axios({
             method: "GET",
             url: `/api/bootstrap`,
-            params: {sleep: 500}
+            params: {
+
+            }
         }).then((response) => {
-            console.log("res ", response);
             cadioDispatcher({
                 type: "SET_SYSTEM_AVAILABLE",
                 systemAvailable: response.data.result.systemAvailable,
                 //systemAvailable: false,
             })
 
-
         }).catch((error) => {
             //TODO : error catch
+            axiosCatch(error);
         }).finally(() => {
-            console.log("finally")
             cadioDispatcher({
                 type: "SET_BOOTSTRAP_LOADING",
                 bootstrapLoading: false,

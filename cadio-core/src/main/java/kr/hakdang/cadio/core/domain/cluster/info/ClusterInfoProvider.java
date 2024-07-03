@@ -1,17 +1,18 @@
 package kr.hakdang.cadio.core.domain.cluster.info;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hakdang.cadio.common.Jsons;
-import kr.hakdang.cadio.core.domain.cluster.ClusterInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ClusterInfoProvider
@@ -25,6 +26,8 @@ import java.util.List;
 @Service
 public class ClusterInfoProvider extends BaseClusterInfo {
 
+    private static final ObjectMapper OM = Jsons.OBJECT_MAPPER;
+
     public boolean checkMinClusterCount() {
         long count = registeredCount();
 
@@ -32,16 +35,16 @@ public class ClusterInfoProvider extends BaseClusterInfo {
     }
 
     public long registeredCount() {
-        ObjectMapper om = Jsons.OBJECT_MAPPER;
 
         try {
-            List<ClusterInfo> result = om.readValue(getClusterJsonFile(), TYPED);
+            List<ClusterInfo> result = OM.readValue(getClusterJsonFile(), TYPED);
 
             if (CollectionUtils.isEmpty(result)) {
                 return 0;
             }
 
             return result.size();
+
         } catch (FileNotFoundException e) {
             log.warn(e.getMessage(), e); //첫 실행시, TODO : 에러메시지 등 고민 필요
             return 0;
@@ -51,4 +54,23 @@ public class ClusterInfoProvider extends BaseClusterInfo {
         }
     }
 
+    public List<ClusterInfo> getList() {
+        try {
+            return OM.readValue(getClusterJsonFile(), TYPED);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * @return key : clusterId
+     */
+    public Map<String, ClusterInfo> getDictionary() {
+        return getList().stream().collect(Collectors.toMap(ClusterInfo::getClusterId, o -> o));
+    }
+
+    public ClusterInfo findClusterInfo(String clusterId) {
+        return getDictionary().get(clusterId);
+    }
 }

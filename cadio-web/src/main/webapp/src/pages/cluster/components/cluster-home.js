@@ -1,5 +1,4 @@
 import {Link, useParams} from "react-router-dom";
-import QueryEditor from "./query/query-editor";
 import {useClusterState} from "../context/clusterContext";
 import {useEffect} from "react";
 
@@ -16,8 +15,6 @@ const ClusterHome = () => {
     useEffect(() => {
         //show component
 
-        console.log("routeParams ", routeParams.clusterId)
-
         return () => {
             //hide component
 
@@ -30,7 +27,8 @@ const ClusterHome = () => {
                 <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item active">
-                            <Link to={`/cluster/${routeParams.clusterId}`} className={"link-body-emphasis text-decoration-none"}>
+                            <Link to={`/cluster/${routeParams.clusterId}`}
+                                  className={"link-body-emphasis text-decoration-none"}>
                                 Cluster {routeParams.clusterId}
                             </Link>
                         </li>
@@ -43,7 +41,7 @@ const ClusterHome = () => {
                 <h2 className="h2">Keyspace</h2>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group me-2">
-                    <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>
                         <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>
                     </div>
                     <button type="button"
@@ -72,7 +70,7 @@ const ClusterHome = () => {
                                     </div>
                                 </td>
                             </tr> :
-                            keyspaceList.map((info, infoIndex) => {
+                            keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
                                 return (
                                     <tr key={infoIndex}>
                                         <th className={"text-center"}>
