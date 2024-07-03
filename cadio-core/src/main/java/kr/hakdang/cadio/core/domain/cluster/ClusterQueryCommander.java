@@ -32,12 +32,12 @@ import java.util.Map;
 @Service
 public class ClusterQueryCommander {
 
-    public ClusterQueryCommanderResult execute(CqlSession session, String query, String nextTokenParam) {
-        SimpleStatement statement = SimpleStatement.builder(query)
-            .setPageSize(2)                    // 10 per pages
-            .setTimeout(Duration.ofSeconds(3))  // 3s timeout
-            .setPagingState(StringUtils.isNotBlank(nextTokenParam) ? Bytes.fromHexString(nextTokenParam) : null)
-            .setTracing(false)
+    public ClusterQueryCommanderResult execute(CqlSession session, ClusterQueryCommanderArgs args) {
+        SimpleStatement statement = SimpleStatement.builder(args.getQuery())
+            .setPageSize(args.getPageSize())                    // 10 per pages
+            .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
+            .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null)
+            .setTracing(args.isTrace())
             .build();
         //.setConsistencyLevel(ConsistencyLevel.ONE);
 
@@ -45,7 +45,6 @@ public class ClusterQueryCommander {
 
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
 
-        //log.info("+ Page 1 has {} items", resultSet.getAvailableWithoutFetching());
         Iterator<Row> page1Iter = resultSet.iterator();
 
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -57,20 +56,24 @@ public class ClusterQueryCommander {
 
         List<String> columnNames = new ArrayList<>();
         for (ColumnDefinition definition : definitions) {
+            //TODO : 컬럼 정보 이름 외에도 추가하기
             columnNames.add(definition.getName().asCql(true));
         }
 
-        QueryTrace queryTrace = resultSet.getExecutionInfo().getQueryTrace();
-        log.info("query Trace : {}", queryTrace.getTracingId());
-        for (TraceEvent event : queryTrace.getEvents()) {
-            log.info("event : {}", event);
+        if (args.isTrace()) {
+            QueryTrace queryTrace = resultSet.getExecutionInfo().getQueryTrace();
+            log.info("query Trace : {}", queryTrace.getTracingId());
+            for (TraceEvent event : queryTrace.getEvents()) {
+                log.info("event : {}", event);
+                //TODO : 추적값 담기
+            }
         }
 
         return ClusterQueryCommanderResult.builder()
             .wasApplied(resultSet.wasApplied())
             .columnNames(columnNames)
             .rows(rows)
-            .nextToken(Bytes.toHexString(pagingStateAsBytes))
+            .nextCursor(pagingStateAsBytes != null ? Bytes.toHexString(pagingStateAsBytes) : null)
             .build();
     }
 

@@ -1,4 +1,4 @@
-package kr.hakdang.cadio.web.route.cluster;
+package kr.hakdang.cadio.web.route.cluster.query;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.core.domain.cluster.ClusterQueryCommander;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Collections.emptyMap;
-
 /**
  * ClusterQueryApi
  *
@@ -38,13 +36,12 @@ public class ClusterQueryApi extends BaseSample {
     public ApiResponse<Map<String, Object>> clusterQueryCommand(
         @RequestBody ClusterQueryRequest request
     ) {
-
         Map<String, Object> map = new HashMap<>();
         try (CqlSession session = makeSession()) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.getQuery(), request.getNextToken());
+            ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.makeArgs());
 
             map.put("wasApplied", result1.isWasApplied());
-            map.put("nextToken", result1.getNextToken());
+            map.put("nextCursor", result1.getNextCursor());
             map.put("rows", result1.getRows());
             map.put("columnNames", result1.getColumnNames());
         } catch (Exception e) {
@@ -54,12 +51,5 @@ public class ClusterQueryApi extends BaseSample {
 
 
         return ApiResponse.ok(map);
-    }
-
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class ClusterQueryRequest {
-        private String query;
-        private String nextToken;
     }
 }
