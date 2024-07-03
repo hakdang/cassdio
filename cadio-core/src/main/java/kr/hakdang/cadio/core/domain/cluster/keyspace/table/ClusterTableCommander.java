@@ -35,7 +35,11 @@ import java.util.Map;
 public class ClusterTableCommander extends BaseClusterCommander {
 
     public ClusterTablePureSelectResult pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
-        SimpleStatement statement = QueryBuilder.selectFrom(args.getKeyspace(), args.getTable()).all().build().setPageSize(args.getLimit()).setTimeout(Duration.ofSeconds(3))  // 3s timeout
+        SimpleStatement statement = QueryBuilder.selectFrom(args.getKeyspace(), args.getTable())
+            .all()
+            .build()
+            .setPageSize(args.getPageSize())
+            .setTimeout(Duration.ofSeconds(3))  // 3s timeout
             .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null);
 
         ResultSet resultSet = session.execute(statement);
@@ -47,7 +51,6 @@ public class ClusterTableCommander extends BaseClusterCommander {
             rows.add(convertMap(definitions, page1Iter.next()));
         }
 
-        String previewCursor = args.getCursor();
         String nextCursor = "";
         ByteBuffer pagingState = resultSet.getExecutionInfo().getPagingState();
         if (pagingState != null) {
@@ -63,8 +66,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
             .wasApplied(resultSet.wasApplied())
             .columnNames(columnNames)
             .rows(rows)
-            .nextToken(nextCursor)
-            .previewToken(previewCursor)
+            .nextCursor(nextCursor)
             .build();
     }
 

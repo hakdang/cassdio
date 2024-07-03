@@ -2,8 +2,8 @@ import {Link, useParams} from "react-router-dom";
 import {useClusterState} from "../../../context/clusterContext";
 import {useEffect} from "react";
 
-const TableHome = () => {
-
+const TableHome = (props) => {
+    console.log("props : ", props.submenu);
     const routeParams = useParams();
 
     //const {doGetKeyspaceList} = useCluster();
@@ -68,68 +68,52 @@ const TableHome = () => {
 
             <ul className="nav nav-tabs">
                 <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="#">Home</a>
+                    <Link
+                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`}
+                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'HOME' && `active`}`}>
+                        Home
+                    </Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" aria-current="page" href="#">Detail</a>
+                    <Link
+                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/rows`}
+                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'ROWS' && `active`}`}>
+                        Rows
+                    </Link>
                 </li>
-                <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                <li className="nav-item dropdown ">
+                    <a className={`nav-link dropdown-toggle link-body-emphasis text-decoration-none`} data-bs-toggle="dropdown" role="button"
                        aria-expanded="false">Data</a>
                     <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="#">Export</a></li>
-                        <li><a className="dropdown-item" href="#">Import</a></li>
-                        <li><a className="dropdown-item" href="#">Something else here</a></li>
                         <li>
-                            <hr className="dropdown-divider"/>
+                            <Link
+                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/export`}
+                                className={`dropdown-item ${props.submenu === 'EXPORT' && `active`}`}>
+                                Export
+                            </Link>
                         </li>
-                        <li><a className="dropdown-item" href="#">Separated link</a></li>
+                        <li>
+                            <Link
+                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/import`}
+                                className={`dropdown-item ${props.submenu === 'IMPORT' && `active`}`}>
+                                Import
+                            </Link>
+                        </li>
+                        {/*<li>*/}
+                        {/*    <hr className="dropdown-divider"/>*/}
+                        {/*</li>*/}
+                        {/*<li><a className="dropdown-item" href="#">Separated link</a></li>*/}
                     </ul>
                 </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#">Link</a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link disabled" aria-disabled="true">Disabled</a>
-                </li>
+                {/*<li className="nav-item">*/}
+                {/*    <a className="nav-link" href="#">Link</a>*/}
+                {/*</li>*/}
+                {/*<li className="nav-item">*/}
+                {/*    <a className="nav-link disabled" aria-disabled="true">Disabled</a>*/}
+                {/*</li>*/}
             </ul>
 
-            <div className="table-responsive small">
-                <table className="table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Header</th>
-                        <th scope="col">Header</th>
-                        <th scope="col">Header</th>
-                        <th scope="col">Header</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        new Array(1000).fill({
-                            t1: "test",
-                            t2: "value",
-                            t3: "tttt",
-                            t4: "adfasdfasd"
-                        }).map((info, infoIndex) => {
-                            return (
-                                <tr>
-                                    <td>{info.t1}</td>
-                                    <td>{info.t2}</td>
-                                    <td>{info.t3}</td>
-                                    <td>{info.t4}</td>
-                                    <td></td>
-                                </tr>
-                            )
-                        })
-                    }
-
-                    </tbody>
-                </table>
-            </div>
-
-
+            {props.children}
         </>
     )
 }

@@ -20,15 +20,13 @@ public class ClusterTablePureSelectResult {
     private boolean wasApplied;
     private List<String> columnNames;
     private List<Map<String, Object>> rows;
-    private String previewToken;
-    private String nextToken;
+    private String nextCursor;
 
     @Builder
-    public ClusterTablePureSelectResult(boolean wasApplied, List<String> columnNames, List<Map<String, Object>> rows, String previewToken, String nextToken) {
+    public ClusterTablePureSelectResult(boolean wasApplied, List<String> columnNames, List<Map<String, Object>> rows, String nextCursor) {
         this.wasApplied = wasApplied;
         this.columnNames = columnNames;
         this.rows = rows;
-        this.previewToken = previewToken;
-        this.nextToken = nextToken;
+        this.nextCursor = nextCursor;
     }
 }
