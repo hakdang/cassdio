@@ -20,13 +20,15 @@ public class ClusterQueryCommanderResult {
     private boolean wasApplied;
     private List<String> columnNames;
     private List<Map<String, Object>> rows;
-    private String nextToken;
+    private String previousCursor;
+    private String nextCursor;
 
     @Builder
-    public ClusterQueryCommanderResult(boolean wasApplied, List<String> columnNames, List<Map<String, Object>> rows, String nextToken) {
+    public ClusterQueryCommanderResult(boolean wasApplied, List<String> columnNames, List<Map<String, Object>> rows, String previousCursor, String nextCursor) {
         this.wasApplied = wasApplied;
         this.columnNames = columnNames;
         this.rows = rows;
-        this.nextToken = nextToken;
+        this.previousCursor = previousCursor;
+        this.nextCursor = nextCursor;
     }
 }
