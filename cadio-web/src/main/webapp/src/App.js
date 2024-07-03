@@ -17,6 +17,7 @@ import {useEffect} from "react";
 import useCadio from "./pages/commons/hooks/useCadio";
 import {useCadioState} from "./pages/commons/context/cadioContext";
 import InitializeView from "./pages/commons/initialize-view";
+import NodesHome from "./pages/cluster/components/nodes-home";
 import SystemView from "./pages/system/system-view";
 
 function App() {
@@ -56,6 +57,8 @@ function App() {
                                         <Route path="/" element={<Home/>}></Route>
                                         <Route path="/cluster/:clusterId"
                                                element={<ClusterView><ClusterHome/></ClusterView>}></Route>
+                                        <Route path="/cluster/:clusterId/nodes"
+                                               element={<ClusterView><NodesHome/></ClusterView>}></Route>
 
                                         <Route path="/cluster/:clusterId/query"
                                                element={<ClusterView><QueryHome/></ClusterView>}></Route>

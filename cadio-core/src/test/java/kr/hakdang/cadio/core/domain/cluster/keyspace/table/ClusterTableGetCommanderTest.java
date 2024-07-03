@@ -39,10 +39,10 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
         assertThat(sut.getTable().getOptions()).containsEntry("bloom_filter_fp_chance", 0.01);
 
         assertThat(sut.getColumns()).hasSize(5);
-        assertThat(sut.getColumns().get(0).getName()).isEqualTo("partition_key_1");
-        assertThat(sut.getColumns().get(0).getDataType()).isEqualTo("text");
-        assertThat(sut.getColumns().get(0).getClusteringOrder()).isEqualTo(ColumnClusteringOrder.NONE);
-        assertThat(sut.getColumns().get(0).getKind()).isEqualTo(ColumnKind.PARTITION_KEY);
+        assertThat(sut.getColumns().getFirst().getName()).isEqualTo("partition_key_1");
+        assertThat(sut.getColumns().getFirst().getDataType()).isEqualTo("text");
+        assertThat(sut.getColumns().getFirst().getClusteringOrder()).isEqualTo(ColumnClusteringOrder.NONE);
+        assertThat(sut.getColumns().getFirst().getKind()).isEqualTo(ColumnKind.PARTITION_KEY);
 
         assertThat(sut.getColumns().get(1).getName()).isEqualTo("partition_key_2");
         assertThat(sut.getColumns().get(1).getDataType()).isEqualTo("bigint");

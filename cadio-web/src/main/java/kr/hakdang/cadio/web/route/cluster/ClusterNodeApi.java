@@ -1,12 +1,19 @@
 package kr.hakdang.cadio.web.route.cluster;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import kr.hakdang.cadio.core.domain.cluster.ClusterNode;
+import kr.hakdang.cadio.core.domain.cluster.ClusterNodeGetCommander;
+import kr.hakdang.cadio.core.domain.cluster.ClusterNodeListCommander;
+import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
+import kr.hakdang.cadio.web.common.dto.response.ItemListWithCursorResponse;
+import kr.hakdang.cadio.web.route.BaseSample;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * ClusterNodeApi
@@ -16,21 +23,38 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
-public class ClusterNodeApi {
+public class ClusterNodeApi extends BaseSample {
 
-    @GetMapping("/node")
-    public Map<String, Object> nodeList(
-        @PathVariable String clusterId
+    private final ClusterNodeListCommander clusterNodeListCommander;
+    private final ClusterNodeGetCommander clusterNodeGetCommander;
+
+    public ClusterNodeApi(
+        ClusterNodeListCommander clusterNodeListCommander,
+        ClusterNodeGetCommander clusterNodeGetCommander
     ) {
-        return Collections.emptyMap();
+        this.clusterNodeListCommander = clusterNodeListCommander;
+        this.clusterNodeGetCommander = clusterNodeGetCommander;
     }
 
-    @GetMapping("/node/{node}")
-    public Map<String, Object> nodeDetail(
-        @PathVariable String clusterId,
-        @PathVariable String node
+    @GetMapping("/node")
+    public ApiResponse<ItemListWithCursorResponse<ClusterNode, String>> nodeList(
+        @PathVariable String clusterId
     ) {
-        return Collections.emptyMap();
+        try (CqlSession session = makeSession()) {
+            List<ClusterNode> nodes = clusterNodeListCommander.listNodes(session);
+            return ApiResponse.ok(ItemListWithCursorResponse.noMore(nodes));
+        }
+    }
+
+    @GetMapping("/node/{nodeId}")
+    public ApiResponse<ClusterNode> nodeDetail(
+        @PathVariable String clusterId,
+        @PathVariable UUID nodeId
+    ) {
+        try (CqlSession session = makeSession()) {
+            ClusterNode result = clusterNodeGetCommander.getNode(session, nodeId);
+            return ApiResponse.ok(result);
+        }
     }
 
 

@@ -6,14 +6,15 @@
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",
         "@testing-library/user-event": "^13.5.0",
-            "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.29",
-    "@types/react": "^18.2.6",
-    "@types/react-dom": "^18.2.4",
+        "@types/jest": "^27.5.2",
+        "@types/node": "^16.18.29",
+        "@types/react": "^18.2.6",
+        "@types/react-dom": "^18.2.4",
         "axios": "^1.2.4",
-        "dayjs": "^1.11.7",
         "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.10.3",
+        "dayjs": "^1.11.7",
+        "moment": "^2.30.1",
         "node-sass": "^7.0.3",
         "react": "^18.3.1",
         "react-bootstrap": "^2.10.3",
@@ -48,7 +49,7 @@
         ]
     },
     "proxy": "http://localhost:20000",
-      "devDependencies": {
-    "@types/bootstrap": "^5.2.10"
-  }
+    "devDependencies": {
+        "@types/bootstrap": "^5.2.10"
+    }
 }

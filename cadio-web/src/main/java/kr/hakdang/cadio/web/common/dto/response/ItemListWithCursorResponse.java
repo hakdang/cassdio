@@ -30,4 +30,8 @@ public class ItemListWithCursorResponse<ITEM, CURSOR> {
         return new ItemListWithCursorResponse<>(items, cursor);
     }
 
+    public static <ITEM, CURSOR> ItemListWithCursorResponse<ITEM, CURSOR> noMore(List<ITEM> items) {
+        return new ItemListWithCursorResponse<>(items, CursorResponse.noMore());
+    }
+
 }
