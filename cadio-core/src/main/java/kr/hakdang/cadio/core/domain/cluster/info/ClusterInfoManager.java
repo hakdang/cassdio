@@ -3,13 +3,14 @@ package kr.hakdang.cadio.core.domain.cluster.info;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hakdang.cadio.common.Jsons;
 import kr.hakdang.cadio.core.domain.bootstrap.BootstrapProvider;
-import kr.hakdang.cadio.core.domain.cluster.ClusterInfo;
+import kr.hakdang.cadio.core.domain.cluster.ClusterConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * ClusterManager
@@ -33,13 +34,7 @@ public class ClusterInfoManager extends BaseClusterInfo {
         this.clusterInfoProvider = clusterInfoProvider;
     }
 
-    public void register(
-        String contactPoints,
-        int port,
-        String localDatacenter,
-        String username,
-        String password
-    ) {
+    public void register(ClusterInfoRegisterArgs args) {
         ObjectMapper om = Jsons.OBJECT_MAPPER;
 
         try {
@@ -47,8 +42,7 @@ public class ClusterInfoManager extends BaseClusterInfo {
 
             File baseDir = new File(cadioBaseDir);
             if (!baseDir.exists()) {
-                boolean result = baseDir.mkdir();
-                log.info("make base directory : {}, path : {}", result, cadioBaseDir);
+                log.info("make base directory : {}, path : {}", baseDir.mkdir(), cadioBaseDir);
             }
 
             File clusterJsonFile = getClusterJsonFile();
@@ -57,16 +51,9 @@ public class ClusterInfoManager extends BaseClusterInfo {
             }
 
             List<ClusterInfo> result = om.readValue(clusterJsonFile, TYPED);
-            result.add(ClusterInfo.builder()
-                .contactPoints(contactPoints)
-                .port(port)
-                .localDatacenter(localDatacenter)
-                .username(username)
-                .password(password)
-                .build());
+            result.add(args.makeClusterInfo(UUID.randomUUID().toString()));
 
             om.writeValue(clusterJsonFile, result);
-            bootstrapProvider.updateMinClusterCountCheck(clusterInfoProvider.checkMinClusterCount());
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);

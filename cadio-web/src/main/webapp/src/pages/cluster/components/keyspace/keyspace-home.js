@@ -5,6 +5,7 @@ import axios from "axios";
 import KeyspaceDetailDescribe from "./keyspace-detail-describe";
 import Spinner from "../../../../components/spinner";
 import TableList from "./table/table-list";
+import {axiosCatch} from "../../../../utils/axiosUtils";
 
 const KeyspaceHome = () => {
 
@@ -57,6 +58,7 @@ const KeyspaceHome = () => {
         }).catch((error) => {
             console.log(error)
             //TODO : error catch
+            axiosCatch(error)
         }).finally(() => {
             setTableLoading(false)
         });

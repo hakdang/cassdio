@@ -1,5 +1,5 @@
 {
-    "name": "cassandra-web-console-ui",
+    "name": "cadio-ui",
     "version": "0.1.0",
     "private": true,
     "dependencies": {

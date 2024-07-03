@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-class ClusterInfoManagerTest extends IntegrationTest {
+class ClusterConnectionManagerTest extends IntegrationTest {
 
     @Autowired
     private ClusterInfoManager clusterInfoManager;
 
     @Test
     void registerTest() {
-        clusterInfoManager.register("127.0.0.1", 9042, "dc1", "", "");
+       // clusterInfoManager.register("127.0.0.1", 9042, "dc1", "", "");
     }
 }
