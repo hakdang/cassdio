@@ -6,7 +6,6 @@ import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
-import kr.hakdang.cadio.web.route.BaseSample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
-public class ClusterKeyspaceApi extends BaseSample {
+public class ClusterKeyspaceApi {
 
     private final TempClusterConnector tempClusterConnector;
     private final ClusterKeyspaceCommander clusterKeyspaceCommander;
