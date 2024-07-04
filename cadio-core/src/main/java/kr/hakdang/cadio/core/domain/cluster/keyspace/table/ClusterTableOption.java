@@ -25,7 +25,11 @@ public enum ClusterTableOption {
     }
 
     public Object extract(Row row) {
-        return this.extracting.apply(row);
+        try {
+            return this.extracting.apply(row);
+        } catch (Exception exception) {
+            return null;
+        }
     }
 
 }
