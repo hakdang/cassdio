@@ -26,7 +26,7 @@ public class ClusterKeyspaceListResult {
     public ClusterKeyspaceListResult(boolean wasApplied, List<KeyspaceResult> keyspaceList) {
         this.wasApplied = wasApplied;
         this.keyspaceList = keyspaceList.stream()
-            .sorted(Comparator.comparing(KeyspaceResult::isSystemKeyspace)
+            .sorted(Comparator.comparing(KeyspaceResult::isSystemKeyspace).reversed()
                 .thenComparing(KeyspaceResult::getKeyspaceName))
             .collect(Collectors.toList());
     }
