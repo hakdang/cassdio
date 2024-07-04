@@ -2,6 +2,8 @@ package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 /**
  * CassandraSystemKeyspace
  *
@@ -24,6 +26,11 @@ public enum CassandraSystemKeyspace {
 
     CassandraSystemKeyspace(String keyspaceName) {
         this.keyspaceName = keyspaceName;
+    }
+
+    public static boolean isSystemKeyspace(String keyspaceName) {
+        return Arrays.stream(CassandraSystemKeyspace.values())
+            .anyMatch(keyspace -> keyspace.getKeyspaceName().equals(keyspaceName));
     }
 
 }

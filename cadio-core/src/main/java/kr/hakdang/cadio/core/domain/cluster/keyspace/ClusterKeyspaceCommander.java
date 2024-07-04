@@ -1,14 +1,13 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.shaded.guava.common.collect.Maps;
 import kr.hakdang.cadio.core.domain.cluster.BaseClusterCommander;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,7 +48,10 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
     }
 
     public String describe(CqlSession session, ClusterKeyspaceDescribeArgs args) {
-        //TODO : system keyspace 는 접근 못함.
+        if (CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace())) {
+            return StringUtils.EMPTY;
+        }
+
         KeyspaceMetadata keyspaceMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
             .orElseThrow(() -> new RuntimeException("not found keyspace"));
 
