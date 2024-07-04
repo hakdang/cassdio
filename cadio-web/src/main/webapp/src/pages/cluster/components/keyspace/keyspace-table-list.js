@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 const KeyspaceTableList = ({clusterId, keyspace, tableList}) => {
     return (
         <div className="table-responsive small">
-            <table className="table table-sm table-fixed table-lock-height table-hover">
+            <table className="table table-sm table-hover">
                 <thead>
                 <tr className={"table-dark"}>
                     <th className={"text-center"} scope="col">Name</th>

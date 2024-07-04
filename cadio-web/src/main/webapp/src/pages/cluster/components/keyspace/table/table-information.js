@@ -135,11 +135,9 @@ const TableInformation = () => {
                                     <table className="table table-sm">
                                         <thead>
                                         <tr>
-                                            <th className={"text-center"} scope="col">Table Name</th>
                                             <th className={"text-center"} scope="col">Column Name</th>
                                             <th className={"text-center"} scope="col">Kind</th>
                                             <th className={"text-center"} scope="col">Clustering Order</th>
-                                            <th className={"text-center"} scope="col">Position</th>
                                             <th className={"text-center"} scope="col">DataType</th>
                                         </tr>
                                         </thead>
@@ -152,9 +150,6 @@ const TableInformation = () => {
                                                     ${info.kind === 'CLUSTERING' && 'table-warning '}
                                                     `}
                                                         key={infoIndex}>
-                                                        <td className={"text-center"}>
-                                                            {info.tableName}
-                                                        </td>
                                                         <th className={"text-center"}>
                                                             {info.name}
                                                         </th>
@@ -163,9 +158,6 @@ const TableInformation = () => {
                                                         </td>
                                                         <td className={"text-center"}>
                                                             {info.clusteringOrder}
-                                                        </td>
-                                                        <td className={"text-center"}>
-                                                            {info.position}
                                                         </td>
                                                         <td className={"text-center"}>
                                                             {info.dataType}
