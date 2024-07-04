@@ -64,7 +64,7 @@ const QueryEditor = (props) => {
                     <button className="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
                             data-bs-target="#queryOptionCollapse" aria-expanded="false"
                             aria-controls="queryOptionCollapse">
-                        <i className="bi bi-gear-wide-connected"></i> Options
+                        <i className="bi bi-gear-wide-connected"></i>
                     </button>
                 </div>
                 {/*<div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">*/}

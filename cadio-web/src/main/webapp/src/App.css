@@ -48,3 +48,19 @@
 .breadcrumb-arrow {
     --bs-breadcrumb-divider: ">"
 }
+
+.table-fixed thead > tr, .table-fixed tbody > tr {
+    display: flex;
+    justify-content: space-around;
+    flex: 0 0 auto;
+}
+
+.table-fixed thead > tr th, .table-fixed tbody > tr th, .table-fixed thead > tr td, .table-fixed tbody > tr td {
+    flex: 1;
+}
+
+.table-fixed tbody {
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+}

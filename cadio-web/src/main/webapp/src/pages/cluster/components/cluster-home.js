@@ -48,49 +48,43 @@ const ClusterHome = () => {
                 </div>
             </div>
 
-            <div className="table-responsive small">
-                <table className="table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th className={"text-center"} scope="col">Keyspace Name</th>
-                        <th className={"text-center"} scope="col">Durable Writes</th>
-                        <th className={"text-center"} scope="col">replication</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        keyspaceListLoading ?
-                            <tr>
-                                <td className={"text-center"} colSpan={5}>
-                                    <div className="spinner-border text-danger" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                </td>
-                            </tr> :
-                            keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
-                                return (
-                                    <tr key={infoIndex}>
-                                        <th className={"text-center"}>
-                                            <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
-                                                className={`nav-link d-flex align-items-center gap-2`}>
-                                                <i className="bi bi-database"></i> {info.keyspaceName}
-                                            </Link>
-                                        </th>
-                                        <td className={"text-center"}>
-                                            {info.durableWrites}
-                                        </td>
-                                        <td className={"text-center"}>
-                                            {JSON.stringify(info.replication)}
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                    }
-
-                    </tbody>
-                </table>
-            </div>
+            {
+                keyspaceListLoading ? <div className="d-flex justify-content-center">
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div> :
+                    <div className="table-responsive small">
+                        <table className="table table-sm table-hover">
+                            <thead>
+                            <tr className={"table-dark"}>
+                                <th className={"text-center"} scope="col">Keyspace Name</th>
+                                <th className={"text-center"} scope="col">replication</th>
+                            </tr>
+                            </thead>
+                            <tbody className="table-group-divider">
+                            {
+                                keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
+                                    return (
+                                        <tr key={infoIndex}>
+                                            <th>
+                                                <Link
+                                                    to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
+                                                    className={``}>
+                                                    <i className="bi bi-database"></i> {info.keyspaceName}
+                                                </Link>
+                                            </th>
+                                            <td className={"text-center"}>
+                                                {JSON.stringify(info.replication)}
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+            }
         </>
     )
 }

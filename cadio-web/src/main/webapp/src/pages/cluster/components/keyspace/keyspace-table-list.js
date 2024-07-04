@@ -3,15 +3,15 @@ import {Link} from "react-router-dom";
 const KeyspaceTableList = ({clusterId, keyspace, tableList}) => {
     return (
         <div className="table-responsive small">
-            <table className="table table-striped table-sm">
+            <table className="table table-sm table-fixed table-lock-height table-hover">
                 <thead>
-                <tr>
+                <tr className={"table-dark"}>
                     <th className={"text-center"} scope="col">Name</th>
                     <th className={"text-center"} scope="col">Comment</th>
                     <th className={"text-center"} scope="col">Options</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-group-divider" style={{maxHeight: "50vh"}}>
                 {tableList.map((table) => (
                     <tr key={table.id}>
                         <th className="text-center">

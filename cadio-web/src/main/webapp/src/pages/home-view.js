@@ -75,16 +75,16 @@ const HomeView = () => {
                     <h4 className="h4">Clusters</h4>
 
                     <div className="table-responsive small">
-                        <table className="table table-striped table-sm">
+                        <table className="table table-sm table-hover">
                             <thead>
-                            <tr>
+                            <tr className={"table-dark"}>
                                 <th className={"text-center"} scope="col">Cluster Name</th>
                                 <th className={"text-center"} scope="col">ContactPoints</th>
                                 <th className={"text-center"} scope="col">Port</th>
                                 <th className={"text-center"} scope="col">Local Datacenter</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="table-group-divider">
                             {
                                 clustersLoading ? <tr>
                                     <td colSpan={5}>

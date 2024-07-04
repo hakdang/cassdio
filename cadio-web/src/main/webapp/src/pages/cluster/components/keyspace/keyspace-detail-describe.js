@@ -21,9 +21,11 @@ const KeyspaceDetailDescribe = ({describe}) => {
                 {/*</div>*/}
             </div>
 
-            <code style={{whiteSpace: "pre"}}>
-                {describe}
-            </code>
+            <pre style={{whiteSpace: "pre"}}>
+                <code>
+                    {describe}
+                </code>
+            </pre>
         </>
     )
 }

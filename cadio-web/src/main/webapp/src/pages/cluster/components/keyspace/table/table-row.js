@@ -6,9 +6,9 @@ const TableRow = () => {
                 <h5 className={"h5"}>Rows</h5>
 
                 <div className="table-responsive small">
-                    <table className="table table-striped table-sm">
+                    <table className="table table-sm table-fixed table-lock-height table-hover">
                         <thead>
-                        <tr>
+                        <tr className={"table-dark"}>
                             <th scope="col">#</th>
                             <th scope="col">Header</th>
                             <th scope="col">Header</th>
@@ -16,7 +16,7 @@ const TableRow = () => {
                             <th scope="col">Header</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="table-group-divider" style={{height: "50vh"}}>
                         {
                             new Array(1000).fill({
                                 t1: "test",

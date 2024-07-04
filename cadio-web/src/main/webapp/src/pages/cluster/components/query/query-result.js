@@ -31,9 +31,9 @@ const QueryResult = (props) => {
                     </code>
 
                     <div className="table-responsive small">
-                        <table className="table table-striped table-hover table-sm">
+                        <table className="table table-sm table-fixed table-lock-height table-hover">
                             <thead>
-                            <tr>
+                            <tr className={"table-dark"}>
                                 {
                                     result.columnNames.map((info, infoIndex) => {
                                         return (
@@ -44,10 +44,13 @@ const QueryResult = (props) => {
                                 }
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="table-group-divider" style={{maxHeight: "50vh"}}>
                             {
                                 result.rows.length <= 0 ? <>
-                                    <tr><td className={"text-center"} colSpan={result.columnNames.length}>데이터가 없습니다.</td></tr>
+                                        <tr>
+                                            <td className={"text-center"} colSpan={result.columnNames.length}>데이터가 없습니다.
+                                            </td>
+                                        </tr>
                                     </> :
                                     result.rows.map((row, rowIndex) => {
                                         return (
