@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ClusterKeyspaceListResult
@@ -23,6 +25,10 @@ public class ClusterKeyspaceListResult {
     @Builder
     public ClusterKeyspaceListResult(boolean wasApplied, List<KeyspaceResult> keyspaceList) {
         this.wasApplied = wasApplied;
-        this.keyspaceList = keyspaceList;
+        this.keyspaceList = keyspaceList.stream()
+            .sorted(Comparator.comparing(KeyspaceResult::isSystemKeyspace)
+                .thenComparing(KeyspaceResult::getKeyspaceName))
+            .collect(Collectors.toList());
     }
+
 }

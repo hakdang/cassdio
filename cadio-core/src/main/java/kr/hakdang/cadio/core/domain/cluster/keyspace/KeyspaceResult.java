@@ -20,11 +20,13 @@ public class KeyspaceResult {
     private String keyspaceName;
     private boolean durableWrites;
     private Map<String, String> replication;
+    private boolean isSystemKeyspace;
 
     @Builder
     public KeyspaceResult(String keyspaceName, boolean durableWrites, Map<String, String> replication) {
         this.keyspaceName = keyspaceName;
         this.durableWrites = durableWrites;
         this.replication = replication;
+        this.isSystemKeyspace = CassandraSystemKeyspace.isSystemKeyspace(keyspaceName);
     }
 }

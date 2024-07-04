@@ -3,6 +3,7 @@ package kr.hakdang.cadio.core.domain.cluster;
 import com.datastax.oss.driver.api.core.CqlSession;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,14 +19,8 @@ public class ClusterNodeListCommander extends BaseClusterCommander {
     public List<ClusterNode> listNodes(CqlSession session) {
         return session.getMetadata().getNodes().values().stream()
             .map(ClusterNode::from)
-            .sorted((o1, o2) -> {
-                if (o1.getDatacenter().compareTo(o2.getDatacenter()) < 0) {
-                    return -1;
-                } else if (o1.getDatacenter().compareTo(o2.getDatacenter()) > 0) {
-                    return 1;
-                }
-                return o1.getRack().compareTo(o2.getRack());
-            })
+            .sorted(Comparator.comparing(ClusterNode::getDatacenter)
+                .thenComparing(ClusterNode::getRack))
             .collect(Collectors.toList());
     }
 

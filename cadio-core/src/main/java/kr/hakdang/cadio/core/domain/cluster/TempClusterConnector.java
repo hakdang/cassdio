@@ -6,7 +6,6 @@ import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cadio.core.domain.cluster.info.ClusterInfoProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -57,6 +56,9 @@ public class TempClusterConnector {
 
     public CqlSession makeSession(String clusterId) {
         ClusterInfo info = clusterInfoProvider.findClusterInfo(clusterId);
+        if (info == null) {
+            throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
+        }
         return makeSession(info.makeClusterConnector());
     }
 }

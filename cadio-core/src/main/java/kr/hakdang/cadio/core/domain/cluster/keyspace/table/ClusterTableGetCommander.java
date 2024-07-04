@@ -3,7 +3,6 @@ package kr.hakdang.cadio.core.domain.cluster.keyspace.table;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
 import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cadio.core.domain.cluster.BaseClusterCommander;
@@ -14,6 +13,7 @@ import kr.hakdang.cadio.core.domain.cluster.keyspace.table.column.Column;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,14 +72,8 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
         List<Row> columnRows = session.execute(statement).all();
         return columnRows.stream()
             .map(Column::from)
-            .sorted((o1, o2) -> {
-                if (o1.getKind().getOrder() < o2.getKind().getOrder()) {
-                    return -1;
-                } else if (o1.getKind().getOrder() > o2.getKind().getOrder()) {
-                    return 1;
-                }
-                return o1.getPosition() - o2.getPosition();
-            })
+            .sorted(Comparator.comparing(o1 -> ((Column) o1).getKind().getOrder())
+                .thenComparing(o1 -> ((Column) o1).getPosition()))
             .collect(Collectors.toList());
     }
 
