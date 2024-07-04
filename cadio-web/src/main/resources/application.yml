@@ -1,2 +1,28 @@
+spring.profiles.default: local # TODO: local/alpha/beta/release 이렇게 나눠두고 나중에 기본으로 release로 변경?
+spring.config:
+  import:
+    - classpath:/application-core.yml
 server:
   port: 20000
+  shutdown: graceful
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    threads:
+      max: 500
+
+spring:
+  main:
+    web-application-type: servlet
+
+---
+spring.config:
+  activate:
+    on-profile:
+      - local
+      - test
+
+logging.level:
+  org.springframework.cache: TRACE
