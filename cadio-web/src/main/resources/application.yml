@@ -1,2 +1,14 @@
 server:
   port: 20000
+  shutdown: graceful
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    threads:
+      max: 500
+
+spring:
+  main:
+    web-application-type: servlet
