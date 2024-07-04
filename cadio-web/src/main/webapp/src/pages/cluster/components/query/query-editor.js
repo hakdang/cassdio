@@ -1,70 +1,33 @@
-import {useState} from "react";
-import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useRef,useState} from "react";
 
-const QueryEditor = () => {
-    const routeParams = useParams();
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/ext-language_tools";
+import "ace-builds/src-noconflict/mode-sql";
+import "ace-builds/src-noconflict/theme-sqlserver"
+
+const QueryEditor = (props) => {
 
     const [queryLoading, setQueryLoading] = useState(false)
+    const [query, setQuery] = useState("SELECT * FROM testdb.test_table_1;")
 
-    const [queryParam, setQueryParam] = useState(
-        {
-            query: "SELECT * FROM testdb.test_table_1;",
-            nextCursor: "",
-        }
-    );
-
-    const [queryResult, setQueryResult] = useState({
-        wasApplied: null,
-        rows: [],
-        columnNames: [],
-    })
+    const editorRef = useRef();
 
     const queryExecute = (cursor) => {
-        if (!queryParam.query) {
-            alert("쿼리를 입력해 주세요.")
-            return;
-        }
+        props.queryExecute(query, cursor, setQueryLoading);
+    }
 
-        if (cursor === null) {
-            setQueryResult({
-                wasApplied: null,
-                rows: [],
-                columnNames: [],
-            })
-        }
+    function onSelectionChange(value, event) {
+        const content = editorRef.current.editor.getSelectedText();
+        console.log("content : ", content)
+        // use content
+    }
+    function onLoad(newValue) {
+        console.log("load", newValue);
+    }
 
-        setQueryLoading(true);
-
-        axios({
-            method: "POST",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/query`,
-            data: {
-                query: queryParam.query,
-                pageSize: 2,
-                timeoutSeconds: 3,
-                cursor: cursor,
-            },
-        }).then((response) => {
-            console.log("response : ", response);
-
-            setQueryParam(t => {
-                return {
-                    ...t,
-                    nextCursor: response.data.result.nextCursor
-                }
-            })
-
-            setQueryResult({
-                wasApplied: response.data.result.wasApplied,
-                rows: [...queryResult.rows, ...response.data.result.rows],
-                columnNames: response.data.result.columnNames,
-            })
-        }).catch((error) => {
-
-        }).finally(() => {
-            setQueryLoading(false);
-        })
+    function onChange(newValue) {
+        console.log("change", newValue);
+        setQuery(newValue)
     }
 
     return (
@@ -81,6 +44,20 @@ const QueryEditor = () => {
                             </div>
                         }
 
+                    </button>
+                </div>
+                <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
+                    <button className="btn btn-sm btn-outline-secondary" type="button"
+                            onClick={e => {
+                                editorRef.current.editor.undo()
+                            }}>
+                        <i className="bi bi-arrow-left"></i>
+                    </button>
+                    <button className="btn btn-sm btn-outline-secondary" type="button"
+                            onClick={e => {
+                                editorRef.current.editor.redo()
+                            }}>
+                        <i className="bi bi-arrow-right"></i>
                     </button>
                 </div>
                 <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
@@ -155,69 +132,41 @@ const QueryEditor = () => {
                 </div>
             </div>
 
-            <div className="form-floating">
-                {/*현재는 단일 쿼리만 실행 가능하도록*/}
-                <textarea className="form-control" placeholder="Query" id="queryEditor"
-                          style={{"height": "300px"}}
-                          value={queryParam.query || ''}
-                          rows={10}
-                          onChange={evt => setQueryParam(t => {
-                              return {...t, query: evt.target.value}
-                          })}
-                ></textarea>
-                <label htmlFor="queryEditor">Query</label>
-            </div>
+            {/*<div className="form-floating">*/}
+            {/*    /!*현재는 단일 쿼리만 실행 가능하도록*!/*/}
+            {/*    <textarea className="form-control" placeholder="Query" id="queryEditor"*/}
+            {/*              style={{"height": "300px"}}*/}
+            {/*              value={query || ''}*/}
+            {/*              rows={10}*/}
+            {/*              onChange={evt => setQuery(evt.target.value)}*/}
+            {/*    ></textarea>*/}
+            {/*    <label htmlFor="queryEditor">Query</label>*/}
+            {/*</div>*/}
 
-            {
-                queryResult.wasApplied && <>
-                    <h4 className={"h4 mt-3"}>Result</h4>
-
-                    <p>wasApplied : {queryResult.wasApplied}</p>
-
-                    <div className="table-responsive small">
-                        <table className="table table-striped table-hover table-sm">
-                            <thead>
-                            <tr>
-                                {
-                                    queryResult.columnNames.map((info, infoIndex) => {
-                                        return (
-                                            <th className={"text-center"} key={`resultHeader${infoIndex}`} scope="col">{info}</th>
-                                        )
-                                    })
-                                }
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                queryResult.rows.map((row, rowIndex) => {
-                                    return (
-                                        <tr key={`resultBody${rowIndex}`}>
-                                            {
-                                                queryResult.columnNames.map((info, infoIndex) => {
-                                                    return (
-                                                        <td className={"text-center"} key={`resultItem${infoIndex}`}>{row[info]}</td>
-                                                    )
-                                                })
-                                            }
-                                        </tr>
-                                    )
-                                })
-                            }
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {
-                        queryParam.nextCursor &&
-                        <div className="d-grid gap-2">
-                            <button className="btn btn-primary" type="button"
-                                    onClick={() => queryExecute(queryParam.nextCursor)}>More
-                            </button>
-                        </div>
-                    }
-                </>
-            }
+            <AceEditor
+                ref={editorRef}
+                mode={"sql"}
+                theme={"sqlserver"}
+                onLoad={onLoad}
+                onChange={onChange}
+                editorProps={{$blockScrolling: true}}
+                onSelectionChange={onSelectionChange}
+                setOptions={{
+                    enableBasicAutocompletion: true,
+                    enableLiveAutocompletion: true,
+                    enableSnippets: false,
+                    showLineNumbers: true,
+                    tabSize: 2,
+                }}
+                fontSize={12}
+                lineHeight={19}
+                showPrintMargin={true}
+                showGutter={true}
+                highlightActiveLine={true}
+                value={query || ''}
+                width={'100%'}
+                height={300}
+            />
         </>
     )
 }
