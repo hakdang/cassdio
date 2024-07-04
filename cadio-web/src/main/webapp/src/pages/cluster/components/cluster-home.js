@@ -24,13 +24,10 @@ const ClusterHome = () => {
     return (
         <>
             <div className={"row pt-3"}>
-                <nav aria-label="breadcrumb">
+                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item active">
-                            <Link to={`/cluster/${routeParams.clusterId}`}
-                                  className={"link-body-emphasis text-decoration-none"}>
-                                Cluster {routeParams.clusterId}
-                            </Link>
+                            Cluster
                         </li>
                     </ol>
                 </nav>

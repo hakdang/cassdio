@@ -1,9 +1,29 @@
-const SystemView = () => {
+import CadioSidebar from "../../components/layout/cadio-sidebar";
+import {Link} from "react-router-dom";
+
+const SystemView = (props) => {
 
     return (
-        <>
-            System Admin 페이지
-        </>
+        <div className="container-fluid min-vh-100">
+            <div className="row">
+
+                <CadioSidebar>
+                    <ul className="nav flex-column">
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/`}>
+                                <i className="bi bi-house"></i> Home
+                            </Link>
+                        </li>
+                    </ul>
+                </CadioSidebar>
+
+                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    {props.children}
+                </main>
+            </div>
+        </div>
     )
 }
 

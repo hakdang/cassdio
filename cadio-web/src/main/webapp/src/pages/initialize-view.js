@@ -90,7 +90,7 @@ const InitializeView = (props) => {
             <main>
                 <div className="py-5 text-center">
                     <h2>Cadio Initialize View</h2>
-                    <p className="lead">Cluster 정보 최소 한개를 등록해주세요.</p>
+                    <p className="lead">Cluster 정보 최소 한개를 등록해 주세요.</p>
                 </div>
 
                 <div className="row g-5">
@@ -98,7 +98,7 @@ const InitializeView = (props) => {
                         <h4 className="mb-3">Cluster</h4>
 
                         <div className="col-12 mb-2">
-                            <label htmlFor="contactPoints" className="form-label">ContactPoints</label>
+                            <label htmlFor="contactPoints" className="form-label">Contact Points</label>
                             <div className="input-group">
                                 <input type="text" className="form-control" id="username" placeholder="contactPoints"
                                        value={clusterInfo.contactPoints || ''}

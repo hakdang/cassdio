@@ -2,6 +2,7 @@ import {Link, useParams} from "react-router-dom";
 import {useEffect} from "react";
 import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
+import CadioSidebar from "../../components/layout/cadio-sidebar";
 
 const ClusterView = (props) => {
     const routeParams = useParams();
@@ -24,101 +25,75 @@ const ClusterView = (props) => {
     }, [routeParams.clusterId]);
 
     return (
-        <>
-            <div className="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
-                <div className="offcanvas-md offcanvas-end bg-body-tertiary" tabIndex="-1" id="sidebarMenu"
-                     aria-labelledby="sidebarMenuLabel">
-                    <div className="offcanvas-header">
-                        <h5 className="offcanvas-title" id="sidebarMenuLabel">Cadio</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="offcanvas"
-                                data-bs-target="#sidebarMenu" aria-label="Close"></button>
-                    </div>
-                    <div className="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                        <ul className="nav flex-column">
-                            <li className="nav-item">
-                                <Link
-                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                    to={`/cluster/${routeParams.clusterId}`}>
-                                    <i className="bi bi-house"></i> Cluster Home
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link
-                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                    to={`/cluster/${routeParams.clusterId}/nodes`}>
-                                    <i className="bi bi-server"></i> Node List
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link
-                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                    to={`/cluster/${routeParams.clusterId}/query`}>
-                                    <i className="bi bi-journal-code"></i> Query Editor
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link
-                                    className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                    to={`/cluster/${routeParams.clusterId}/metrics`}>
-                                    <i className="bi bi-laptop"></i> Metrics
-                                </Link>
-                            </li>
-                        </ul>
+        <div className="container-fluid min-vh-100">
+            <div className="row">
 
-                        <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">
-                            <span>Keyspace</span>
-                            {/*<a className="link-secondary" href="#" aria-label="Add a new report">*/}
-                            {/*</a>*/}
-                        </h6>
-                        <ul className="nav flex-column mb-auto">
-                            {
-                                keyspaceListLoading ?
-                                    <li className="nav-item text-center">
-                                        <div className="spinner-border text-danger" role="status">
-                                            <span className="visually-hidden">Loading...</span>
-                                        </div>
-                                    </li> :
-                                    keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
-                                        return (
-                                            <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
-                                                <Link
-                                                    to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
-                                                    className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
-                                                    <i className="bi bi-database"></i> {info.keyspaceName}
-                                                </Link>
-                                            </li>
-                                        )
-                                    })
-                            }
+                <CadioSidebar>
+                    <ul className="nav flex-column">
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/cluster/${routeParams.clusterId}`}>
+                                <i className="bi bi-house"></i> Cluster Home
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/cluster/${routeParams.clusterId}/nodes`}>
+                                <i className="bi bi-server"></i> Node List
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/cluster/${routeParams.clusterId}/query`}>
+                                <i className="bi bi-journal-code"></i> Query Editor
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/cluster/${routeParams.clusterId}/metrics`}>
+                                <i className="bi bi-laptop"></i> Metrics
+                            </Link>
+                        </li>
+                    </ul>
 
-                        </ul>
+                    <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">
+                        <span>Keyspace</span>
+                        {/*<a className="link-secondary" href="#" aria-label="Add a new report">*/}
+                        {/*</a>*/}
+                    </h6>
+                    <ul className="nav flex-column mb-auto">
+                        {
+                            keyspaceListLoading ?
+                                <li className="nav-item text-center">
+                                    <div className="spinner-border text-danger" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </li> :
+                                keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
+                                    return (
+                                        <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
+                                            <Link
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
+                                                className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
+                                                <i className="bi bi-database"></i> {info.keyspaceName}
+                                            </Link>
+                                        </li>
+                                    )
+                                })
+                        }
 
-                        <hr className="my-3"/>
+                    </ul>
+                </CadioSidebar>
 
-                        <ul className="nav flex-column mb-auto">
-                            <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2"
-                                   href="#">
-                                    Settings
-                                </a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2"
-                                   href="#">
-                                    Sign out
-                                </a>
-                            </li>
-                        </ul>
-
-                    </div>
-                </div>
+                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    {props.children}
+                </main>
             </div>
-
-            <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                {props.children}
-
-            </main>
-        </>
+        </div>
     )
 }
 

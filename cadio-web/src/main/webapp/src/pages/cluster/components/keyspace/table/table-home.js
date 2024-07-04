@@ -27,24 +27,22 @@ const TableHome = (props) => {
     return (
         <>
             <div className={"row pt-3"}>
-                <nav aria-label="breadcrumb">
+                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item">
-                            <Link to={`/cluster/${routeParams.clusterId}`}>
-                                Cluster {routeParams.clusterId}
+                            <Link to={`/cluster/${routeParams.clusterId}`}
+                                  className={"link-body-emphasis text-decoration-none"}>
+                                Cluster
                             </Link>
                         </li>
-                        <li className="breadcrumb-item" aria-current="page">
-                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}>
+                        <li className="breadcrumb-item">
+                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}
+                                  className={"link-body-emphasis text-decoration-none"}>
                                 {routeParams.keyspaceName}
                             </Link>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <Link
-                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`}
-                                className={"link-body-emphasis text-decoration-none"}>
-                                {routeParams.tableName}
-                            </Link>
+                            {routeParams.tableName}
                         </li>
                     </ol>
                 </nav>
@@ -81,7 +79,8 @@ const TableHome = (props) => {
                     </Link>
                 </li>
                 <li className="nav-item dropdown ">
-                    <a className={`nav-link dropdown-toggle link-body-emphasis text-decoration-none`} data-bs-toggle="dropdown" role="button"
+                    <a className={`nav-link dropdown-toggle link-body-emphasis text-decoration-none`}
+                       data-bs-toggle="dropdown" role="button"
                        aria-expanded="false">Data</a>
                     <ul className="dropdown-menu">
                         <li>

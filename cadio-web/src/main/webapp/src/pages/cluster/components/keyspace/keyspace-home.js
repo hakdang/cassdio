@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import KeyspaceDetailDescribe from "./keyspace-detail-describe";
 import Spinner from "../../../../components/spinner";
-import TableList from "./table/table-list";
+import KeyspaceTableList from "./keyspace-table-list";
 import {axiosCatch} from "../../../../utils/axiosUtils";
 
 const KeyspaceHome = () => {
@@ -70,19 +70,16 @@ const KeyspaceHome = () => {
     return (
         <>
             <div className={"row pt-3"}>
-                <nav aria-label="breadcrumb">
+                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item">
                             <Link to={`/cluster/${routeParams.clusterId}`}
                                   className={"link-body-emphasis text-decoration-none"}>
-                                Cluster {routeParams.clusterId}
+                                Cluster
                             </Link>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}
-                                  className={"link-body-emphasis text-decoration-none"}>
-                                {routeParams.keyspaceName}
-                            </Link>
+                            {routeParams.keyspaceName}
                         </li>
                     </ol>
                 </nav>
@@ -115,7 +112,7 @@ const KeyspaceHome = () => {
             </div>
 
             <Spinner loading={tableLoading}>
-                <TableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName} tableList={tableList}/>
+                <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName} tableList={tableList}/>
             </Spinner>
         </>
     )
