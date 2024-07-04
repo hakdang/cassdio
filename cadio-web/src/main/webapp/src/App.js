@@ -5,7 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import ConsoleNavbar from "./components/layout/console-navbar";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Home from "./pages/home";
+import HomeView from "./pages/home-view";
 import NotFound from "./pages/not-found";
 import ClusterView from "./pages/cluster/cluster-view";
 import KeyspaceHome from "./pages/cluster/components/keyspace/keyspace-home";
@@ -16,10 +16,10 @@ import MetricsHome from "./pages/cluster/components/metrics-home";
 import {useEffect} from "react";
 import useCadio from "./pages/commons/hooks/useCadio";
 import {useCadioState} from "./pages/commons/context/cadioContext";
-import InitializeView from "./pages/commons/initialize-view";
+import InitializeView from "./pages/initialize-view";
 import NodesHome from "./pages/cluster/components/nodes-home";
 import SystemView from "./pages/system/system-view";
-import TableRows from "./pages/cluster/components/keyspace/table/table-rows";
+import TableRow from "./pages/cluster/components/keyspace/table/table-row";
 import TableInformation from "./pages/cluster/components/keyspace/table/table-information";
 import TableImport from "./pages/cluster/components/keyspace/table/table-import";
 import TableExport from "./pages/cluster/components/keyspace/table/table-export";
@@ -49,7 +49,6 @@ function App() {
                     systemAvailable && <ConsoleNavbar/>
                 }
 
-
                 <div className="container-fluid">
                     <div className="row">
 
@@ -58,7 +57,7 @@ function App() {
                                 systemAvailable === false ?
                                     <InitializeView/> :
                                     <Routes>
-                                        <Route path="/" element={<Home/>}></Route>
+                                        <Route path="/" element={<HomeView/>}></Route>
                                         <Route path="/cluster/:clusterId"
                                                element={<ClusterView><ClusterHome/></ClusterView>}></Route>
                                         <Route path="/cluster/:clusterId/nodes"
@@ -75,10 +74,10 @@ function App() {
                                                element={
                                                    <ClusterView><TableHome
                                                        submenu={"HOME"}><TableInformation/></TableHome></ClusterView>}></Route>
-                                        <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/rows"
+                                        <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/row"
                                                element={
                                                    <ClusterView><TableHome
-                                                       submenu={"ROWS"}><TableRows/></TableHome></ClusterView>}></Route>
+                                                       submenu={"ROW"}><TableRow/></TableHome></ClusterView>}></Route>
                                         <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/import"
                                                element={
                                                    <ClusterView><TableHome submenu={"IMPORT"}><TableImport/></TableHome></ClusterView>}></Route>
@@ -100,7 +99,16 @@ function App() {
 
                     </div>
                 </div>
+
             </BrowserRouter>
+            <div className="container">
+                <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                    <div className="col-md-4 d-flex align-items-center">
+                        <span className="mb-3 mb-md-0 text-body-secondary">&copy; 2024 Company, Inc</span>
+                    </div>
+
+                </footer>
+            </div>
         </div>
     )
 }

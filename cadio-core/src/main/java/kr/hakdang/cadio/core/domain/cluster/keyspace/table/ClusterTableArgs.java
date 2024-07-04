@@ -21,11 +21,13 @@ public class ClusterTableArgs {
 
         private String keyspace;
         private String table;
+        private boolean withTableDescribe = false;
 
         @Builder
-        private ClusterTableGetArgs(String keyspace, String table) {
+        private ClusterTableGetArgs(String keyspace, String table, boolean withTableDescribe) {
             this.keyspace = keyspace;
             this.table = table;
+            this.withTableDescribe = withTableDescribe;
         }
 
     }

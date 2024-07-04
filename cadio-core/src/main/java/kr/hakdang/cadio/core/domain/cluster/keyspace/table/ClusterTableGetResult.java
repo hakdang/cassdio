@@ -21,11 +21,13 @@ import java.util.List;
 public class ClusterTableGetResult {
 
     private ClusterTable table;
+    private String tableDescribe;
     private List<Column> columns;
 
     @Builder
-    private ClusterTableGetResult(ClusterTable table, List<Column> columns) {
+    private ClusterTableGetResult(ClusterTable table, String tableDescribe, List<Column> columns) {
         this.table = table;
+        this.tableDescribe = tableDescribe;
         this.columns = columns;
     }
 

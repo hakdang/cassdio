@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import useCadio from "./hooks/useCadio";
+import useCadio from "./commons/hooks/useCadio";
 
 const InitializeView = (props) => {
     const {doBootstrap} = useCadio();

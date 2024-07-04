@@ -17,6 +17,7 @@ import kr.hakdang.cadio.web.common.dto.response.ItemListWithCursorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}/keyspace/{keyspace}")
-public class ClusterTableApi  {
+public class ClusterTableApi {
 
     private final TempClusterConnector tempClusterConnector;
     private final ClusterTableListCommander clusterTableListCommander;
@@ -63,12 +64,14 @@ public class ClusterTableApi  {
     public ApiResponse<ClusterTableGetResult> getTable(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
-        @PathVariable String table
+        @PathVariable String table,
+        @RequestParam(required = false, defaultValue = "false") boolean withTableDescribe
     ) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
             ClusterTableGetResult result = clusterTableGetCommander.getTable(session, ClusterTableGetArgs.builder()
                 .keyspace(keyspace)
                 .table(table)
+                .withTableDescribe(withTableDescribe)
                 .build());
             return ApiResponse.ok(result);
         }

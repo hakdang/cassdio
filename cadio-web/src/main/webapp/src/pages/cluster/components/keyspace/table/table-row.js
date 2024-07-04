@@ -1,4 +1,4 @@
-const TableRows = () => {
+const TableRow = () => {
 
     return (
         <div className={"row mt-3"}>
@@ -45,4 +45,4 @@ const TableRows = () => {
     )
 }
 
-export default TableRows;
+export default TableRow;
