@@ -23,6 +23,8 @@ import TableInformation from "./pages/cluster/components/keyspace/table/table-in
 import TableImport from "./pages/cluster/components/keyspace/table/table-import";
 import TableExport from "./pages/cluster/components/keyspace/table/table-export";
 import LoadingView from "./pages/loading-view";
+import SystemHome from "./pages/system/components/system-home";
+import SystemClusterManageHome from "./pages/system/components/cluster/system-cluster-manage-home";
 
 function App() {
     const {doBootstrap} = useCadio();
@@ -82,7 +84,13 @@ function App() {
                                    <ClusterView><TableHome
                                        submenu={"EXPORT"}><TableExport/></TableHome></ClusterView>}></Route>
                         <Route path="/system"
-                               element={<SystemView/>}></Route>
+                               element={<SystemView>
+                                    <SystemHome/>
+                               </SystemView>}></Route>
+                        <Route path="/system/cluster"
+                               element={<SystemView>
+                                    <SystemClusterManageHome/>
+                               </SystemView>}></Route>
                         {/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
                         <Route path="*" element={<NotFound/>}></Route>
                     </Routes>

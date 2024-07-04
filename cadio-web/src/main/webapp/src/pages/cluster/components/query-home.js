@@ -3,6 +3,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import QueryResult from "./query/query-result";
+import {axiosCatch} from "../../../utils/axiosUtils";
 
 const QueryHome = () => {
     const routeParams = useParams();
@@ -43,7 +44,7 @@ const QueryHome = () => {
             url: `/api/cassandra/cluster/${routeParams.clusterId}/query`,
             data: {
                 query: query,
-                pageSize: 2,
+                pageSize: 50,
                 timeoutSeconds: 3,
                 cursor: cursor,
             },
@@ -60,7 +61,7 @@ const QueryHome = () => {
                 columnNames: response.data.result.columnNames,
             })
         }).catch((error) => {
-
+            axiosCatch(error);
         }).finally(() => {
             setLoading(false);
         })
