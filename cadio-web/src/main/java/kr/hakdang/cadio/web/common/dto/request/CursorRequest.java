@@ -3,6 +3,7 @@ package kr.hakdang.cadio.web.common.dto.request;
 import kr.hakdang.cadio.common.model.Direction;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import lombok.ToString;
  * @since 2024-07-01
  */
 @ToString
+@EqualsAndHashCode
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CursorRequest {

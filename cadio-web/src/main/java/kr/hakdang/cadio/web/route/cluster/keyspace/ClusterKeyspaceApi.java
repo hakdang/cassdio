@@ -1,14 +1,11 @@
 package kr.hakdang.cadio.web.route.cluster.keyspace;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
-import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
-import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,15 +23,12 @@ import java.util.Map;
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
 public class ClusterKeyspaceApi {
 
-    private final TempClusterConnector tempClusterConnector;
-    private final ClusterKeyspaceCommander clusterKeyspaceCommander;
+    private final ClusterKeyspaceReader clusterKeyspaceReader;
 
     public ClusterKeyspaceApi(
-        TempClusterConnector tempClusterConnector,
-        ClusterKeyspaceCommander clusterKeyspaceCommander
+        ClusterKeyspaceReader clusterKeyspaceReader
     ) {
-        this.tempClusterConnector = tempClusterConnector;
-        this.clusterKeyspaceCommander = clusterKeyspaceCommander;
+        this.clusterKeyspaceReader = clusterKeyspaceReader;
     }
 
     @GetMapping("/keyspace")
@@ -42,13 +36,17 @@ public class ClusterKeyspaceApi {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            ClusterKeyspaceListResult result1 = clusterKeyspaceCommander.keyspaceList(session);
-
-            result.put("keyspaceList", result1.getKeyspaceList());
-        }
-
+        ClusterKeyspaceListResult response = clusterKeyspaceReader.listKeyspace(clusterId);
+        result.put("keyspaceList", response.getKeyspaceList());
         return ApiResponse.ok(result);
+    }
+
+    @PutMapping("/keyspace/cache-evict")
+    public ApiResponse<Object> evictKeyspaceListCache(
+        @PathVariable String clusterId
+    ) {
+        clusterKeyspaceReader.refreshKeyspaceCache(clusterId);
+        return ApiResponse.OK;
     }
 
     @GetMapping("/keyspace/{keyspace}")
@@ -57,15 +55,8 @@ public class ClusterKeyspaceApi {
         @PathVariable String keyspace
     ) {
         Map<String, Object> result = new HashMap<>();
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            result.put("describe", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
-                .keyspace(keyspace)
-                .withChildren(false)
-                .pretty(true)
-                .build()));
-
-        }
-
+        String keyspaceDescribe = clusterKeyspaceReader.getKeyspace(clusterId, keyspace);
+        result.put("describe", keyspaceDescribe);
         return result;
     }
 }
