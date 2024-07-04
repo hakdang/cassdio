@@ -3,7 +3,6 @@ import {useClusterState} from "../../../context/clusterContext";
 import {useEffect} from "react";
 
 const TableHome = (props) => {
-    console.log("props : ", props.submenu);
     const routeParams = useParams();
 
     //const {doGetKeyspaceList} = useCluster();
@@ -76,8 +75,8 @@ const TableHome = (props) => {
                 </li>
                 <li className="nav-item">
                     <Link
-                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/rows`}
-                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'ROWS' && `active`}`}>
+                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`}
+                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'ROW' && `active`}`}>
                         Rows
                     </Link>
                 </li>

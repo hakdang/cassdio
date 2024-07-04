@@ -3,23 +3,36 @@ import {Link} from "react-router-dom";
 const ConsoleNavbar = () => {
 
     return (
-        <header className="navbar sticky-top bg-dark flex-md-nowrap shadow" data-bs-theme="dark">
-            <Link className={`navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white`}
-                  to="/">
-                Cadio
-            </Link>
+        <nav className="navbar navbar-dark bg-dark">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="#">Never expand</a>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
 
-            <ul className="navbar-nav flex-row d-md-none">
-                <li className="nav-item text-nowrap">
-                    <button className="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
-                            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                        <i className="bi bi-list"></i>
-                    </button>
-                </li>
-            </ul>
-
-        </header>
+                <div className="collapse navbar-collapse" id="navbarsExample01">
+                    <ul className="navbar-nav me-auto mb-2">
+                        <li className="nav-item">
+                            <a className="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Link</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link disabled" aria-disabled="true">Disabled</a>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
+                            <ul className="dropdown-menu">
+                                <li><a className="dropdown-item" href="#">Action</a></li>
+                                <li><a className="dropdown-item" href="#">Another action</a></li>
+                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     )
 }
 

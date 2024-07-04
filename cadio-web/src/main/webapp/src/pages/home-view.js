@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-const Home = () => {
+const HomeView = () => {
 
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
@@ -111,4 +111,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default HomeView;

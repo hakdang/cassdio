@@ -21,8 +21,8 @@ const KeyspaceDetailDescribe = ({describe}) => {
                 {/*</div>*/}
             </div>
 
-            <code>
-                {describe.replace(/(?:\r\n|\r|\n)/g, '<br>')}
+            <code style={{whiteSpace: "pre"}}>
+                {describe}
             </code>
         </>
     )
