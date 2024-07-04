@@ -37,7 +37,7 @@ const KeyspaceHome = () => {
             console.log("res ", response);
             setDescribe(response.data.describe)
         }).catch((error) => {
-            //TODO : error catch
+            console.error(error)
         }).finally(() => {
             setDetailLoading(false)
         });
@@ -56,8 +56,6 @@ const KeyspaceHome = () => {
                 setTableCursor(response.data.result.cursor.next)
             }
         }).catch((error) => {
-            console.log(error)
-            //TODO : error catch
             axiosCatch(error)
         }).finally(() => {
             setTableLoading(false)
