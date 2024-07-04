@@ -1,6 +1,6 @@
 import QueryEditor from "./query/query-editor";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import QueryResult from "./query/query-result";
 
@@ -14,11 +14,13 @@ const QueryHome = () => {
         }
     );
 
-    const [queryResult, setQueryResult] = useState({
+    const initQueryResult = {
         wasApplied: null,
         rows: [],
         columnNames: [],
-    })
+    };
+
+    const [queryResult, setQueryResult] = useState(initQueryResult)
 
     const queryExecute = (query, cursor, setLoading) => {
         if (!query) {
@@ -63,6 +65,17 @@ const QueryHome = () => {
             setLoading(false);
         })
     }
+
+    useEffect(() => {
+        //show component
+        setQueryResult(initQueryResult);
+
+        return () => {
+            //hide component
+
+        };
+    }, []);
+
 
     return (
         <>

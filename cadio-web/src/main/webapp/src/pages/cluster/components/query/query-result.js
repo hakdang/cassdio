@@ -46,20 +46,23 @@ const QueryResult = (props) => {
                             </thead>
                             <tbody>
                             {
-                                result.rows.map((row, rowIndex) => {
-                                    return (
-                                        <tr key={`resultBody${rowIndex}`}>
-                                            {
-                                                result.columnNames.map((info, infoIndex) => {
-                                                    return (
-                                                        <td className={"text-center"}
-                                                            key={`resultItem${infoIndex}`}>{row[info]}</td>
-                                                    )
-                                                })
-                                            }
-                                        </tr>
-                                    )
-                                })
+                                result.rows.length <= 0 ? <>
+                                    <tr><td className={"text-center"} colSpan={result.columnNames.length}>데이터가 없습니다.</td></tr>
+                                    </> :
+                                    result.rows.map((row, rowIndex) => {
+                                        return (
+                                            <tr key={`resultBody${rowIndex}`}>
+                                                {
+                                                    result.columnNames.map((info, infoIndex) => {
+                                                        return (
+                                                            <td className={"text-center"}
+                                                                key={`resultItem${infoIndex}`}>{row[info]}</td>
+                                                        )
+                                                    })
+                                                }
+                                            </tr>
+                                        )
+                                    })
                             }
 
                             </tbody>
