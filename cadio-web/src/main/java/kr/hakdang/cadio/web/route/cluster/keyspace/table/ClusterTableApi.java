@@ -1,8 +1,9 @@
-package kr.hakdang.cadio.web.route.cluster.table;
+package kr.hakdang.cadio.web.route.cluster.keyspace.table;
 
 import jakarta.validation.Valid;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult2;
 import kr.hakdang.cadio.web.common.dto.request.CursorRequest;
 import kr.hakdang.cadio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cadio.web.common.dto.response.ItemListWithCursorResponse;
@@ -41,13 +42,13 @@ public class ClusterTableApi {
     }
 
     @GetMapping("/table/{table}")
-    public ApiResponse<ClusterTableGetResult> getTable(
+    public ApiResponse<ClusterTableGetResult2> getTable(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
         @PathVariable String table,
         @RequestParam(required = false, defaultValue = "false") boolean withTableDescribe
     ) {
-        ClusterTableGetResult cluster = clusterTableReader.getTable(clusterId, keyspace, table, withTableDescribe);
+        ClusterTableGetResult2 cluster = clusterTableReader.getTable(clusterId, keyspace, table, withTableDescribe);
         return ApiResponse.ok(cluster);
     }
 

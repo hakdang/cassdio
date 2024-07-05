@@ -1,4 +1,4 @@
-package kr.hakdang.cadio.core.domain.cluster.info;
+package kr.hakdang.cadio.core.domain.cluster;
 
 import kr.hakdang.cadio.BaseTest;
 import lombok.extern.slf4j.Slf4j;

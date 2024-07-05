@@ -35,15 +35,12 @@ const QueryEditor = (props) => {
             <div className="btn-toolbar pb-1" role="toolbar" aria-label="Toolbar with button groups">
                 <div className="btn-group btn-group-sm me-2 " role="group" aria-label="Third group">
                     <button type="button" className="btn btm-sm btn-danger" onClick={() => queryExecute(null)}>
-                        <i className="bi bi-play-fill"></i> Execute
-
                         {
-                            queryLoading &&
-                            <div className="ms-2 spinner-border spinner-border-sm" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </div>
+                            queryLoading ?
+                                <div className="spinner-border spinner-border-sm" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div> : <i className="bi bi-play-fill"></i>
                         }
-
                     </button>
                 </div>
                 <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
@@ -165,7 +162,6 @@ const QueryEditor = (props) => {
                 highlightActiveLine={true}
                 value={query || ''}
                 width={'100%'}
-                height={300}
             />
         </>
     )

@@ -24,8 +24,6 @@ const QueryResult = (props) => {
                 result.wasApplied && <>
                     <h4 className={"h4 mt-3"}>Result</h4>
 
-                    {/*<p>wasApplied : {result.wasApplied}</p>*/}
-
                     <code className={"mb-3"}>
                         {query}
                     </code>
@@ -59,7 +57,9 @@ const QueryResult = (props) => {
                                                     result.columnNames.map((info, infoIndex) => {
                                                         return (
                                                             <td className={"text-center"}
-                                                                key={`resultItem${infoIndex}`}>{row[info]}</td>
+                                                                key={`resultItem${infoIndex}`}>
+                                                                <p className={"text-break"}>{row[info]}</p>
+                                                            </td>
                                                         )
                                                     })
                                                 }

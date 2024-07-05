@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 const SystemView = (props) => {
 
     return (
-        <div className="container-fluid min-vh-100">
+        <div className="container-fluid h-100  mb-5">
             <div className="row">
 
                 <CadioSidebar>
@@ -24,7 +24,7 @@ const SystemView = (props) => {
                     </ul>
                 </CadioSidebar>
 
-                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4  mb-5">
                     {props.children}
                 </main>
             </div>

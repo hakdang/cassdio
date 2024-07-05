@@ -1,11 +1,13 @@
-package kr.hakdang.cadio.web.route.cluster.table;
+package kr.hakdang.cadio.web.route.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult2;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListResult;
 import kr.hakdang.cadio.core.support.cache.CacheType;
@@ -27,20 +29,22 @@ public class ClusterTableReader {
     private final TempClusterConnector tempClusterConnector;
     private final ClusterTableListCommander clusterTableListCommander;
     private final ClusterTableGetCommander clusterTableGetCommander;
+    private final ClusterTableCommander clusterTableCommander;
 
     public ClusterTableReader(
         TempClusterConnector tempClusterConnector,
         ClusterTableListCommander clusterTableListCommander,
-        ClusterTableGetCommander clusterTableGetCommander
-    ) {
+        ClusterTableGetCommander clusterTableGetCommander,
+        ClusterTableCommander clusterTableCommander) {
         this.tempClusterConnector = tempClusterConnector;
         this.clusterTableListCommander = clusterTableListCommander;
         this.clusterTableGetCommander = clusterTableGetCommander;
+        this.clusterTableCommander = clusterTableCommander;
     }
 
-    @Cacheable(value = CacheType.CacheTypeNames.TABLE_LIST, condition = "#cursorRequest.cursor == null")
+    //@Cacheable(value = CacheType.CacheTypeNames.TABLE_LIST, condition = "#cursorRequest.cursor == null")
     public ItemListWithCursorResponse<ClusterTable, String> listTables(String clusterId, String keyspace, CursorRequest cursorRequest) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
             ClusterTableListResult result = clusterTableListCommander.listTables(session, ClusterTableArgs.ClusterTableListArgs.builder().build().builder()
                 .keyspace(keyspace)
                 .limit(cursorRequest.getSize())
@@ -51,10 +55,10 @@ public class ClusterTableReader {
         }
     }
 
-    @Cacheable(value = CacheType.CacheTypeNames.TABLE)
-    public ClusterTableGetResult getTable(String clusterId, String keyspace, String table, boolean withTableDescribe) {
+    //@Cacheable(value = CacheType.CacheTypeNames.TABLE)
+    public ClusterTableGetResult2 getTable(String clusterId, String keyspace, String table, boolean withTableDescribe) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-            return clusterTableGetCommander.getTable(session, ClusterTableArgs.ClusterTableGetArgs.builder()
+            return clusterTableCommander.tableDetail(session, ClusterTableArgs.ClusterTableGetArgs.builder()
                 .keyspace(keyspace)
                 .table(table)
                 .withTableDescribe(withTableDescribe)

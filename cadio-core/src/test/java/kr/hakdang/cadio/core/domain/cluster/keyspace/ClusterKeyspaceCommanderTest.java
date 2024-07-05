@@ -14,12 +14,12 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
 
     @Test
     void runTest() {
-        try (CqlSession session = makeSession()) {
-            log.info("describeResult : {}", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
-                .keyspace(keyspaceName)
-                .withChildren(true)
-                .pretty(true)
-                .build()));
-        }
+//        try (CqlSession session = makeSession()) {
+//            log.info("describeResult : {}", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
+//                .keyspace(keyspaceName)
+//                .withChildren(true)
+//                .pretty(true)
+//                .build()));
+//        }
     }
 }

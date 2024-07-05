@@ -1,15 +1,21 @@
 package kr.hakdang.cadio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
-import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cadio.core.support.cache.CacheType;
+import kr.hakdang.cadio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ClusterKeyspaceReader
@@ -32,10 +38,31 @@ public class ClusterKeyspaceReader {
         this.clusterKeyspaceCommander = clusterKeyspaceCommander;
     }
 
+    public Map<String, List<String>> getKeyspaceNames(String clusterId) {
+        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+            List<String> keyspaceNames = clusterKeyspaceCommander.allKeyspaceNames(session);
+
+            KeyspaceFilter keyspaceFilter = ClusterUtils.makeKeyspaceFilter(session.getContext());
+
+            Map<String, List<String>> resultMap = new HashMap<>();
+            for (String keyspaceName : keyspaceNames) {
+                String keyName = keyspaceFilter.includes(keyspaceName) ?
+                    "GENERAL" : //사용자 생성
+                    "SYSTEM";
+
+                List<String> list = resultMap.getOrDefault(keyName, new ArrayList<>());
+                list.add(keyspaceName);
+                resultMap.put(keyName, list);
+            }
+
+            return resultMap;
+        }
+    }
+
     @Cacheable(value = CacheType.CacheTypeNames.CLUSTER_LIST)
     public ClusterKeyspaceListResult listKeyspace(String clusterId) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-            return clusterKeyspaceCommander.keyspaceList(session);
+            return clusterKeyspaceCommander.generalKeyspaceList(session);
         }
     }
 
@@ -44,15 +71,15 @@ public class ClusterKeyspaceReader {
         log.info("ClusterList ({}) is evicted", clusterId);
     }
 
-    @Cacheable(value = CacheType.CacheTypeNames.CLUSTER_LIST)
-    public String getKeyspace(String clusterId, String keyspace) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-            return clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
-                .keyspace(keyspace)
-                .withChildren(false)
-                .pretty(true)
-                .build());
-        }
-    }
+//    @Cacheable(value = CacheType.CacheTypeNames.CLUSTER_LIST)
+//    public String getKeyspace(String clusterId, String keyspace) {
+//        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+//            return clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
+//                .keyspace(keyspace)
+//                .withChildren(false)
+//                .pretty(true)
+//                .build());
+//        }
+//    }
 
 }

@@ -9,6 +9,37 @@ export default function useCluster() {
     const clusterDispatcher = useClusterDispatch();
     const {} = useClusterState();
 
+    function doGetKeyspaceNames() {
+        //console.log("keyspace : ", routeParams.clusterId);
+        clusterDispatcher({
+            type: "SET_KEYSPACE_NAMES_LOADING",
+            loading: true,
+        })
+
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
+            params: {}
+        }).then((response) => {
+            console.log("doGetKeyspaceNames", response);
+            clusterDispatcher({
+                type: "SET_KEYSPACE_GENERAL_NAMES",
+                keyspaceNames: response.data.result.keyspaceNameMap.GENERAL,
+            })
+            clusterDispatcher({
+                type: "SET_KEYSPACE_SYSTEM_NAMES",
+                keyspaceNames: response.data.result.keyspaceNameMap.SYSTEM,
+            })
+        }).catch((error) => {
+            axiosCatch(error)
+        }).finally(() => {
+            clusterDispatcher({
+                type: "SET_KEYSPACE_NAMES_LOADING",
+                loading: false,
+            })
+        });
+    }
+
     function doGetKeyspaceList() {
         //console.log("keyspace : ", routeParams.clusterId);
         clusterDispatcher({
@@ -21,7 +52,7 @@ export default function useCluster() {
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace`,
             params: {}
         }).then((response) => {
-            console.log(response);
+            console.log("doGetKeyspaceList", response);
             clusterDispatcher({
                 type: "SET_KEYSPACE_LIST",
                 keyspaceList: response.data.result.keyspaceList,
@@ -38,5 +69,6 @@ export default function useCluster() {
 
     return {
         doGetKeyspaceList,
+        doGetKeyspaceNames,
     }
 }

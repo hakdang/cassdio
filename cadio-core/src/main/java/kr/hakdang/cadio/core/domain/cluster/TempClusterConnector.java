@@ -46,6 +46,10 @@ public class TempClusterConnector {
     }
 
     public CqlSession makeSession(ClusterConnection clusterConnection) {
+        return makeSession(clusterConnection, null);
+    }
+
+    public CqlSession makeSession(ClusterConnection clusterConnection, String keyspace) {
         CqlSessionBuilder builder = CqlSession.builder()
             .addContactPoints(makeContactPoint(clusterConnection.getContactPoints(), clusterConnection.getPort()))
             .withLocalDatacenter(clusterConnection.getLocalDatacenter());
@@ -61,6 +65,10 @@ public class TempClusterConnector {
                 .build()
         );
 
+        if (StringUtils.isNotBlank(keyspace)) {
+            builder.withKeyspace(keyspace);
+        }
+
         return builder.build();
     }
 
@@ -69,6 +77,14 @@ public class TempClusterConnector {
         if (info == null) {
             throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
         }
-        return makeSession(info.makeClusterConnector());
+        return makeSession(info.makeClusterConnector(), null);
+    }
+
+    public CqlSession makeSession(String clusterId, String keyspace) {
+        ClusterInfo info = clusterInfoProvider.findClusterInfo(clusterId);
+        if (info == null) {
+            throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
+        }
+        return makeSession(info.makeClusterConnector(), keyspace);
     }
 }

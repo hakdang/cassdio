@@ -3,9 +3,15 @@ import React, {createContext, Dispatch, useContext, useReducer} from "react";
 type ClusterState = {
     keyspaceList: [],
     keyspaceListLoading: boolean,
+    keyspaceGeneralNames: [],
+    keyspaceSystemNames: [],
+    keyspaceNamesLoading: boolean,
 };
 
 type Action =
+    | { type: "SET_KEYSPACE_GENERAL_NAMES"; keyspaceNames: []; }
+    | { type: "SET_KEYSPACE_SYSTEM_NAMES"; keyspaceNames: []; }
+    | { type: "SET_KEYSPACE_NAMES_LOADING"; loading: boolean; }
     | { type: "SET_KEYSPACE_LIST"; keyspaceList: []; }
     | { type: "SET_KEYSPACE_LIST_LOADING"; loading: boolean; }
 
@@ -18,6 +24,9 @@ export function ClusterProvider({children}: { children: React.ReactNode }) {
     const [state, dispatch] = useReducer(reducer, {
         keyspaceList: [],
         keyspaceListLoading: false,
+        keyspaceGeneralNames: [],
+        keyspaceSystemNames: [],
+        keyspaceNamesLoading: false
     });
 
     return (
@@ -41,6 +50,24 @@ function reducer(state: ClusterState, action: Action): ClusterState {
                 ...state,
                 keyspaceListLoading: action.loading,
             };
+        case "SET_KEYSPACE_GENERAL_NAMES":
+            return {
+                ...state,
+                keyspaceGeneralNames: action.keyspaceNames
+            };
+        case "SET_KEYSPACE_SYSTEM_NAMES":
+            return {
+                ...state,
+                keyspaceSystemNames: action.keyspaceNames
+            };
+
+        case "SET_KEYSPACE_NAMES_LOADING":
+            return {
+                ...state,
+                keyspaceNamesLoading: action.loading,
+            };
+
+
         default:
             throw new Error("Unhandled action");
     }

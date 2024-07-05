@@ -1,4 +1,4 @@
-package kr.hakdang.cadio.web.route.cluster.table.pureselect;
+package kr.hakdang.cadio.web.route.cluster.keyspace.table.pureselect;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
