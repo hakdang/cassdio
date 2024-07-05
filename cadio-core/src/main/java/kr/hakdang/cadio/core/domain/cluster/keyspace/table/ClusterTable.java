@@ -7,11 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * ClusterTable
@@ -38,8 +37,13 @@ public class ClusterTable {
     }
 
     public static ClusterTable from(Row row) {
-        Map<String, Object> options = Arrays.stream(ClusterTableOption.values())
-            .collect(Collectors.toMap(option -> option.name().toLowerCase(Locale.ROOT), option -> option.extract(row)));
+        Map<String, Object> options = new HashMap<>();
+        for (ClusterTableOption option : ClusterTableOption.values()) {
+            Object optionValue = option.extract(row);
+            if (optionValue != null) {
+                options.put(option.name().toLowerCase(Locale.ROOT), optionValue);
+            }
+        }
 
         return ClusterTable.builder()
             .id(row.getUuid("id"))

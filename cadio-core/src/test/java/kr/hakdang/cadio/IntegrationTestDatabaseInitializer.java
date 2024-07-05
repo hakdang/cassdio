@@ -39,7 +39,7 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
 
             session.execute(createKeyspace.build());
 
-            SimpleStatement createTable1 = SchemaBuilder.createTable("test_table_1")
+            SimpleStatement createTable1 = SchemaBuilder.createTable(keyspaceName, "test_table_1")
                 .withPartitionKey("partition_key_1", DataTypes.TEXT)
                 .withPartitionKey("partition_key_2", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_1", DataTypes.BIGINT)
@@ -49,11 +49,10 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
                 .withClusteringOrder("clustering_key_2", ClusteringOrder.ASC)
                 .withComment("test_table_one")
                 .withBloomFilterFpChance(0.01)
-                .build()
-                .setKeyspace(keyspaceName);
+                .build();
             session.execute(createTable1);
 
-            SimpleStatement createTable2 = SchemaBuilder.createTable("test_table_2")
+            SimpleStatement createTable2 = SchemaBuilder.createTable(keyspaceName, "test_table_2")
                 .withPartitionKey("partition_key_11", DataTypes.TEXT)
                 .withPartitionKey("partition_key_12", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_11", DataTypes.BIGINT)
@@ -61,8 +60,7 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
                 .withColumn("column_11", DataTypes.TEXT)
                 .withComment("test_table_two")
                 .withBloomFilterFpChance(0.001)
-                .build()
-                .setKeyspace(keyspaceName);
+                .build();
             session.execute(createTable2);
         }
 
