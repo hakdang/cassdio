@@ -24,7 +24,7 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
         // given
         ClusterTableArgs.ClusterTableListArgs args = ClusterTableArgs.ClusterTableListArgs.builder()
             .keyspace(keyspaceName)
-            .limit(50)
+            .pageSize(50)
             .build();
 
         // when
@@ -46,7 +46,7 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
         // given
         ClusterTableArgs.ClusterTableListArgs args = ClusterTableArgs.ClusterTableListArgs.builder()
             .keyspace(keyspaceName)
-            .limit(1)
+            .pageSize(1)
             .build();
 
         // when
