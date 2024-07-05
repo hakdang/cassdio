@@ -16,6 +16,7 @@ public enum CassandraSystemTable {
 
     SYSTEM_SCHEMA_TABLES(SYSTEM_SCHEMA, "tables"),
     SYSTEM_SCHEMA_COLUMNS(SYSTEM_SCHEMA, "columns"),
+    SYSTEM_SCHEMA_TYPES(SYSTEM_SCHEMA, "types"),
     ;
 
     private final CassandraSystemKeyspace keyspace;

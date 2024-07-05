@@ -1,5 +1,6 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace.table;
 
+import com.datastax.oss.protocol.internal.util.Bytes;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class ClusterTableListResult {
     }
 
     public static ClusterTableListResult of(List<ClusterTable> tables, ByteBuffer pagingState) {
-        return new ClusterTableListResult(tables, pagingState == null ? null : pagingState.toString());
+        return new ClusterTableListResult(tables, pagingState == null ? null : Bytes.toHexString(pagingState));
     }
 
 }

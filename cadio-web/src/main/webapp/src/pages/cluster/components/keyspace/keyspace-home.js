@@ -27,14 +27,12 @@ const KeyspaceHome = () => {
         //show component
         setDescribe('');
         setDetailLoading(true)
-        setTableLoading(true)
-        setTableList([]);
+
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
             params: {}
         }).then((response) => {
-            console.log("res ", response);
             setDescribe(response.data.describe)
         }).catch((error) => {
             console.error(error)
@@ -42,30 +40,39 @@ const KeyspaceHome = () => {
             setDetailLoading(false)
         });
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
-            params: {
-                size: 50,
-                cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
-            }
-        }).then((response) => {
-            console.log("res ", response);
-            setTableList(response.data.result.items)
-            if (response.data.result.cursor.hasNext) {
-                setTableCursor(response.data.result.cursor.next)
-            }
-        }).catch((error) => {
-            axiosCatch(error)
-        }).finally(() => {
-            setTableLoading(false)
-        });
+        fetchData(true)
 
         return () => {
             //hide component
 
         };
     }, [routeParams.clusterId, routeParams.keyspaceName]);
+
+    const fetchData = async (reset) => {
+        if (reset) {
+            setTableLoading(true)
+            setTableCursor(null)
+            setTableList([])
+        }
+
+        try {
+            const response = await axios({
+                method: "GET",
+                url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
+                params: {
+                    size: 10,
+                    cursor: reset ? null : tableCursor
+                }
+            })
+
+            setTableList(prevList => [...prevList, ...response.data.result.items]);
+            setTableCursor(response.data.result.cursor.next)
+
+            setTableLoading(false)
+        } catch (error) {
+            axiosCatch(error)
+        }
+    }
 
     return (
         <>
@@ -112,7 +119,16 @@ const KeyspaceHome = () => {
             </div>
 
             <Spinner loading={tableLoading}>
-                <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName} tableList={tableList}/>
+                <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName}
+                                   tableList={tableList}/>
+                {
+                    tableCursor &&
+                    <div className="d-grid gap-2 col-6 mx-auto">
+                        <button className="btn btn-outline-secondary" type="button"
+                                onClick={() => fetchData(false)}>More
+                        </button>
+                    </div>
+                }
             </Spinner>
         </>
     )

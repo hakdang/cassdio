@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
@@ -41,9 +42,9 @@ public class ClusterTableReader {
     @Cacheable(value = CacheType.CacheTypeNames.TABLE_LIST, condition = "#cursorRequest.cursor == null")
     public ItemListWithCursorResponse<ClusterTable, String> listTables(String clusterId, String keyspace, CursorRequest cursorRequest) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-            ClusterTableListResult result = clusterTableListCommander.listTables(session, ClusterTableArgs.ClusterTableListArgs.builder().build().builder()
+            ClusterTableListResult result = clusterTableListCommander.listTables(session, ClusterTableListArgs.builder()
                 .keyspace(keyspace)
-                .limit(cursorRequest.getSize())
+                .pageSize(cursorRequest.getSize())
                 .nextPageState(cursorRequest.getCursor())
                 .build());
 
