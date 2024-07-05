@@ -20,6 +20,7 @@ public enum CacheType {
     CLUSTER(CacheTypeNames.CLUSTER, Duration.ofMinutes(5)),
     TABLE_LIST(CacheTypeNames.TABLE_LIST, Duration.ofMinutes(5)),
     TABLE(CacheTypeNames.TABLE, Duration.ofMinutes(5)),
+    TYPE_LIST(CacheTypeNames.TYPE_LIST, Duration.ofMinutes(5)),
     ;
 
     private final String key;
@@ -37,6 +38,7 @@ public enum CacheType {
         public static final String CLUSTER = "cluster";
         public static final String TABLE_LIST = "tableList";
         public static final String TABLE = "table";
+        public static final String TYPE_LIST = "typeList";
 
     }
 

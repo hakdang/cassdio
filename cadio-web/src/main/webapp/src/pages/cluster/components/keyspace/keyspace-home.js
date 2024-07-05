@@ -6,6 +6,7 @@ import KeyspaceDetailDescribe from "./keyspace-detail-describe";
 import Spinner from "../../../../components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
 import {axiosCatch} from "../../../../utils/axiosUtils";
+import KeyspaceUdtTypeList from "./keyspace-udt-type-list";
 
 const KeyspaceHome = () => {
 
@@ -22,6 +23,10 @@ const KeyspaceHome = () => {
     const [tableLoading, setTableLoading] = useState(false);
     const [tableCursor, setTableCursor] = useState(null)
     const [tableList, setTableList] = useState([]);
+
+    const [typeLoading, setTypeLoading] = useState(false);
+    const [typeCursor, setTypeCursor] = useState(null)
+    const [types, setTypeList] = useState([])
 
     useEffect(() => {
         //show component
@@ -40,7 +45,8 @@ const KeyspaceHome = () => {
             setDetailLoading(false)
         });
 
-        fetchData(true)
+        fetchTables(true)
+        fetchUDTTypes(true)
 
         return () => {
             //hide component
@@ -48,7 +54,7 @@ const KeyspaceHome = () => {
         };
     }, [routeParams.clusterId, routeParams.keyspaceName]);
 
-    const fetchData = async (reset) => {
+    const fetchTables = async (reset) => {
         if (reset) {
             setTableLoading(true)
             setTableCursor(null)
@@ -69,6 +75,34 @@ const KeyspaceHome = () => {
             setTableCursor(response.data.result.cursor.next)
 
             setTableLoading(false)
+        } catch (error) {
+            axiosCatch(error)
+        }
+    }
+
+    const fetchUDTTypes = async (reset) => {
+        if (reset) {
+            setTypeLoading(true)
+            setTypeCursor(null)
+            setTypeList([])
+        }
+
+        try {
+            const response = await axios({
+                method: "GET",
+                url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/udt-type`,
+                params: {
+                    size: 10,
+                    cursor: reset ? null : tableCursor
+                }
+            })
+
+            console.log(response.data.result)
+
+            setTypeList(prevList => [...prevList, ...response.data.result.items]);
+            setTypeCursor(response.data.result.cursor.next)
+
+            setTypeLoading(false)
         } catch (error) {
             axiosCatch(error)
         }
@@ -125,7 +159,25 @@ const KeyspaceHome = () => {
                     tableCursor &&
                     <div className="d-grid gap-2 col-6 mx-auto">
                         <button className="btn btn-outline-secondary" type="button"
-                                onClick={() => fetchData(false)}>More
+                                onClick={() => fetchTables(false)}>More
+                        </button>
+                    </div>
+                }
+            </Spinner>
+
+            <br/>
+            <div
+                className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2 className="h2">UDT Types</h2>
+            </div>
+
+            <Spinner loading={typeLoading}>
+                <KeyspaceUdtTypeList typeList={types}/>
+                {
+                    typeCursor &&
+                    <div className="d-grid gap-2 col-6 mx-auto">
+                        <button className="btn btn-outline-secondary" type="button"
+                                onClick={() => fetchUDTTypes(false)}>More
                         </button>
                     </div>
                 }

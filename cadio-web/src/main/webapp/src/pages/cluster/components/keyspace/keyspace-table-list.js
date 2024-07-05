@@ -1,7 +1,6 @@
 import {Link} from "react-router-dom";
-import {Spinner} from "react-bootstrap";
 
-const KeyspaceTableList = ({clusterId, keyspace, tableList, tableLoading}) => {
+const KeyspaceTableList = ({clusterId, keyspace, tableList}) => {
     return (
         <div className="table-responsive small">
             <table className="table table-sm table-hover">

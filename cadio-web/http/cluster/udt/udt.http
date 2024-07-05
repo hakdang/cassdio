@@ -1,0 +1,2 @@
+### List UDT Types
+GET {{api}}/api/cassandra/cluster/edad928d/keyspace/demodb/udt-type?size=3

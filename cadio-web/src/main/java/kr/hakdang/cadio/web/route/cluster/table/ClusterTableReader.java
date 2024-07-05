@@ -3,7 +3,7 @@ package kr.hakdang.cadio.web.route.cluster.table;
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cadio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTable;
-import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult;
@@ -55,7 +55,7 @@ public class ClusterTableReader {
     @Cacheable(value = CacheType.CacheTypeNames.TABLE)
     public ClusterTableGetResult getTable(String clusterId, String keyspace, String table, boolean withTableDescribe) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-            return clusterTableGetCommander.getTable(session, ClusterTableArgs.ClusterTableGetArgs.builder()
+            return clusterTableGetCommander.getTable(session, ClusterTableGetArgs.builder()
                 .keyspace(keyspace)
                 .table(table)
                 .withTableDescribe(withTableDescribe)
