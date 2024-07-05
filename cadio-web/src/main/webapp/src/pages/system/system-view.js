@@ -12,8 +12,13 @@ const SystemView = (props) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/`}>
-                                <i className="bi bi-house"></i> Home
+                                to={`/system`}>
+                                <i className="bi bi-house"></i> System Home
+                            </Link>
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/system/cluster`}>
+                                <i className="bi bi-house"></i> Cluster Manage
                             </Link>
                         </li>
                     </ul>

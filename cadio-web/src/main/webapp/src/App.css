@@ -64,3 +64,9 @@
     display: flex;
     flex-direction: column;
 }
+
+.btn-mn {
+    --bs-btn-padding-y: .20rem;
+    --bs-btn-padding-x: .3rem;
+    --bs-btn-font-size: .55rem;
+}
