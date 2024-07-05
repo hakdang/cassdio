@@ -14,7 +14,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  unit-test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout@v4
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: adopt
+          cache: gradle
+        timeout-minutes: 3
+
+      - name: Test
+        run: ./gradlew test
+
+  integration-test:
     name: Build on Cassandra
     runs-on: ubuntu-latest
     strategy:
@@ -36,5 +54,5 @@ jobs:
         run: docker compose -f "docker/docker-compose-cassandra-${{ matrix.cassandra-version }}.yml" up -d --build --wait
         timeout-minutes: 3
 
-      - name: Build
-        run: ./gradlew build
+      - name: Test
+        run: ./gradlew integrationTest

@@ -1,6 +1,7 @@
 package kr.hakdang.cadio;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,6 +13,7 @@ import java.net.InetSocketAddress;
  * @author seungh0
  * @since 2024-07-01
  */
+@Tag("integration-test")
 @SpringBootTest(classes = {CoreRoot.class})
 public abstract class IntegrationTest extends BaseTest {
 
