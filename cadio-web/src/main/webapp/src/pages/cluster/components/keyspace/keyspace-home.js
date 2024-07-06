@@ -121,7 +121,7 @@ const KeyspaceHome = () => {
                     <div className={"col-md-6 col-sm-12"}>
                         <h2 className="h3">Tables</h2>
 
-                        <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName}
+                        <KeyspaceTableList clusterId={routeParams.clusterId} keyspaceName={routeParams.keyspaceName}
                                            tableList={tableList}/>
 
                     </div>

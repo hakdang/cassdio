@@ -46,7 +46,8 @@ const QueryResult = (props) => {
                             {
                                 result.rows.length <= 0 ? <>
                                         <tr>
-                                            <td className={"text-center"} colSpan={result.columnNames.length}>데이터가 없습니다.
+                                            <td className={"text-center"} colSpan={result.columnNames.length}>
+                                                데이터가 없습니다.
                                             </td>
                                         </tr>
                                     </> :
