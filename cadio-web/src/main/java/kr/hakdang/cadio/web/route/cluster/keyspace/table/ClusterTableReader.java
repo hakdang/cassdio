@@ -10,6 +10,7 @@ import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableGetResult2;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTableListResult;
+import kr.hakdang.cadio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cadio.core.support.cache.CacheType;
 import kr.hakdang.cadio.web.common.dto.request.CursorRequest;
 import kr.hakdang.cadio.web.common.dto.response.CursorResponse;
@@ -30,16 +31,20 @@ public class ClusterTableReader {
     private final ClusterTableListCommander clusterTableListCommander;
     private final ClusterTableGetCommander clusterTableGetCommander;
     private final ClusterTableCommander clusterTableCommander;
+    private final ClusterTableColumnCommander clusterTableColumnCommander;
 
     public ClusterTableReader(
         TempClusterConnector tempClusterConnector,
         ClusterTableListCommander clusterTableListCommander,
         ClusterTableGetCommander clusterTableGetCommander,
-        ClusterTableCommander clusterTableCommander) {
+        ClusterTableCommander clusterTableCommander,
+        ClusterTableColumnCommander clusterTableColumnCommander
+    ) {
         this.tempClusterConnector = tempClusterConnector;
         this.clusterTableListCommander = clusterTableListCommander;
         this.clusterTableGetCommander = clusterTableGetCommander;
         this.clusterTableCommander = clusterTableCommander;
+        this.clusterTableColumnCommander = clusterTableColumnCommander;
     }
 
     //@Cacheable(value = CacheType.CacheTypeNames.TABLE_LIST, condition = "#cursorRequest.cursor == null")
@@ -58,6 +63,9 @@ public class ClusterTableReader {
     //@Cacheable(value = CacheType.CacheTypeNames.TABLE)
     public ClusterTableGetResult2 getTable(String clusterId, String keyspace, String table, boolean withTableDescribe) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+
+            clusterTableColumnCommander.columnList(session, keyspace, table);
+
             return clusterTableCommander.tableDetail(session, ClusterTableArgs.ClusterTableGetArgs.builder()
                 .keyspace(keyspace)
                 .table(table)

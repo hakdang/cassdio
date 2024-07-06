@@ -42,7 +42,7 @@ function App() {
             //hide component
 
         };
-    }, [systemAvailable]);
+    }, []);
 
     return (
         <div className={"min-vh-100"}>
@@ -96,7 +96,6 @@ function App() {
                     </Routes>
                 </LoadingView>
             </BrowserRouter>
-
         </div>
     )
 }

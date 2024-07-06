@@ -50,6 +50,14 @@ const TableRow = () => {
         })
     }
 
+    const renderData = (data) => {
+        if (typeof data === "object") {
+            return JSON.stringify(data);
+        }
+
+        return data;
+    }
+
     useEffect(() => {
         //show component
         setQueryResult(initQueryResult);
@@ -124,7 +132,11 @@ const TableRow = () => {
                                                 queryResult.columnNames.map((info, infoIndex) => {
                                                     return (
                                                         <td className={"text-center text-break"}
-                                                            key={`resultItem${infoIndex}`}>{JSON.stringify(row[info])}</td>
+                                                            key={`resultItem${infoIndex}`}>
+                                                            {
+                                                                renderData(row[info])
+                                                            }
+                                                        </td>
                                                     )
                                                 })
                                             }
