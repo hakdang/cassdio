@@ -2,7 +2,6 @@ import {Link, useParams} from "react-router-dom";
 import {useClusterState} from "../../context/clusterContext";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import KeyspaceDetailDescribe from "./keyspace-detail-describe";
 import Spinner from "../../../../components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
 import {axiosCatch} from "../../../../utils/axiosUtils";
@@ -18,48 +17,59 @@ const KeyspaceHome = () => {
     } = useClusterState();
 
     const [detailLoading, setDetailLoading] = useState(false);
-    const [describe, setDescribe] = useState('');
+    const [keyspaceDetail, setKeyspaceDetail] = useState({
+        keyspace_name: '',
+        name: '',
+        create_statement: '',
+    });
     const [tableLoading, setTableLoading] = useState(false);
     const [tableCursor, setTableCursor] = useState(null)
     const [tableList, setTableList] = useState([]);
 
     useEffect(() => {
         //show component
-        setDescribe('');
+        setKeyspaceDetail({});
         setDetailLoading(true)
-        setTableLoading(true)
         setTableList([]);
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
-            params: {}
-        }).then((response) => {
-            console.log("res ", response);
-            setDescribe(response.data.describe)
-        }).catch((error) => {
-            console.error(error)
-        }).finally(() => {
-            setDetailLoading(false)
-        });
-
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
             params: {
-                size: 50,
-                cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
+                withTableList : true,
             }
         }).then((response) => {
             console.log("res ", response);
-            setTableList(response.data.result.items)
-            if (response.data.result.cursor.hasNext) {
-                setTableCursor(response.data.result.cursor.next)
+            setKeyspaceDetail(response.data.result.describe)
+
+            setTableList(response.data.result.tableList.rows)
+            if (response.data.result.tableList.nextCursor) {
+                setTableCursor(response.data.result.tableList.nextCursor)
             }
+
         }).catch((error) => {
             axiosCatch(error)
         }).finally(() => {
-            setTableLoading(false)
+            setDetailLoading(false)
         });
+        //
+        // axios({
+        //     method: "GET",
+        //     url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
+        //     params: {
+        //         size: 50,
+        //         cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
+        //     }
+        // }).then((response) => {
+        //     console.log("KeyspaceHome ", response);
+        //     setTableList(response.data.result.items)
+        //     if (response.data.result.cursor.hasNext) {
+        //         setTableCursor(response.data.result.cursor.next)
+        //     }
+        // }).catch((error) => {
+        //     axiosCatch(error)
+        // }).finally(() => {
+        //     setTableLoading(false)
+        // });
 
         return () => {
             //hide component
@@ -87,7 +97,9 @@ const KeyspaceHome = () => {
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h2 className="h2">Keyspace</h2>
+                <h2 className="h2">
+                    Keyspace <code>{keyspaceDetail.keyspace_name}</code>
+                </h2>
                 {/*<div className="btn-toolbar mb-2 mb-md-0">*/}
                 {/*    <div className="btn-group me-2">*/}
                 {/*        <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>*/}
@@ -101,18 +113,24 @@ const KeyspaceHome = () => {
             </div>
 
             <Spinner loading={detailLoading}>
-                <KeyspaceDetailDescribe describe={describe}/>
+                <code style={{whiteSpace: "pre"}}>
+                    {keyspaceDetail.create_statement}
+                </code>
 
-            </Spinner>
+                <div className={"row mt-3"}>
+                    <div className={"col-md-6 col-sm-12"}>
+                        <h2 className="h3">Tables</h2>
 
-            <br/>
-            <div
-                className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h2 className="h2">Tables</h2>
-            </div>
+                        <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName}
+                                           tableList={tableList}/>
 
-            <Spinner loading={tableLoading}>
-                <KeyspaceTableList clusterId={routeParams.clusterId} keyspace={routeParams.keyspaceName} tableList={tableList}/>
+                    </div>
+                    <div className={"col-md-6 col-sm-12"}>
+                        <h2 className="h3">Views</h2>
+
+
+                    </div>
+                </div>
             </Spinner>
         </>
     )

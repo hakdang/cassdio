@@ -7,16 +7,17 @@ import CadioSidebar from "../../components/layout/cadio-sidebar";
 const ClusterView = (props) => {
     const routeParams = useParams();
 
-    const {doGetKeyspaceList} = useCluster();
+    const {doGetKeyspaceNames} = useCluster();
     const {
-        keyspaceList,
-        keyspaceListLoading,
+        keyspaceGeneralNames,
+        keyspaceSystemNames,
+        keyspaceNamesLoading,
     } = useClusterState();
 
     useEffect(() => {
         //show component
 
-        doGetKeyspaceList();
+        doGetKeyspaceNames();
 
         return () => {
             //hide component
@@ -25,7 +26,7 @@ const ClusterView = (props) => {
     }, [routeParams.clusterId]);
 
     return (
-        <div className="container-fluid min-vh-100">
+        <div className="container-fluid h-100">
             <div className="row">
 
                 <CadioSidebar>
@@ -65,21 +66,49 @@ const ClusterView = (props) => {
                         {/*<a className="link-secondary" href="#" aria-label="Add a new report">*/}
                         {/*</a>*/}
                     </h6>
-                    <ul className="nav flex-column mb-auto">
+                    <ul className="nav flex-column">
                         {
-                            keyspaceListLoading ?
+                            keyspaceNamesLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </li> :
-                                keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
+                                keyspaceGeneralNames && keyspaceGeneralNames.length > 0 && keyspaceGeneralNames.map((info, infoIndex) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
-                                                <i className="bi bi-database"></i> {info.keyspaceName}
+                                                <i className="bi bi-database"></i> {info}
+                                            </Link>
+                                        </li>
+                                    )
+                                })
+                        }
+
+                    </ul>
+
+                    <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 text-body-secondary ">
+                        <span>System Keyspace</span>
+                        {/*<a className="link-secondary" href="#" aria-label="Add a new report">*/}
+                        {/*</a>*/}
+                    </h6>
+                    <ul className="nav flex-column">
+                        {
+                            keyspaceNamesLoading ?
+                                <li className="nav-item text-center">
+                                    <div className="spinner-border text-danger" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </li> :
+                                keyspaceSystemNames && keyspaceSystemNames.length > 0 && keyspaceSystemNames.map((info, infoIndex) => {
+                                    return (
+                                        <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
+                                            <Link
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info}`}
+                                                className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
+                                                <i className="bi bi-database"></i> {info}
                                             </Link>
                                         </li>
                                     )
@@ -89,7 +118,7 @@ const ClusterView = (props) => {
                     </ul>
                 </CadioSidebar>
 
-                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4 mb-5">
                     {props.children}
                 </main>
             </div>

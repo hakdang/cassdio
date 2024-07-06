@@ -1,17 +1,25 @@
 package kr.hakdang.cadio.core.domain.cluster.keyspace;
 
+import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cadio.core.domain.cluster.BaseClusterCommander;
+import kr.hakdang.cadio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClusterKeyspaceDescribeCommander
@@ -23,41 +31,52 @@ import java.util.List;
 @Service
 public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
-    public ClusterKeyspaceListResult keyspaceList(CqlSession session) {
-        ResultSet resultSet = session.execute(QueryBuilder.selectFrom(
-            "system_schema",
-            "keyspaces"
-        ).all().build());
+    /**
+     * All Keyspace name
+     * - system
+     *
+     * @param session
+     * @return
+     */
+    public List<String> allKeyspaceNames(CqlSession session) {
+        return session.execute(SimpleStatement.newInstance("DESC KEYSPACES"))
+            .all()
+            .stream()
+            .map(info -> info.getString("keyspace_name"))
+            .toList();
+    }
 
-        boolean wasApplied = resultSet.wasApplied();
+    public ClusterKeyspaceListResult generalKeyspaceList(CqlSession session) {
+
+
         List<KeyspaceResult> keyspaceList = new ArrayList<>();
-        for (Row row : resultSet.all()) {
+        for (Map.Entry<CqlIdentifier, KeyspaceMetadata> entry : session.getMetadata().getKeyspaces().entrySet()) {
             keyspaceList.add(
                 KeyspaceResult.builder()
-                    .keyspaceName(row.getString("keyspace_name"))
-                    .durableWrites(row.getBoolean("durable_writes"))
-                    .replication(row.getMap("replication", String.class, String.class))
+                    .keyspaceName(entry.getKey().asCql(true))
+                    .durableWrites(entry.getValue().isDurableWrites())
+                    .replication(entry.getValue().getReplication())
                     .build()
             );
         }
 
         return ClusterKeyspaceListResult.builder()
-            .wasApplied(wasApplied)
+            .wasApplied(true)
             .keyspaceList(keyspaceList)
             .build();
     }
 
-    public String describe(CqlSession session, ClusterKeyspaceDescribeArgs args) {
-        if (CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace())) {
-            return StringUtils.EMPTY;
-        }
+    public Map<String, Object> describe(CqlSession session, ClusterKeyspaceDescribeArgs args) {
+        SimpleStatement statement = SimpleStatement.newInstance(String.format("DESC %s", args.getKeyspace()))
+            .setPageSize(1)
+            .setTimeout(Duration.ofSeconds(3))  // 3s timeout
+            ;
 
-        KeyspaceMetadata keyspaceMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
-            .orElseThrow(() -> new RuntimeException("not found keyspace"));
+        ResultSet resultSet = session.execute(statement);
 
-        return args.isWithChildren() ?
-            keyspaceMetadata.describeWithChildren(args.isPretty()) :
-            keyspaceMetadata.describe(args.isPretty());
+        ColumnDefinitions definitions = resultSet.getColumnDefinitions();
 
+        return ClusterUtils.convertMap(session.getContext().getCodecRegistry(), definitions, resultSet.one());
     }
+
 }

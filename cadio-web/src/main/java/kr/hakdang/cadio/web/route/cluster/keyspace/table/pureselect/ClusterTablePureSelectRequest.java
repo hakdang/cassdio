@@ -1,4 +1,4 @@
-package kr.hakdang.cadio.web.route.cluster.table.pureselect;
+package kr.hakdang.cadio.web.route.cluster.keyspace.table.pureselect;
 
 import kr.hakdang.cadio.core.domain.cluster.keyspace.table.ClusterTablePureSelectArgs;
 import lombok.AccessLevel;

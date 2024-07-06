@@ -123,8 +123,8 @@ const TableRow = () => {
                                             {
                                                 queryResult.columnNames.map((info, infoIndex) => {
                                                     return (
-                                                        <td className={"text-center"}
-                                                            key={`resultItem${infoIndex}`}>{row[info]}</td>
+                                                        <td className={"text-center text-break"}
+                                                            key={`resultItem${infoIndex}`}>{JSON.stringify(row[info])}</td>
                                                     )
                                                 })
                                             }

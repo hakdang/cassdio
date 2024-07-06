@@ -33,7 +33,7 @@ const HomeView = () => {
     }, []);
 
     return (
-        <div className="container-fluid h-100">
+        <div className="container-fluid h-100 mb-5">
             <div className="row">
 
                 <CadioSidebar>
@@ -53,7 +53,7 @@ const HomeView = () => {
                     </ul>
                 </CadioSidebar>
 
-                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4  mb-5">
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h2 className="h2">Cadio Dashboard</h2>

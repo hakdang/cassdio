@@ -1,11 +1,12 @@
 import {Link, useParams} from "react-router-dom";
 import {useClusterState} from "../context/clusterContext";
 import {useEffect} from "react";
+import useCluster from "../hooks/useCluster";
 
 const ClusterHome = () => {
 
     const routeParams = useParams();
-
+    const {doGetKeyspaceList} = useCluster();
     //const {doGetKeyspaceList} = useCluster();
     const {
         keyspaceList,
@@ -14,6 +15,8 @@ const ClusterHome = () => {
 
     useEffect(() => {
         //show component
+
+        doGetKeyspaceList();
 
         return () => {
             //hide component
