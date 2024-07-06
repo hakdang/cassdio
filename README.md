@@ -1,3 +1,3 @@
 # CassDio
-- `Ca`ssandra Stu`dio`
+- `Cass`andra Stu`dio`
 
