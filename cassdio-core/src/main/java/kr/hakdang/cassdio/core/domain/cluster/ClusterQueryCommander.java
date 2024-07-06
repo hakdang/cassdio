@@ -9,6 +9,7 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.cql.TraceEvent;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
+import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +43,14 @@ public class ClusterQueryCommander {
         //.setConsistencyLevel(ConsistencyLevel.ONE);
 
         ResultSet resultSet = session.execute(statement);
-
+        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
 
         Iterator<Row> page1Iter = resultSet.iterator();
 
         List<Map<String, Object>> rows = new ArrayList<>();
         while (0 < resultSet.getAvailableWithoutFetching()) {
-            rows.add(convertMap(definitions, page1Iter.next()));
+            rows.add(ClusterUtils.convertMap(codecRegistry, definitions, page1Iter.next()));
         }
 
         ByteBuffer pagingStateAsBytes = resultSet.getExecutionInfo().getPagingState();
@@ -75,20 +76,5 @@ public class ClusterQueryCommander {
             .rows(rows)
             .nextCursor(pagingStateAsBytes != null ? Bytes.toHexString(pagingStateAsBytes) : null)
             .build();
-    }
-
-    private Map<String, Object> convertMap(ColumnDefinitions definitions, Row row) {
-        Map<String, Object> result = new HashMap<>();
-
-        for (int i = 0; i < definitions.size(); i++) {
-            ColumnDefinition definition = definitions.get(i);
-            String name = definition.getName().asCql(true);
-            TypeCodec<Object> codec = row.codecRegistry().codecFor(definition.getType());
-            Object value = codec.decode(row.getBytesUnsafe(i), row.protocolVersion());
-
-            result.put(name, value);
-        }
-
-        return result;
     }
 }

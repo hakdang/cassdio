@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 
 const QueryResult = (props) => {
+    const queryOptions = props.queryOptions;
     const queryExecute = props.queryExecute;
     const result = props.result;
 

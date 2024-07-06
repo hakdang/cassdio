@@ -134,7 +134,16 @@ const QueryEditor = (props) => {
                         <div className="col">
                             <div className="form-check form-switch">
                                 <input className="form-check-input" type="checkbox" role="switch"
-                                       id="tracingOnSwitch"/>
+                                       id="tracingOnSwitch"
+                                       checked={queryOptions.trace}
+                                       onChange={
+                                           e => {
+                                               setQueryOptions(t => {
+                                                   return {...t, trace: !queryOptions.trace}
+                                               })
+                                           }
+                                       }
+                                />
                                 <label className="form-check-label" htmlFor="tracingOnSwitch">
                                     Tracing On
                                 </label>

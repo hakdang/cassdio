@@ -15,9 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BootstrapProvider {
 
-    @Autowired
-    private ClusterInfoProvider clusterInfoProvider;
-
     private static boolean minClusterCountCheck = false;
 
     public boolean systemAvailable() {

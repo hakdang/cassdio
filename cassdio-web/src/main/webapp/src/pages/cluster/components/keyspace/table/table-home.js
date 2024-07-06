@@ -14,7 +14,7 @@ const TableHome = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showDataManage, setShowDataManage] = useState(false);
     const [tableName, setTableName] = useState('');
-    const {errorCatch} = useCassdio();
+    const {errorCatch, openToast} = useCassdio();
     const initQueryResult = {
         wasApplied: null,
         rows: [],
@@ -107,12 +107,13 @@ const TableHome = (props) => {
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2 className="h2">
-                    Table {
-                    queryLoading &&
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                }
+                    {routeParams.tableName || 'Table'}
+                    {
+                        queryLoading &&
+                        <div className="ms-2 spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    }
                 </h2>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <button type="button" className="btn btn-sm btn-outline-secondary me-2"
@@ -183,15 +184,15 @@ const TableHome = (props) => {
                                         <td className={"text-center"}>
                                             <div className="btn-group btn-group-sm">
                                                 <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => alert("복사")}>
+                                                        onClick={() => openToast("복사")}>
                                                     <i className="bi bi-clipboard2"></i>
                                                 </button>
                                                 <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => alert("수정")}>
+                                                        onClick={() => openToast("수정")}>
                                                     <i className="bi bi-pencil-square"></i>
                                                 </button>
                                                 <button type="button" className={"btn btn-sm btn-outline-danger"}
-                                                        onClick={() => alert("삭제")}>
+                                                        onClick={() => openToast("삭제")}>
                                                     <i className="bi bi-trash3-fill"></i>
                                                 </button>
                                             </div>
