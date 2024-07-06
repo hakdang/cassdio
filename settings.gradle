@@ -1,4 +1,4 @@
-rootProject.name = 'cadio'
-include 'cadio-core'
-include 'cadio-web'
+rootProject.name = 'cassdio'
+include 'cassdio-core'
+include 'cassdio-web'
 

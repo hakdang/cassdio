@@ -1,3 +1,3 @@
-# cadio
+# CassDio
 - `Ca`ssandra Stu`dio`
 

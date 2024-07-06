@@ -1,0 +1,21 @@
+application {
+    mainClass.set("kr.hakdang.cassdio.web.WebApplication")
+}
+
+dependencies {
+    // Core
+    implementation project(":cassdio-core")
+
+    // Spring MVC
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // Spring Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+}
+
+bootJar {
+    enabled = true
+}
+jar {
+    enabled = true
+}

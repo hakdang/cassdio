@@ -1,0 +1,3 @@
+cassdio:
+  test-cassandra:
+    keyspace: "testdb"

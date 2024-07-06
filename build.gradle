@@ -12,7 +12,7 @@ plugins {
 }
 
 allprojects {
-    group = 'kr.hakdang.cadio'
+    group = 'kr.hakdang.cassdio'
     version = '0.0.1'
     repositories {
         mavenCentral()
