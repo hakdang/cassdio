@@ -1,6 +1,6 @@
 import axios from "axios";
 import {useCadioDispatch, useCadioState} from "../context/cadioContext";
-import {axiosCatch} from "../../../utils/axiosUtils";
+import {axiosCatch} from "../../utils/axiosUtils";
 
 
 export default function useCadio() {
@@ -18,9 +18,7 @@ export default function useCadio() {
         axios({
             method: "GET",
             url: `/api/bootstrap`,
-            params: {
-
-            }
+            params: {}
         }).then((response) => {
             cadioDispatcher({
                 type: "SET_SYSTEM_AVAILABLE",
@@ -39,7 +37,20 @@ export default function useCadio() {
         });
     }
 
+    function openToast(message) {
+        console.log("message : ", message)
+        if (!message) {
+            return;
+        }
+        cadioDispatcher({
+            type: "SET_TOAST",
+            message: message,
+            delay: 3000,
+        })
+    }
+
     return {
         doBootstrap,
+        openToast
     }
 }

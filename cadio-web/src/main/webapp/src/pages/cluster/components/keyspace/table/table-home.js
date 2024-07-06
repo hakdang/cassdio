@@ -1,22 +1,78 @@
 import {Link, useParams} from "react-router-dom";
-import {useClusterState} from "../../../context/clusterContext";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import TableDetailModal from "./table-detail-modal";
+import axios from "axios";
+import {axiosCatch} from "../../../../../utils/axiosUtils";
+import TableDataManageModal from "./table-data-manage-modal";
+import TableExportModal from "./table-export-modal";
+import TableImportModal from "./table-import-modal";
 
 const TableHome = (props) => {
     const routeParams = useParams();
+    const [showDetail, setShowDetail] = useState(false);
+    const [showExport, setShowExport] = useState(false);
+    const [showImport, setShowImport] = useState(false);
+    const [showDataManage, setShowDataManage] = useState(false);
+    const [tableName, setTableName] = useState('');
 
-    //const {doGetKeyspaceList} = useCluster();
-    const {
-        keyspaceList,
-        keyspaceListLoading,
-    } = useClusterState();
+    const initQueryResult = {
+        wasApplied: null,
+        rows: [],
+        columnNames: [],
+    };
+
+    const [queryLoading, setQueryLoading] = useState(false)
+    const [queryResult, setQueryResult] = useState(initQueryResult)
+    const [nextCursor, setNextCursor] = useState('')
+
+    const getList = (cursor) => {
+        if (cursor === null) {
+            setQueryResult({
+                wasApplied: null,
+                rows: [],
+                columnNames: [],
+            })
+        }
+
+        setQueryLoading(true);
+
+        axios({
+            method: "POST",
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`,
+            data: {
+                pageSize: 50,
+                timeoutSeconds: 3,
+                cursor: cursor,
+            },
+        }).then((response) => {
+            setNextCursor(response.data.result.nextCursor)
+
+            setQueryResult({
+                wasApplied: response.data.result.wasApplied,
+                rows: [...queryResult.rows, ...response.data.result.rows],
+                columnNames: response.data.result.columnNames,
+            })
+        }).catch((error) => {
+            axiosCatch(error);
+        }).finally(() => {
+            setQueryLoading(false);
+        })
+    }
+
+    const renderData = (data) => {
+        if (typeof data === "object") {
+            return JSON.stringify(data);
+        }
+
+        return data;
+    }
+
 
     useEffect(() => {
         //show component
 
-        console.log("routeParams ", routeParams.clusterId)
-        console.log("routeParams ", routeParams.keyspaceName)
-        console.log("routeParams ", routeParams.tableName)
+        setQueryResult(initQueryResult);
+        getList(null)
 
         return () => {
             //hide component
@@ -50,68 +106,150 @@ const TableHome = (props) => {
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h2 className="h2">Table</h2>
-                {/*<div className="btn-toolbar mb-2 mb-md-0">*/}
-                {/*    <div className="btn-group me-2">*/}
-                {/*        <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>*/}
-                {/*        <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>*/}
-                {/*    </div>*/}
-                {/*    <button type="button"*/}
-                {/*            className="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">*/}
-                {/*        This week*/}
-                {/*    </button>*/}
-                {/*</div>*/}
+                <h2 className="h2">
+                    Table {
+                    queryLoading &&
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                }
+                </h2>
+                <div className="btn-toolbar mb-2 mb-md-0">
+                    <button type="button" className="btn btn-sm btn-outline-secondary me-2"
+                            onClick={() => {
+                                setTableName(routeParams.tableName);
+                                setShowDetail(true);
+                            }}>
+                        Detail
+                    </button>
+
+                    <div className="btn-group me-2">
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                onClick={() => {
+                                    setShowExport(true);
+                                }}
+                        >Export
+                        </button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                onClick={() => {
+                                    setShowImport(true);
+                                }}
+                        >Import
+                        </button>
+                    </div>
+
+                    <button type="button"
+                            className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                            onClick={() => {
+                                setShowDataManage(true);
+                            }}>
+                        New Line
+                    </button>
+                </div>
             </div>
 
-            <ul className="nav nav-tabs">
-                <li className="nav-item">
-                    <Link
-                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`}
-                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'HOME' && `active`}`}>
-                        Home
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <Link
-                        to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`}
-                        className={`nav-link link-body-emphasis text-decoration-none ${props.submenu === 'ROW' && `active`}`}>
-                        Rows
-                    </Link>
-                </li>
-                <li className="nav-item dropdown ">
-                    <a className={`nav-link dropdown-toggle link-body-emphasis text-decoration-none`}
-                       data-bs-toggle="dropdown" role="button"
-                       aria-expanded="false">Data</a>
-                    <ul className="dropdown-menu">
-                        <li>
-                            <Link
-                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/export`}
-                                className={`dropdown-item ${props.submenu === 'EXPORT' && `active`}`}>
-                                Export
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/import`}
-                                className={`dropdown-item ${props.submenu === 'IMPORT' && `active`}`}>
-                                Import
-                            </Link>
-                        </li>
-                        {/*<li>*/}
-                        {/*    <hr className="dropdown-divider"/>*/}
-                        {/*</li>*/}
-                        {/*<li><a className="dropdown-item" href="#">Separated link</a></li>*/}
-                    </ul>
-                </li>
-                {/*<li className="nav-item">*/}
-                {/*    <a className="nav-link" href="#">Link</a>*/}
-                {/*</li>*/}
-                {/*<li className="nav-item">*/}
-                {/*    <a className="nav-link disabled" aria-disabled="true">Disabled</a>*/}
-                {/*</li>*/}
-            </ul>
+            {/*TODO : 위치 변경*/}
 
-            {props.children}
+
+            <div className="table-responsive small">
+                <table className="table table-sm table-fixed table-lock-height table-hover">
+                    <thead>
+                    <tr className={"table-dark"}>
+                        <th className={"text-center"}
+                            scope="col">#
+                        </th>
+                        {
+                            queryResult.columnNames.map((info, infoIndex) => {
+                                return (
+                                    <th className={"text-center"} key={`resultHeader${infoIndex}`}
+                                        scope="col">{info}</th>
+                                )
+                            })
+                        }
+                    </tr>
+                    </thead>
+                    <tbody className="table-group-divider" style={{maxHeight: "100vh"}}>
+                    {
+                        queryResult.rows.length <= 0 ? <>
+                                <tr>
+                                    <td className={"text-center"} colSpan={queryResult.columnNames.length + 1}>
+                                        데이터가 없습니다.
+                                    </td>
+                                </tr>
+                            </> :
+                            queryResult.rows.map((row, rowIndex) => {
+                                return (
+                                    <tr key={`resultBody${rowIndex}`}>
+                                        <td className={"text-center"}>
+                                            <div className="btn-group btn-group-sm">
+                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
+                                                        onClick={() => alert("복사")}>
+                                                    <i className="bi bi-clipboard2"></i>
+                                                </button>
+                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
+                                                        onClick={() => alert("수정")}>
+                                                    <i className="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button type="button" className={"btn btn-sm btn-outline-danger"}
+                                                        onClick={() => alert("삭제")}>
+                                                    <i className="bi bi-trash3-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        {
+                                            queryResult.columnNames.map((info, infoIndex) => {
+                                                return (
+                                                    <td className={"text-center text-break"}
+                                                        key={`resultItem${infoIndex}`}>
+                                                        {
+                                                            renderData(row[info])
+                                                        }
+                                                    </td>
+                                                )
+                                            })
+                                        }
+                                    </tr>
+                                )
+                            })
+                    }
+
+                    </tbody>
+                </table>
+            </div>
+
+            {
+                nextCursor &&
+                <div className="d-grid gap-2 col-6 mx-auto">
+                    <button className="btn btn-outline-secondary" type="button"
+                            onClick={() => getList(nextCursor)}>More
+
+                    </button>
+                </div>
+            }
+
+            <TableDetailModal
+                show={showDetail}
+                clusterId={routeParams.clusterId}
+                keyspaceName={routeParams.keyspaceName}
+                tableName={tableName}
+                handleClose={() => setShowDetail(false)}
+            />
+
+            <TableDataManageModal
+                show={showDataManage}
+                handleClose={() => setShowDataManage(false)}
+            />
+
+            <TableExportModal
+                show={showExport}
+                handleClose={() => setShowExport(false)}
+            />
+
+            <TableImportModal
+                show={showImport}
+                handleClose={() => setShowImport(false)}
+            />
+
         </>
     )
 }

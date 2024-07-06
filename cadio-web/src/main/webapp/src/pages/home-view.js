@@ -1,10 +1,12 @@
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import CadioHeader from "../components/layout/cadio-header";
 import CadioSidebar from "../components/layout/cadio-sidebar";
+import useCadio from "../commons/hooks/useCadio";
 
 const HomeView = () => {
+
+    const {openToast} = useCadio();
 
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
@@ -118,7 +120,14 @@ const HomeView = () => {
                             </tbody>
                         </table>
                     </div>
+
+                    <button className={"btn btn-danger"}
+                            onClick={e => openToast('안녕')}>
+                        Open Toast
+                    </button>
                 </main>
+
+
             </div>
         </div>
     )

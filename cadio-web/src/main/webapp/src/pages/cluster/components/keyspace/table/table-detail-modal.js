@@ -37,7 +37,7 @@ const TableDetailModal = (props) => {
         if (!tableName) {
             return;
         }
-
+        setTableLoading(true);
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`,
@@ -199,7 +199,7 @@ const TableDetailModal = (props) => {
             </Modal.Body>
             <Modal.Footer>
                 <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>
-
+                    Close
                 </button>
             </Modal.Footer>
         </Modal>
