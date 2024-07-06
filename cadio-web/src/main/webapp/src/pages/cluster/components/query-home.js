@@ -3,10 +3,12 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import QueryResult from "./query/query-result";
-import {axiosCatch} from "../../../utils/axiosUtils";
+import useCadio from "../../../commons/hooks/useCadio";
 
 const QueryHome = () => {
     const routeParams = useParams();
+
+    const {errorCatch} = useCadio();
 
     const [queryParam, setQueryParam] = useState(
         {
@@ -14,6 +16,11 @@ const QueryHome = () => {
             nextCursor: "",
         }
     );
+
+    const [queryOptions, setQueryOptions] = useState({
+        limit: 10,
+        trace: false,
+    });
 
     const initQueryResult = {
         wasApplied: null,
@@ -44,7 +51,8 @@ const QueryHome = () => {
             url: `/api/cassandra/cluster/${routeParams.clusterId}/query`,
             data: {
                 query: query,
-                pageSize: 50,
+                pageSize: queryOptions.limit,
+                trace: queryOptions.trace,
                 timeoutSeconds: 3,
                 cursor: cursor,
             },
@@ -61,7 +69,7 @@ const QueryHome = () => {
                 columnNames: response.data.result.columnNames,
             })
         }).catch((error) => {
-            axiosCatch(error);
+            errorCatch(error);
         }).finally(() => {
             setLoading(false);
         })
@@ -97,6 +105,8 @@ const QueryHome = () => {
 
             <QueryEditor
                 queryExecute={queryExecute}
+                queryOptions={queryOptions}
+                setQueryOptions={setQueryOptions}
             />
             <QueryResult
                 queryExecute={queryExecute}

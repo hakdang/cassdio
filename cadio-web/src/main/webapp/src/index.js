@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import {ClusterProvider} from "./pages/cluster/context/clusterContext";
-import {CadioProvider} from "./pages/commons/context/cadioContext";
+import {CadioProvider} from "./commons/context/cadioContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

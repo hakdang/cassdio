@@ -3,11 +3,12 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {DateUtils} from "../../../utils/timeUtils";
 import Spinner from "../../../components/spinner";
-import {axiosCatch} from "../../../utils/axiosUtils";
+import useCadio from "../../../commons/hooks/useCadio";
 
 const NodesHome = () => {
 
     const routeParams = useParams();
+    const {errorCatch} = useCadio();
 
     const [nodeLoading, setNodeLoading] = useState(false);
     const [nodeList, setNodeList] = useState([]);
@@ -48,7 +49,7 @@ const NodesHome = () => {
             setTotalNodeSize(nodes.length)
             setAvailableNodeSize(nodes.filter(node => node.nodeState === 'UP').length)
         }).catch((error) => {
-            axiosCatch(error)
+            errorCatch(error);
         }).finally(() => {
             setNodeLoading(false)
         });

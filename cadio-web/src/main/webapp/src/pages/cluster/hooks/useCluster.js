@@ -1,11 +1,11 @@
 import axios from "axios";
 import {useClusterDispatch, useClusterState} from "../context/clusterContext";
 import {useParams} from "react-router-dom";
-import {axiosCatch} from "../../../utils/axiosUtils";
+import {useAxios} from "../../../utils/axiosUtils";
 
 export default function useCluster() {
     const routeParams = useParams();
-
+    const {errorCatch} = useAxios();
     const clusterDispatcher = useClusterDispatch();
     const {} = useClusterState();
 
@@ -31,7 +31,7 @@ export default function useCluster() {
                 keyspaceNames: response.data.result.keyspaceNameMap.SYSTEM,
             })
         }).catch((error) => {
-            axiosCatch(error)
+            errorCatch(error)
         }).finally(() => {
             clusterDispatcher({
                 type: "SET_KEYSPACE_NAMES_LOADING",
@@ -58,7 +58,7 @@ export default function useCluster() {
                 keyspaceList: response.data.result.keyspaceList,
             })
         }).catch((error) => {
-            axiosCatch(error)
+            errorCatch(error)
         }).finally(() => {
             clusterDispatcher({
                 type: "SET_KEYSPACE_LIST_LOADING",

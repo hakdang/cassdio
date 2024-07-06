@@ -14,17 +14,14 @@ import TableHome from "./pages/cluster/components/keyspace/table/table-home";
 import QueryHome from "./pages/cluster/components/query-home";
 import MetricsHome from "./pages/cluster/components/metrics-home";
 import {useEffect} from "react";
-import useCadio from "./pages/commons/hooks/useCadio";
-import {useCadioState} from "./pages/commons/context/cadioContext";
+import useCadio from "./commons/hooks/useCadio";
+import {useCadioState} from "./commons/context/cadioContext";
 import NodesHome from "./pages/cluster/components/nodes-home";
 import SystemView from "./pages/system/system-view";
-import TableRow from "./pages/cluster/components/keyspace/table/table-row";
-import TableInformation from "./pages/cluster/components/keyspace/table/table-information";
-import TableImport from "./pages/cluster/components/keyspace/table/table-import";
-import TableExport from "./pages/cluster/components/keyspace/table/table-export";
 import LoadingView from "./pages/loading-view";
 import SystemHome from "./pages/system/components/system-home";
 import SystemClusterManageHome from "./pages/system/components/cluster/system-cluster-manage-home";
+import CadioToast from "./components/cadio-toast";
 
 function App() {
     const {doBootstrap} = useCadio();
@@ -69,32 +66,20 @@ function App() {
                                element={<ClusterView><KeyspaceHome/></ClusterView>}></Route>
                         <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName"
                                element={
-                                   <ClusterView><TableHome
-                                       submenu={"HOME"}><TableInformation/></TableHome></ClusterView>}></Route>
-                        <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/row"
-                               element={
-                                   <ClusterView><TableHome
-                                       submenu={"ROW"}><TableRow/></TableHome></ClusterView>}></Route>
-                        <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/import"
-                               element={
-                                   <ClusterView><TableHome
-                                       submenu={"IMPORT"}><TableImport/></TableHome></ClusterView>}></Route>
-                        <Route path="/cluster/:clusterId/keyspace/:keyspaceName/table/:tableName/export"
-                               element={
-                                   <ClusterView><TableHome
-                                       submenu={"EXPORT"}><TableExport/></TableHome></ClusterView>}></Route>
+                                   <ClusterView><TableHome/></ClusterView>}></Route>
                         <Route path="/system"
                                element={<SystemView>
-                                    <SystemHome/>
+                                   <SystemHome/>
                                </SystemView>}></Route>
                         <Route path="/system/cluster"
                                element={<SystemView>
-                                    <SystemClusterManageHome/>
+                                   <SystemClusterManageHome/>
                                </SystemView>}></Route>
                         {/* 상단에 위치하는 라우트들의 규칙을 모두 확인, 일치하는 라우트가 없는경우 처리 */}
                         <Route path="*" element={<NotFound/>}></Route>
                     </Routes>
                 </LoadingView>
+                <CadioToast/>
             </BrowserRouter>
         </div>
     )

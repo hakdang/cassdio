@@ -1,4 +1,4 @@
-import {useRef,useState} from "react";
+import {useRef, useState} from "react";
 
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -10,17 +10,30 @@ const QueryEditor = (props) => {
     const [queryLoading, setQueryLoading] = useState(false)
     const [query, setQuery] = useState("SELECT * FROM testdb.test_table_1;")
 
+    const queryOptions = props.queryOptions;
+    const setQueryOptions = props.setQueryOptions;
+
+    const [selectedQuery, setSelectedQuery] = useState('');
+
     const editorRef = useRef();
 
     const queryExecute = (cursor) => {
-        props.queryExecute(query, cursor, setQueryLoading);
+        if (selectedQuery) {
+            props.queryExecute(selectedQuery, cursor, setQueryLoading);
+        } else {
+            props.queryExecute(query, cursor, setQueryLoading);
+        }
+
+
     }
 
     function onSelectionChange(value, event) {
         const content = editorRef.current.editor.getSelectedText();
         console.log("content : ", content)
         // use content
+        setSelectedQuery(editorRef.current.editor.getSelectedText());
     }
+
     function onLoad(newValue) {
         console.log("load", newValue);
     }
@@ -84,39 +97,45 @@ const QueryEditor = (props) => {
                     <div className="row">
                         <div className="col">
                             <div className="form-floating">
-                                <select className="form-select form-select-sm" id="floatingSelect">
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select className="form-select form-select-sm" id="queryLimitSelect"
+                                        onChange={e => {
+                                            setQueryOptions(t => {
+                                                return {...t, limit: parseInt(e.target.value)}
+                                            })
+                                        }
+                                        } value={queryOptions.limit || "10"}>
+                                    <option value="10">10</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
                                 </select>
-                                <label htmlFor="floatingSelect">Limit</label>
+                                <label htmlFor="queryLimitSelect">Limit</label>
                             </div>
                         </div>
                         <div className="col">
-                            <div className="form-floating">
-                                <select className="form-select form-select-sm" id="floatingSelect">
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                                <label htmlFor="floatingSelect">ConsistencyLevel</label>
-                            </div>
+                            {/*<div className="form-floating">*/}
+                            {/*    <select className="form-select form-select-sm" id="floatingSelect">*/}
+                            {/*        <option value="1">One</option>*/}
+                            {/*        <option value="2">Two</option>*/}
+                            {/*        <option value="3">Three</option>*/}
+                            {/*    </select>*/}
+                            {/*    <label htmlFor="floatingSelect">ConsistencyLevel</label>*/}
+                            {/*</div>*/}
                         </div>
                         <div className="col">
-                            <div className="form-floating mb-3">
-                                <input type="email" className="form-control form-control-sm" id="floatingInput"
-                                       placeholder="name@example.com"/>
-                                <label htmlFor="floatingInput">Query Timeout</label>
-                            </div>
+                            {/*<div className="form-floating mb-3">*/}
+                            {/*    <input type="number" className="form-control form-control-sm" id="floatingInput"*/}
+                            {/*           placeholder="name@example.com"/>*/}
+                            {/*    <label htmlFor="floatingInput">Query Timeout</label>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
 
-                    <div className="row g-3">
+                    <div className="row g-3 mt-1">
                         <div className="col">
                             <div className="form-check form-switch">
                                 <input className="form-check-input" type="checkbox" role="switch"
-                                       id="flexSwitchCheckDefault"/>
-                                <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                                       id="tracingOnSwitch"/>
+                                <label className="form-check-label" htmlFor="tracingOnSwitch">
                                     Tracing On
                                 </label>
                             </div>
