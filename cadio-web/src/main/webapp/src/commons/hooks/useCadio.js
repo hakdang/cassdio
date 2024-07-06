@@ -1,14 +1,10 @@
 import axios from "axios";
-import {useCadioDispatch, useCadioState} from "../context/cadioContext";
+import {useCadioDispatch} from "../context/cadioContext";
 import {axiosCatch} from "../../utils/axiosUtils";
 
 
 export default function useCadio() {
     const cadioDispatcher = useCadioDispatch();
-    const {
-        bootstrapLoading,
-        systemAvailable
-    } = useCadioState();
 
     function doBootstrap() {
         cadioDispatcher({

@@ -11,6 +11,8 @@ const HomeView = () => {
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
 
+    const [test, setTest] = useState(0);
+
     useEffect(() => {
         //show component
 
@@ -122,7 +124,10 @@ const HomeView = () => {
                     </div>
 
                     <button className={"btn btn-danger"}
-                            onClick={e => openToast('안녕')}>
+                            onClick={e => {
+                                openToast('안녕' + test);
+                                setTest(test + 1);
+                            }}>
                         Open Toast
                     </button>
                 </main>

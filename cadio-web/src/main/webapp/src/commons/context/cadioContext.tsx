@@ -11,7 +11,7 @@ type Action =
     | { type: "SET_SYSTEM_AVAILABLE"; systemAvailable: boolean; }
 
     | { type: "SET_TOAST"; message: string, delay: number }
-    | { type: "REMOVE_TOAST_ITEM"; toastIndex: number }
+    | { type: "REMOVE_TOAST_ITEM"; id: number }
 
 type CadioDispatch = Dispatch<Action>;
 
@@ -54,7 +54,7 @@ function reducer(state: CadioState, action: Action): CadioState {
         case "SET_TOAST":
             const arr = state.toasts ? [...state.toasts] : [];
             arr.push({
-                //TODO : 아이디 추가
+                id : new Date().getTime(),
                 message: action.message,
                 delay: action.delay,
             });
@@ -72,10 +72,10 @@ function reducer(state: CadioState, action: Action): CadioState {
                 };
             }
 
-            arr2.splice(action.toastIndex, 1)
             return {
                 ...state,
-                toasts: arr2
+                //양이 많을 경우 누락됨.
+                toasts: arr2.filter(info => info.id !== action.id)
             };
 
         default:
