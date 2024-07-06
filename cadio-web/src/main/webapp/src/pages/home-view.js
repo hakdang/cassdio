@@ -6,7 +6,7 @@ import useCadio from "../commons/hooks/useCadio";
 
 const HomeView = () => {
 
-    const {openToast} = useCadio();
+    const {openToast, errorCatch} = useCadio();
 
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
@@ -25,7 +25,7 @@ const HomeView = () => {
         }).then((response) => {
             setClusters(response.data.result.clusters)
         }).catch((error) => {
-            //TODO : error catch
+            errorCatch(error)
         }).finally(() => {
             setClustersLoading(false)
         });

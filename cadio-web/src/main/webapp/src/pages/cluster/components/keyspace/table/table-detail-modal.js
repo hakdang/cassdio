@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {axiosCatch} from "../../../../../utils/axiosUtils";
 import {Modal} from "react-bootstrap";
+import useCadio from "../../../../../commons/hooks/useCadio";
 
 const TableDetailModal = (props) => {
 
@@ -11,7 +11,7 @@ const TableDetailModal = (props) => {
     const clusterId = props.clusterId;
     const keyspaceName = props.keyspaceName;
     const tableName = props.tableName;
-
+    const {errorCatch} = useCadio();
     const [tableLoading, setTableLoading] = useState(false);
     const [tableInfo, setTableInfo] = useState({
         table: {},
@@ -53,8 +53,7 @@ const TableDetailModal = (props) => {
             })
 
         }).catch((error) => {
-            console.log(error)
-            axiosCatch(error)
+            errorCatch(error)
         }).finally(() => {
             setTableLoading(false)
         });

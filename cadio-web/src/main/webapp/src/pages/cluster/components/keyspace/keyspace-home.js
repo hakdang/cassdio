@@ -4,12 +4,12 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import Spinner from "../../../../components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
-import {axiosCatch} from "../../../../utils/axiosUtils";
+import useCadio from "../../../../commons/hooks/useCadio";
 
 const KeyspaceHome = () => {
 
     const routeParams = useParams();
-
+    const {errorCatch} = useCadio();
     //const {doGetKeyspaceList} = useCluster();
     const {
         keyspaceList,
@@ -47,7 +47,7 @@ const KeyspaceHome = () => {
             }
 
         }).catch((error) => {
-            axiosCatch(error)
+            errorCatch(error)
         }).finally(() => {
             setDetailLoading(false)
         });

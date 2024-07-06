@@ -2,10 +2,10 @@ import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import TableDetailModal from "./table-detail-modal";
 import axios from "axios";
-import {axiosCatch} from "../../../../../utils/axiosUtils";
 import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
+import useCadio from "../../../../../commons/hooks/useCadio";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -14,7 +14,7 @@ const TableHome = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showDataManage, setShowDataManage] = useState(false);
     const [tableName, setTableName] = useState('');
-
+    const {errorCatch} = useCadio();
     const initQueryResult = {
         wasApplied: null,
         rows: [],
@@ -53,7 +53,7 @@ const TableHome = (props) => {
                 columnNames: response.data.result.columnNames,
             })
         }).catch((error) => {
-            axiosCatch(error);
+            errorCatch(error);
         }).finally(() => {
             setQueryLoading(false);
         })

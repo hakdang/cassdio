@@ -3,7 +3,7 @@ import axios from "axios";
 import useCadio from "../commons/hooks/useCadio";
 
 const InitializeView = (props) => {
-    const {doBootstrap} = useCadio();
+    const {doBootstrap, errorCatch} = useCadio();
 
     const [clusterInfo, setClusterInfo] = useState(
         {
@@ -70,7 +70,7 @@ const InitializeView = (props) => {
             alert("등록되었습니다.");
             doBootstrap();
         }).catch((error) => {
-
+            errorCatch(error);
         }).finally(() => {
             setSaveLoading(false);
         })
