@@ -33,11 +33,12 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
      * @param session
      * @return
      */
-    public List<String> allKeyspaceNames(CqlSession session) {
+    public List<String> allKeyspaceNames(CqlSession session, boolean includeSystemKeyspace) {
         return session.execute(SimpleStatement.newInstance("DESC KEYSPACES"))
             .all()
             .stream()
             .map(info -> info.getString("keyspace_name"))
+            .filter(keyspaceName -> includeSystemKeyspace || !CassandraSystemKeyspace.isSystemKeyspace(keyspaceName))
             .toList();
     }
 

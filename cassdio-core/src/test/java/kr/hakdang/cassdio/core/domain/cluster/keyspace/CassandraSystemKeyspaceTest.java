@@ -13,19 +13,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CassandraSystemKeyspaceTest {
 
     @Test
-    void system_keyspace() {
+    void check_is_system_keyspace() {
         for (CassandraSystemKeyspace keyspace : CassandraSystemKeyspace.values()) {
             assertThat(CassandraSystemKeyspace.isSystemKeyspace(keyspace.getKeyspaceName())).isTrue();
         }
-    }
 
-    @Test
-    void not_system_keyspace() {
         assertThat(CassandraSystemKeyspace.isSystemKeyspace("demo")).isFalse();
     }
 
     @Test
-    void isVirtualKeyspace() {
+    void check_is_virtual_system_keyspace() {
         assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_virtual_schema")).isTrue();
         assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_views")).isTrue();
         assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_traces")).isFalse();
