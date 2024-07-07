@@ -2,6 +2,7 @@ package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import kr.hakdang.cassdio.IntegrationTest;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.CLusterTableNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ColumnClusteringOrder;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ColumnKind;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * ClusterTableGetCommanderTest
@@ -28,12 +30,15 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)
             .table("test_table_1")
+            .withTableDescribe(true)
             .build();
 
         // when
         ClusterTableGetResult sut = clusterTableGetCommander.getTable(makeSession(), args);
 
         // then
+        assertThat(sut.getTableDescribe()).isNotBlank();
+
         assertThat(sut.getTable().getTableName()).isEqualTo("test_table_1");
         assertThat(sut.getTable().getComment()).isEqualTo("test_table_one");
         assertThat(sut.getTable().getOptions()).containsEntry("bloom_filter_fp_chance", 0.01);
@@ -63,6 +68,35 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
         assertThat(sut.getColumns().get(4).getDataType()).isEqualTo("text");
         assertThat(sut.getColumns().get(4).getClusteringOrder()).isEqualTo(ColumnClusteringOrder.NONE);
         assertThat(sut.getColumns().get(4).getKind()).isEqualTo(ColumnKind.REGULAR);
+    }
+
+    @Test
+    void not_exists_table() {
+        // given
+        ClusterTableGetArgs args = ClusterTableGetArgs.builder()
+            .keyspace(keyspaceName)
+            .table("not_exists_table")
+            .build();
+
+        // when & then
+        assertThatThrownBy(() -> clusterTableGetCommander.getTable(makeSession(), args)).isInstanceOf(CLusterTableNotFoundException.class);
+    }
+
+    @Test
+    void get_system_table() {
+        // given
+        ClusterTableGetArgs args = ClusterTableGetArgs.builder()
+            .keyspace("system_schema")
+            .table("tables")
+            .withTableDescribe(true)
+            .build();
+
+        // when
+        ClusterTableGetResult sut = clusterTableGetCommander.getTable(makeSession(), args);
+
+        // then
+        assertThat(sut.getTableDescribe()).isBlank();
+        assertThat(sut.getTable().getTableName()).isEqualTo("tables");
     }
 
 }

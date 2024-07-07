@@ -2,6 +2,7 @@ package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.metadata.Node;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterException.ClusterNodeNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -21,7 +22,7 @@ public class ClusterNodeGetCommander extends BaseClusterCommander {
 
         Node node = nodes.get(nodeId);
         if (node == null) {
-            throw new IllegalArgumentException(String.format("not exists node(%s)", nodeId));
+            throw new ClusterNodeNotFoundException(String.format("not exists node(%s)", nodeId));
         }
 
         return ClusterNode.from(node);

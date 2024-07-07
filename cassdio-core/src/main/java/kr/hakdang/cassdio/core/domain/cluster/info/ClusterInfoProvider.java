@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster.info;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hakdang.cassdio.common.Jsons;
+import kr.hakdang.cassdio.common.utils.Jsons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

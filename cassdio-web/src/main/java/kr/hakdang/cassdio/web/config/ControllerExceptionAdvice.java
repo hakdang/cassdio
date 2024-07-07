@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.config;
 
-import kr.hakdang.cassdio.common.BaseException;
-import kr.hakdang.cassdio.common.ErrorCode;
+import kr.hakdang.cassdio.common.error.BaseException;
+import kr.hakdang.cassdio.common.error.ErrorCode;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-import static kr.hakdang.cassdio.common.ErrorCode.E400_INVALID_PARAMETER;
+import static kr.hakdang.cassdio.common.error.ErrorCode.E400_INVALID_PARAMETER;
 
 @Slf4j
 @RestControllerAdvice

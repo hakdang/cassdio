@@ -18,18 +18,31 @@ public enum CassandraSystemKeyspace {
     SYSTEM_AUTH("system_auth"),
     SYSTEM_DISTRIBUTED("system_distributed"),
     SYSTEM_TRACES("system_traces"),
-    SYSTEM_VIEWS("system_views"),
-    SYSTEM_VIRTUAL_SCHEMA("system_virtual_schema"),
+    SYSTEM_VIEWS("system_views", true),
+    SYSTEM_VIRTUAL_SCHEMA("system_virtual_schema", true),
     ;
 
     private final String keyspaceName;
+    private final boolean isVirtualKeyspace;
+
+    CassandraSystemKeyspace(String keyspaceName, boolean isVirtualKeyspace) {
+        this.keyspaceName = keyspaceName;
+        this.isVirtualKeyspace = isVirtualKeyspace;
+    }
 
     CassandraSystemKeyspace(String keyspaceName) {
         this.keyspaceName = keyspaceName;
+        this.isVirtualKeyspace = false;
     }
 
     public static boolean isSystemKeyspace(String keyspaceName) {
         return Arrays.stream(CassandraSystemKeyspace.values())
+            .anyMatch(keyspace -> keyspace.getKeyspaceName().equals(keyspaceName));
+    }
+
+    public static boolean isVirtualSystemKeyspace(String keyspaceName) {
+        return Arrays.stream(CassandraSystemKeyspace.values())
+            .filter(keyspace -> keyspace.isVirtualKeyspace)
             .anyMatch(keyspace -> keyspace.getKeyspaceName().equals(keyspaceName));
     }
 
