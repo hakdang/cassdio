@@ -38,13 +38,13 @@ public class ClusterTableArgs {
     public static class ClusterTableListArgs {
 
         private String keyspace;
-        private int limit = 50;
+        private int pageSize = 50;
         private String nextPageState;
 
         @Builder
-        private ClusterTableListArgs(String keyspace, int limit, String nextPageState) {
+        private ClusterTableListArgs(String keyspace, int pageSize, String nextPageState) {
             this.keyspace = keyspace;
-            this.limit = limit;
+            this.pageSize = pageSize;
             this.nextPageState = nextPageState;
         }
 
