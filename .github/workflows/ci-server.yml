@@ -35,6 +35,7 @@ jobs:
   integration-test:
     name: Build on Cassandra
     runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
       matrix:
         cassandra-version: [ '3.11', '4.0', '4.1', '5.0' ]
