@@ -40,6 +40,7 @@ public class ClusterKeyspaceReader {
 
     public Map<String, List<String>> getKeyspaceNames(String clusterId) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+
             List<String> keyspaceNames = clusterKeyspaceCommander.allKeyspaceNames(session);
 
             KeyspaceFilter keyspaceFilter = ClusterUtils.makeKeyspaceFilter(session.getContext());

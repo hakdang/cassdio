@@ -1,11 +1,11 @@
 import axios from "axios";
 import {useClusterDispatch, useClusterState} from "../context/clusterContext";
 import {useParams} from "react-router-dom";
-import {useAxios} from "../../../utils/axiosUtils";
+import useCassdio from "../../../commons/hooks/useCassdio";
 
 export default function useCluster() {
     const routeParams = useParams();
-    const {errorCatch} = useAxios();
+    const {errorCatch} = useCassdio();
     const clusterDispatcher = useClusterDispatch();
     const {} = useClusterState();
 

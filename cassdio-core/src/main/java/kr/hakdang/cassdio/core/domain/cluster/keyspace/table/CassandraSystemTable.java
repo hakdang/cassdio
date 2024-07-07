@@ -14,6 +14,7 @@ import static kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKey
 @Getter
 public enum CassandraSystemTable {
 
+    SYSTEM_SCHEMA_KEYSPACES(SYSTEM_SCHEMA, "keyspaces"),
     SYSTEM_SCHEMA_TABLES(SYSTEM_SCHEMA, "tables"),
     SYSTEM_SCHEMA_COLUMNS(SYSTEM_SCHEMA, "columns"),
     SYSTEM_SCHEMA_TYPES(SYSTEM_SCHEMA, "types"),
