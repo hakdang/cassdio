@@ -20,11 +20,11 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
     private ClusterTableListCommander clusterTableListCommander;
 
     @Test
-    void listTables() {
+    void list_tables() {
         // given
         ClusterTableArgs.ClusterTableListArgs args = ClusterTableArgs.ClusterTableListArgs.builder()
             .keyspace(keyspaceName)
-            .limit(50)
+            .pageSize(50)
             .build();
 
         // when
@@ -46,7 +46,7 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
         // given
         ClusterTableArgs.ClusterTableListArgs args = ClusterTableArgs.ClusterTableListArgs.builder()
             .keyspace(keyspaceName)
-            .limit(1)
+            .pageSize(1)
             .build();
 
         // when
@@ -57,6 +57,22 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
         assertThat(sut.getTables().getFirst().getTableName()).isEqualTo("test_table_1");
         assertThat(sut.getTables().getFirst().getComment()).isEqualTo("test_table_one");
         assertThat(sut.getTables().getFirst().getOptions()).containsEntry("bloom_filter_fp_chance", 0.01);
+        assertThat(sut.getNextPageState()).isNotBlank();
+    }
+
+    @Test
+    void when_empty_table_in_keyspace_result_empty() {
+        // given
+        ClusterTableArgs.ClusterTableListArgs args = ClusterTableArgs.ClusterTableListArgs.builder()
+            .keyspace("empty_table_keyspace")
+            .build();
+
+        // when
+        ClusterTableListResult sut = clusterTableListCommander.listTables(makeSession(), args);
+
+        // then
+        assertThat(sut.getTables()).isEmpty();
+        assertThat(sut.getNextPageState()).isNull();
     }
 
 }

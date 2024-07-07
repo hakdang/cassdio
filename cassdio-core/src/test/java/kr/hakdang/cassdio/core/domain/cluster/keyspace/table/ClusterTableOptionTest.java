@@ -20,7 +20,7 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 class ClusterTableOptionTest extends IntegrationTest {
 
     @Test
-    void extra_table_options() {
+    void extract_table_option() {
         // given
         SimpleStatement statement = QueryBuilder
             .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())

@@ -66,7 +66,7 @@ subprojects {
         }
     }
 
-    tasks.named('test') {
+    tasks.withType(Test).configureEach {
         useJUnitPlatform()
         testLogging {
             showExceptions = true

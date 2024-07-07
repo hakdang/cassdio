@@ -25,7 +25,7 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
     private ClusterTableGetCommander clusterTableGetCommander;
 
     @Test
-    void getTable() {
+    void get_table_in_keyspace() {
         // given
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)
@@ -71,7 +71,7 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
     }
 
     @Test
-    void not_exists_table() {
+    void when_get_not_exists_table_throw_not_exists_exception() {
         // given
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)

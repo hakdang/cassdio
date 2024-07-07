@@ -41,7 +41,7 @@ public class ClusterTableReader {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
             ClusterTableListResult result = clusterTableListCommander.listTables(session, ClusterTableListArgs.builder()
                 .keyspace(keyspace)
-                .limit(cursorRequest.getSize())
+                .pageSize(cursorRequest.getSize())
                 .nextPageState(cursorRequest.getCursor())
                 .build());
 
