@@ -22,7 +22,7 @@ public class InitConfig implements InitializingBean {
     private ClusterInfoProvider clusterInfoProvider;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         bootstrapProvider.updateMinClusterCountCheck(clusterInfoProvider.checkMinClusterCount());
     }
 }
