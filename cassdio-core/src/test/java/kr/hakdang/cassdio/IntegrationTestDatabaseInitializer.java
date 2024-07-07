@@ -40,6 +40,7 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
             session.execute(createKeyspace.build());
 
             SimpleStatement createTable1 = SchemaBuilder.createTable(keyspaceName, "test_table_1")
+                .ifNotExists()
                 .withPartitionKey("partition_key_1", DataTypes.TEXT)
                 .withPartitionKey("partition_key_2", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_1", DataTypes.BIGINT)
@@ -53,6 +54,7 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
             session.execute(createTable1);
 
             SimpleStatement createTable2 = SchemaBuilder.createTable(keyspaceName, "test_table_2")
+                .ifNotExists()
                 .withPartitionKey("partition_key_11", DataTypes.TEXT)
                 .withPartitionKey("partition_key_12", DataTypes.BIGINT)
                 .withClusteringColumn("clustering_key_11", DataTypes.BIGINT)
@@ -62,6 +64,14 @@ public class IntegrationTestDatabaseInitializer extends BaseTest {
                 .withBloomFilterFpChance(0.001)
                 .build();
             session.execute(createTable2);
+
+            SimpleStatement createType = SchemaBuilder.createType(keyspaceName, "test_type_1")
+                .ifNotExists()
+                .withField("field_1", DataTypes.TEXT)
+                .withField("field_2", DataTypes.BIGINT)
+                .withField("field_3", DataTypes.TIME)
+                .build();
+            session.execute(createType);
         }
 
         log.info("Database initialization complete.....");
