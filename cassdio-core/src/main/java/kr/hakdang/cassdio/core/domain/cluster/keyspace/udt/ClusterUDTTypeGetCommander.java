@@ -32,7 +32,7 @@ public class ClusterUDTTypeGetCommander extends BaseClusterCommander {
             .all()
             .whereColumn(TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
             .whereColumn(TYPES_TYPE_NAME.getColumnName()).isEqualTo(bindMarker())
-            .build(args.getKeyspace(), args.getTypeName())
+            .build(args.getKeyspace(), args.getType())
             .setPageSize(1);
 
         ResultSet rs = session.execute(statement);
@@ -41,7 +41,7 @@ public class ClusterUDTTypeGetCommander extends BaseClusterCommander {
             .limit(1)
             .map(ClusterUDTType::from)
             .findFirst()
-            .orElseThrow(() -> new ClusterUDTTypeNotFoundException(String.format("not exists udt type(%s) in keyspace(%s)", args.getTypeName(), args.getKeyspace())));
+            .orElseThrow(() -> new ClusterUDTTypeNotFoundException(String.format("not exists udt type(%s) in keyspace(%s)", args.getType(), args.getKeyspace())));
     }
 
 }

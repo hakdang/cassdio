@@ -25,7 +25,17 @@ public class ClusterConnection {
 
     @Builder
     public ClusterConnection(String contactPoints, int port, String localDatacenter, String username, String password) {
-        //TODO : Validation
+        if (StringUtils.isBlank(contactPoints)) {
+            throw new IllegalArgumentException(String.format("contactPoints(%s) is blank", contactPoints));
+        }
+
+        if (port <= 0) {
+            throw new IllegalArgumentException(String.format("port(%s) can't be less or equal than zero", port));
+        }
+
+        if (StringUtils.isBlank(localDatacenter)) {
+            throw new IllegalArgumentException(String.format("local-datacenter(%s) is blank", localDatacenter));
+        }
 
         this.contactPoints = contactPoints;
         this.port = port;
