@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,9 @@ public class ClusterKeyspaceDescribeArgs {
 
     @Builder
     public ClusterKeyspaceDescribeArgs(String keyspace, boolean withChildren, boolean pretty) {
+        if (StringUtils.isBlank(keyspace)) {
+            throw new IllegalArgumentException("keyspaceName is null or empty");
+        }
         this.keyspace = keyspace;
         this.withChildren = withChildren;
         this.pretty = pretty;

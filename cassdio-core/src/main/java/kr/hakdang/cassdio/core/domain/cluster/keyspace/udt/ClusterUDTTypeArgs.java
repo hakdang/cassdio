@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.udt;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,14 @@ public class ClusterUDTTypeArgs {
 
         @Builder
         private ClusterUDTTypeListArgs(String keyspace, int pageSize, String nextPageState) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (pageSize > 100) {
+                throw new IllegalArgumentException("pageSize can't be greater than 100");
+            }
+
             this.keyspace = keyspace;
             this.pageSize = pageSize;
             this.nextPageState = nextPageState;
@@ -38,12 +47,20 @@ public class ClusterUDTTypeArgs {
     public static class ClusterUDTTypeGetArgs {
 
         private String keyspace;
-        private String typeName;
+        private String type;
 
         @Builder
         public ClusterUDTTypeGetArgs(String keyspace, String type) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (StringUtils.isBlank(type)) {
+                throw new IllegalArgumentException("type can't be null or empty");
+            }
+
             this.keyspace = keyspace;
-            this.typeName = type;
+            this.type = type;
         }
 
     }

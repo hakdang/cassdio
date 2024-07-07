@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -20,5 +21,37 @@ public class Jsons {
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .registerModules(new ParameterNamesModule(), new Jdk8Module(), new JavaTimeModule());
+
+    public static <T> T toObject(String input, Class<T> toClass) {
+        try {
+            return OBJECT_MAPPER.readValue(input, toClass);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException(String.format("failed to deserialize [input: (%s) toClass: (%s)]", input, toClass.getSimpleName()), exception);
+        }
+    }
+
+    public static <T> T toObject(String input, TypeReference<T> toClass) {
+        try {
+            return OBJECT_MAPPER.readValue(input, toClass);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException(String.format("failed to deserialize [input: (%s) toClass: (%s)]", input, toClass), exception);
+        }
+    }
+
+    public static <T> String toJson(T input) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(input);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException(String.format("failed to serialize [input: (%s)]", input), exception);
+        }
+    }
+
+    public static <T> String toPrettyJson(T input) {
+        try {
+            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(input);
+        } catch (Exception exception) {
+            throw new IllegalArgumentException(String.format("failed to serialize [input: (%s)]", input), exception);
+        }
+    }
 
 }

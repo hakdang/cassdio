@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,13 @@ public class ClusterTableArgs {
 
         @Builder
         private ClusterTableGetArgs(String keyspace, String table, boolean withTableDescribe) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (StringUtils.isBlank(table)) {
+                throw new IllegalArgumentException("table can't be null or empty");
+            }
             this.keyspace = keyspace;
             this.table = table;
             this.withTableDescribe = withTableDescribe;
@@ -43,6 +51,14 @@ public class ClusterTableArgs {
 
         @Builder
         private ClusterTableListArgs(String keyspace, int pageSize, String nextPageState) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (pageSize > 100) {
+                throw new IllegalArgumentException("pageSize can't be greater than 100");
+            }
+
             this.keyspace = keyspace;
             this.pageSize = pageSize;
             this.nextPageState = nextPageState;
@@ -58,12 +74,24 @@ public class ClusterTableArgs {
         private String keyspace;
         private String table;
 
-        private int pageSize; //TODO : max check
+        private int pageSize;
 
         private String cursor;
 
         @Builder
         public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, String cursor) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (StringUtils.isBlank(table)) {
+                throw new IllegalArgumentException("table can't be null or empty");
+            }
+
+            if (pageSize > 100) {
+                throw new IllegalArgumentException("pageSize can't be greater than 100");
+            }
+
             this.keyspace = keyspace;
             this.table = table;
             this.pageSize = pageSize;
