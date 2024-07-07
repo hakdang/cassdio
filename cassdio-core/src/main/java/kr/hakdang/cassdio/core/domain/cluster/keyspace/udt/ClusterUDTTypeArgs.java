@@ -32,4 +32,20 @@ public class ClusterUDTTypeArgs {
 
     }
 
+    @ToString
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ClusterUDTTypeGetArgs {
+
+        private String keyspace;
+        private String typeName;
+
+        @Builder
+        public ClusterUDTTypeGetArgs(String keyspace, String type) {
+            this.keyspace = keyspace;
+            this.typeName = type;
+        }
+
+    }
+
 }

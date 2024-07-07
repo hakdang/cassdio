@@ -1,0 +1,5 @@
+### List Types
+GET {{api}}/api/cassandra/cluster/005ffbce/keyspace/demodb/udt-type?size=100
+
+### Get Type
+GET {{api}}/api/cassandra/cluster/005ffbce/keyspace/demodb/udt-type/aaaaa
