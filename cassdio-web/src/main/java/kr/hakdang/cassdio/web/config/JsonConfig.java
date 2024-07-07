@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.hakdang.cassdio.common.Jsons;
+import kr.hakdang.cassdio.common.utils.Jsons;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

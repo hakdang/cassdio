@@ -24,4 +24,12 @@ class CassandraSystemKeyspaceTest {
         assertThat(CassandraSystemKeyspace.isSystemKeyspace("demo")).isFalse();
     }
 
+    @Test
+    void isVirtualKeyspace() {
+        assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_virtual_schema")).isTrue();
+        assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_views")).isTrue();
+        assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("system_traces")).isFalse();
+        assertThat(CassandraSystemKeyspace.isVirtualSystemKeyspace("demo")).isFalse();
+    }
+
 }

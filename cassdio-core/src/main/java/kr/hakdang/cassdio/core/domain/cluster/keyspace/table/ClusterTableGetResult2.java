@@ -1,13 +1,11 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +23,7 @@ public class ClusterTableGetResult2 {
     private Map<String, Object> describe;
 
     @Builder
-    private ClusterTableGetResult2(Map<String, Object> table, Map<String, Object> describe, List<Column> columns) {
+    private ClusterTableGetResult2(Map<String, Object> table, Map<String, Object> describe) {
         this.table = table;
         this.describe = describe;
     }

@@ -13,7 +13,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +48,7 @@ public abstract class ClusterUtils {
     }
 
     public static boolean isVirtualKeyspace(DriverContext context, String keyspace) {
-        return !makeKeyspaceFilter(context).includes(keyspace)
-            && Arrays.asList(
-            CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(),
-            CassandraSystemKeyspace.SYSTEM_VIEWS.getKeyspaceName()
-        ).contains(keyspace);
+        return !makeKeyspaceFilter(context).includes(keyspace) && CassandraSystemKeyspace.isVirtualSystemKeyspace(keyspace);
     }
 
     public static String generateClusterId() {

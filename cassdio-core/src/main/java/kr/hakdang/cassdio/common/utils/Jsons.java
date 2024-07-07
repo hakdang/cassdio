@@ -1,4 +1,4 @@
-package kr.hakdang.cassdio.common;
+package kr.hakdang.cassdio.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;

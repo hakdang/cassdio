@@ -3,6 +3,7 @@ package kr.hakdang.cassdio.core.domain.cluster;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.metadata.Node;
 import kr.hakdang.cassdio.IntegrationTest;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterException.ClusterNodeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,7 +28,7 @@ class ClusterNodeGetCommanderTest extends IntegrationTest {
     void not_exists_node_in_cluster() {
         // when & then
         assertThatThrownBy(() -> clusterNodeGetCommander.getNode(makeSession(), UUID.randomUUID()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(ClusterNodeNotFoundException.class);
     }
 
     @Test

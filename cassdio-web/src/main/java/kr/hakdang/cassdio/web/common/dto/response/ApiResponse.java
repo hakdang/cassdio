@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import kr.hakdang.cassdio.common.ErrorCode;
+import kr.hakdang.cassdio.common.error.ErrorCode;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

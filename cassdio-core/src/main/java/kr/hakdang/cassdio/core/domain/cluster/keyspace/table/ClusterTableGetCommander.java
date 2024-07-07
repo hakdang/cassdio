@@ -7,7 +7,9 @@ import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceException.ClusterKeyspaceNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.CLusterTableNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Column;
 import org.springframework.stereotype.Service;
@@ -42,15 +44,15 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
 
         Row tableRow = session.execute(statement).one();
         if (tableRow == null) {
-            throw new IllegalArgumentException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
+            throw new CLusterTableNotFoundException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
         }
 
         String tableDescribe = "";
         if (!CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace()) && args.isWithTableDescribe()) {
             TableMetadata tableMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
-                .orElseThrow(() -> new RuntimeException("not found keyspace"))
+                .orElseThrow(() -> new ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", args.getKeyspace())))
                 .getTable(args.getTable())
-                .orElseThrow(() -> new RuntimeException("not found table"));
+                .orElseThrow(() -> new CLusterTableNotFoundException(String.format("not found table(%s)", args.getTable())));
 
             tableDescribe = tableMetadata.describe(true);
         }
