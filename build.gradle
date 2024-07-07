@@ -52,6 +52,13 @@ subprojects {
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 
+    tasks.register('unitTest', Test) {
+        group = "verification"
+        useJUnitPlatform {
+            excludeTags 'integration-test'
+        }
+    }
+
     tasks.register('integrationTest', Test) {
         group = "verification"
         useJUnitPlatform {
@@ -60,9 +67,7 @@ subprojects {
     }
 
     tasks.named('test') {
-        useJUnitPlatform {
-            excludeTags 'integration-test'
-        }
+        useJUnitPlatform()
         testLogging {
             showExceptions = true
             exceptionFormat = 'FULL'

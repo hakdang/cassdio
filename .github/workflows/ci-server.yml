@@ -30,7 +30,7 @@ jobs:
         timeout-minutes: 3
 
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew unitTest
 
   integration-test:
     name: Build on Cassandra
