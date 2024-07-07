@@ -1,6 +1,6 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table.pureselect;
 
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTablePureSelectArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

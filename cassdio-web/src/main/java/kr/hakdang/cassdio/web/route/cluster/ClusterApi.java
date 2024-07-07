@@ -85,9 +85,7 @@ public class ClusterApi {
     public ApiResponse<Map<String, Object>> clusterRegister(
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
-        try (
-            CqlSession session = tempClusterConnector.makeSession(request.makeClusterConnector());
-        ) {
+        try (CqlSession session = tempClusterConnector.makeSession(request.makeClusterConnector())) {
             String clusterName = session.getMetadata().getClusterName()
                 .orElse(UUID.randomUUID().toString());
 

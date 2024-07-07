@@ -2,11 +2,11 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cassdio.core.support.cache.CacheType;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -70,16 +70,5 @@ public class ClusterKeyspaceReader {
     public void refreshKeyspaceCache(String clusterId) {
         log.info("ClusterList ({}) is evicted", clusterId);
     }
-
-//    @Cacheable(value = CacheType.CacheTypeNames.CLUSTER_LIST)
-//    public String getKeyspace(String clusterId, String keyspace) {
-//        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-//            return clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
-//                .keyspace(keyspace)
-//                .withChildren(false)
-//                .pretty(true)
-//                .build());
-//        }
-//    }
 
 }

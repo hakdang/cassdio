@@ -50,4 +50,25 @@ public class ClusterTableArgs {
 
     }
 
+    @ToString
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ClusterTablePureSelectArgs {
+
+        private String keyspace;
+        private String table;
+
+        private int pageSize; //TODO : max check
+
+        private String cursor;
+
+        @Builder
+        public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, String cursor) {
+            this.keyspace = keyspace;
+            this.table = table;
+            this.pageSize = pageSize;
+            this.cursor = cursor;
+        }
+    }
+
 }

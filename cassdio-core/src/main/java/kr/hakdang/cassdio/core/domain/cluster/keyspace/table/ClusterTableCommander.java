@@ -13,6 +13,7 @@ import com.datastax.oss.protocol.internal.util.Bytes;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

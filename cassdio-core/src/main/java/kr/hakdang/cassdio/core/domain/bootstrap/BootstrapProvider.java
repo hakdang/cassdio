@@ -1,8 +1,6 @@
 package kr.hakdang.cassdio.core.domain.bootstrap;
 
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,8 +1,8 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;

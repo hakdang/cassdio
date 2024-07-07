@@ -2,7 +2,6 @@ package kr.hakdang.cassdio.core.domain.cluster.info;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hakdang.cassdio.common.Jsons;
-import kr.hakdang.cassdio.core.domain.bootstrap.BootstrapProvider;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,18 +19,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class ClusterInfoManager extends BaseClusterInfo {
-
-    private final BootstrapProvider bootstrapProvider;
-
-    private final ClusterInfoProvider clusterInfoProvider;
-
-    public ClusterInfoManager(
-        BootstrapProvider bootstrapProvider,
-        ClusterInfoProvider clusterInfoProvider
-    ) {
-        this.bootstrapProvider = bootstrapProvider;
-        this.clusterInfoProvider = clusterInfoProvider;
-    }
 
     public void register(ClusterInfoRegisterArgs args) {
         ObjectMapper om = Jsons.OBJECT_MAPPER;

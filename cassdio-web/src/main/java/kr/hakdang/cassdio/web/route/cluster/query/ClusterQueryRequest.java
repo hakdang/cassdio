@@ -24,6 +24,7 @@ public class ClusterQueryRequest {
     private boolean trace = false;
 
     private String nextCursor;
+
     @Builder
     public ClusterQueryRequest(String query, String cursor, int pageSize, int timeoutSeconds, boolean trace) {
         this.query = query;
