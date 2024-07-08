@@ -34,7 +34,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
      * @return
      */
     public List<String> allKeyspaceNames(CqlSession session, boolean includeSystemKeyspace) {
-        return session.execute(SimpleStatement.newInstance("DESC KEYSPACES"))
+        return session.execute(SimpleStatement.newInstance("DESCRIBE KEYSPACES"))
             .all()
             .stream()
             .map(info -> info.getString("keyspace_name"))
