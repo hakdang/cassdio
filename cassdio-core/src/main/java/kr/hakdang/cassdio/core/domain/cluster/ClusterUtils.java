@@ -51,6 +51,10 @@ public abstract class ClusterUtils {
         return !makeKeyspaceFilter(context).includes(keyspace) && CassandraSystemKeyspace.isVirtualSystemKeyspace(keyspace);
     }
 
+    public static boolean isSystemKeyspace(DriverContext context, String keyspace) {
+        return !makeKeyspaceFilter(context).includes(keyspace);
+    }
+
     public static String generateClusterId() {
         String uuid = UUID.randomUUID().toString();
         byte[] temp = uuid.getBytes(StandardCharsets.UTF_8);

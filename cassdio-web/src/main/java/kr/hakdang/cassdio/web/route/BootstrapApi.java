@@ -28,14 +28,11 @@ public class BootstrapApi {
     }
 
     @GetMapping("/bootstrap")
-    public ApiResponse<Map<String, Object>> getBootstrap(
-    ) {
+    public ApiResponse<Map<String, Object>> getBootstrap() {
         Map<String, Object> result = new HashMap<>();
 
         result.put("systemAvailable", bootstrapProvider.systemAvailable()); //해당 값이 false 경우에는 초기 세팅 화면으로 넘어간다.
 
-        return ApiResponse.ok(
-            result
-        );
+        return ApiResponse.ok(result);
     }
 }

@@ -11,24 +11,16 @@ const KeyspaceHome = () => {
     const routeParams = useParams();
     const {errorCatch} = useCassdio();
     //const {doGetKeyspaceList} = useCluster();
-    const {
-        keyspaceList,
-        keyspaceListLoading,
-    } = useClusterState();
 
     const [detailLoading, setDetailLoading] = useState(false);
-    const [keyspaceDetail, setKeyspaceDetail] = useState({
-        keyspace_name: '',
-        name: '',
-        create_statement: '',
-    });
+    const [keyspaceDetail, setKeyspaceDetail] = useState('');
     const [tableLoading, setTableLoading] = useState(false);
     const [tableCursor, setTableCursor] = useState(null)
     const [tableList, setTableList] = useState([]);
 
     useEffect(() => {
         //show component
-        setKeyspaceDetail({});
+        setKeyspaceDetail('');
         setDetailLoading(true)
         setTableList([]);
         axios({
@@ -113,9 +105,13 @@ const KeyspaceHome = () => {
             </div>
 
             <Spinner loading={detailLoading}>
-                <code style={{whiteSpace: "pre"}}>
-                    {keyspaceDetail.create_statement}
-                </code>
+                <div className={"row"}>
+                    <div className={"col"}>
+                        <code style={{whiteSpace: "pre"}}>
+                            {keyspaceDetail}
+                        </code>
+                    </div>
+                </div>
 
                 <div className={"row mt-3"}>
                     <div className={"col-md-6 col-sm-12"}>

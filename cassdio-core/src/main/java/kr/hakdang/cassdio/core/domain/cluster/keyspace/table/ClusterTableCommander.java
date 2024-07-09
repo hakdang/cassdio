@@ -184,10 +184,11 @@ public class ClusterTableCommander extends BaseClusterCommander {
 
     public Map<String, Object> tableDescribe(CqlSession session, String keyspace, String table) {
         if (StringUtils.equals(keyspace, "system") && StringUtils.equals(table, "IndexInfo")) {
-            return Collections.emptyMap();
+            return Collections.emptyMap(); //해당 테이블은 데이터 제공이 안됨. 추후 확인
         }
 
-        SimpleStatement statement2 = SimpleStatement.newInstance(String.format("DESC %s.%s", keyspace, table))
+        SimpleStatement statement2 = SimpleStatement
+            .newInstance(String.format("DESC %s.%s", keyspace, table))
             .setPageSize(1);
 
         ResultSet resultSet2 = session.execute(statement2);
