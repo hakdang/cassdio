@@ -7,17 +7,17 @@ import CassdioSidebar from "../../components/layout/cassdio-sidebar";
 const ClusterView = (props) => {
     const routeParams = useParams();
 
-    const {doGetKeyspaceNames} = useCluster();
+    const {doGetKeyspaceList} = useCluster();
     const {
-        keyspaceGeneralNames,
-        keyspaceSystemNames,
-        keyspaceNamesLoading,
+        keyspaceList,
+        systemKeyspaceList,
+        keyspaceListLoading,
     } = useClusterState();
 
     useEffect(() => {
         //show component
 
-        doGetKeyspaceNames();
+        doGetKeyspaceList();
 
         return () => {
             //hide component
@@ -68,19 +68,19 @@ const ClusterView = (props) => {
                     </h6>
                     <ul className="nav flex-column">
                         {
-                            keyspaceNamesLoading ?
+                            keyspaceListLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </li> :
-                                keyspaceGeneralNames && keyspaceGeneralNames.length > 0 && keyspaceGeneralNames.map((info, infoIndex) => {
+                                keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
-                                                <i className="bi bi-database"></i> {info}
+                                                <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
                                         </li>
                                     )
@@ -96,19 +96,19 @@ const ClusterView = (props) => {
                     </h6>
                     <ul className="nav flex-column">
                         {
-                            keyspaceNamesLoading ?
+                            keyspaceListLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </li> :
-                                keyspaceSystemNames && keyspaceSystemNames.length > 0 && keyspaceSystemNames.map((info, infoIndex) => {
+                                systemKeyspaceList && systemKeyspaceList.length > 0 && systemKeyspaceList.map((info, infoIndex) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
-                                                <i className="bi bi-database"></i> {info}
+                                                <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
                                         </li>
                                     )

@@ -16,7 +16,7 @@ const ClusterHome = () => {
     useEffect(() => {
         //show component
 
-        doGetKeyspaceList();
+        //
 
         return () => {
             //hide component

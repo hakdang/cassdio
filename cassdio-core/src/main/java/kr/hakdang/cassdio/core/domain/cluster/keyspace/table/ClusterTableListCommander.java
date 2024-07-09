@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,11 @@ import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Cassa
 public class ClusterTableListCommander extends BaseClusterCommander {
 
     public ClusterTableListResult listTables(CqlSession session, ClusterTableListArgs args) {
+        //TODO 버전 분기해서 virtual keyspace 의 테이블인 경우 virtual schema table 에서 조회 해야함
+        // ClusterUtils.isVirtualKeyspace()
+        // if (ClusterUtils.cassandraVersion(session).compareTo(Version.V4_0_0) >= 0) {
+        //ClusterTableCommander.allTables 합쳐야함.
+
         SimpleStatement statement = QueryBuilder
             .selectFrom(SYSTEM_SCHEMA.getKeyspaceName(), SYSTEM_SCHEMA_TABLES.getTableName())
             .all()

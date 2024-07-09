@@ -187,6 +187,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
             return Collections.emptyMap(); //해당 테이블은 데이터 제공이 안됨. 추후 확인
         }
 
+        //TODO : DESC 는 3버전에서 못씀. 제거하고 다른 방식으로 해야함.
         SimpleStatement statement2 = SimpleStatement
             .newInstance(String.format("DESC %s.%s", keyspace, table))
             .setPageSize(1);
