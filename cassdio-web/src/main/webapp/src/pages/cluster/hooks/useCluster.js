@@ -9,36 +9,36 @@ export default function useCluster() {
     const clusterDispatcher = useClusterDispatch();
     const {} = useClusterState();
 
-    function doGetKeyspaceNames() {
-        //console.log("keyspace : ", routeParams.clusterId);
-        clusterDispatcher({
-            type: "SET_KEYSPACE_NAMES_LOADING",
-            loading: true,
-        })
-
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
-            params: {}
-        }).then((response) => {
-            console.log("doGetKeyspaceNames", response);
-            clusterDispatcher({
-                type: "SET_KEYSPACE_GENERAL_NAMES",
-                keyspaceNames: response.data.result.keyspaceNameMap.GENERAL,
-            })
-            clusterDispatcher({
-                type: "SET_KEYSPACE_SYSTEM_NAMES",
-                keyspaceNames: response.data.result.keyspaceNameMap.SYSTEM,
-            })
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-            clusterDispatcher({
-                type: "SET_KEYSPACE_NAMES_LOADING",
-                loading: false,
-            })
-        });
-    }
+    // function doGetKeyspaceNames() {
+    //     //console.log("keyspace : ", routeParams.clusterId);
+    //     clusterDispatcher({
+    //         type: "SET_KEYSPACE_NAMES_LOADING",
+    //         loading: true,
+    //     })
+    //
+    //     axios({
+    //         method: "GET",
+    //         url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
+    //         params: {}
+    //     }).then((response) => {
+    //         console.log("doGetKeyspaceNames", response);
+    //         clusterDispatcher({
+    //             type: "SET_KEYSPACE_GENERAL_NAMES",
+    //             keyspaceNames: response.data.result.keyspaceNameMap.GENERAL,
+    //         })
+    //         clusterDispatcher({
+    //             type: "SET_KEYSPACE_SYSTEM_NAMES",
+    //             keyspaceNames: response.data.result.keyspaceNameMap.SYSTEM,
+    //         })
+    //     }).catch((error) => {
+    //         errorCatch(error)
+    //     }).finally(() => {
+    //         clusterDispatcher({
+    //             type: "SET_KEYSPACE_NAMES_LOADING",
+    //             loading: false,
+    //         })
+    //     });
+    // }
 
     function doGetKeyspaceList() {
         //console.log("keyspace : ", routeParams.clusterId);
@@ -53,9 +53,28 @@ export default function useCluster() {
             params: {}
         }).then((response) => {
             console.log("doGetKeyspaceList", response);
+
+            const userCreatedList = [];
+            const systemCreatedList = [];
+
+            const tempKeyspaceList = response.data.result.keyspaceList;
+
+            for (const ele of tempKeyspaceList) {
+                if (ele.systemKeyspace) {
+                    systemCreatedList.push(ele)
+                } else {
+                    userCreatedList.push(ele)
+                }
+            }
+
             clusterDispatcher({
                 type: "SET_KEYSPACE_LIST",
-                keyspaceList: response.data.result.keyspaceList,
+                keyspaceList: userCreatedList,
+            })
+
+            clusterDispatcher({
+                type: "SET_SYSTEM_KEYSPACE_LIST",
+                keyspaceList: systemCreatedList,
             })
         }).catch((error) => {
             errorCatch(error)
@@ -69,6 +88,6 @@ export default function useCluster() {
 
     return {
         doGetKeyspaceList,
-        doGetKeyspaceNames,
+        //doGetKeyspaceNames,
     }
 }

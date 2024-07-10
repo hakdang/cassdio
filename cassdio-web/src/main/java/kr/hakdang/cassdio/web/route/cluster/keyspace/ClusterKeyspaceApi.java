@@ -53,8 +53,7 @@ public class ClusterKeyspaceApi {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-        ClusterKeyspaceListResult response = clusterKeyspaceReader.listKeyspace(clusterId);
-        result.put("keyspaceList", response.getKeyspaceList());
+        result.put("keyspaceList", clusterKeyspaceReader.allKeyspaceList(clusterId));
         return ApiResponse.ok(result);
     }
 
@@ -63,9 +62,8 @@ public class ClusterKeyspaceApi {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-        Map<String, List<String>> keyspaceNamesMap = clusterKeyspaceReader.getKeyspaceNames(clusterId);
 
-        result.put("keyspaceNameMap", keyspaceNamesMap);
+
 
         return ApiResponse.ok(result);
     }
