@@ -4,7 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceResult;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceNameResult;
 import kr.hakdang.cassdio.core.support.cache.CacheType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -34,10 +34,11 @@ public class ClusterKeyspaceReader {
         this.clusterKeyspaceCommander = clusterKeyspaceCommander;
     }
 
-    public List<KeyspaceResult> allKeyspaceList(String clusterId) {
+    //TODO: 리네임
+    public List<KeyspaceNameResult> allKeyspaceNameList(String clusterId) {
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
 
-            List<KeyspaceResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceList(session);
+            List<KeyspaceNameResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceList(session);
 
             return allKeyspaceList;
         }

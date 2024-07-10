@@ -1,21 +1,32 @@
 import {Link, useParams} from "react-router-dom";
-import {useClusterState} from "../context/clusterContext";
-import {useEffect} from "react";
-import useCluster from "../hooks/useCluster";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import useCassdio from "../../../commons/hooks/useCassdio";
 
 const ClusterHome = () => {
-
+    const {errorCatch} = useCassdio();
     const routeParams = useParams();
-    const {doGetKeyspaceList} = useCluster();
     //const {doGetKeyspaceList} = useCluster();
-    const {
-        keyspaceList,
-        keyspaceListLoading,
-    } = useClusterState();
+    const [keyspaceList, setKeyspaceList] = useState([]);
+    const [keyspaceLoading, setKeyspaceLoading] = useState(false);
 
     useEffect(() => {
         //show component
+        setKeyspaceLoading(true)
 
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace`,
+            params: {}
+        }).then((response) => {
+            console.log("doGetKeyspaceList", response);
+            setKeyspaceList(response.data.result.keyspaceList);
+
+        }).catch((error) => {
+            errorCatch(error)
+        }).finally(() => {
+            setKeyspaceLoading(false)
+        });
         //
 
         return () => {
@@ -52,7 +63,7 @@ const ClusterHome = () => {
             </div>
 
             {
-                keyspaceListLoading ? <div className="d-flex justify-content-center">
+                keyspaceLoading ? <div className="d-flex justify-content-center">
                         <div className="spinner-border" role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>

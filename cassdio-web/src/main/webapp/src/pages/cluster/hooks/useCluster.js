@@ -9,55 +9,24 @@ export default function useCluster() {
     const clusterDispatcher = useClusterDispatch();
     const {} = useClusterState();
 
-    // function doGetKeyspaceNames() {
-    //     //console.log("keyspace : ", routeParams.clusterId);
-    //     clusterDispatcher({
-    //         type: "SET_KEYSPACE_NAMES_LOADING",
-    //         loading: true,
-    //     })
-    //
-    //     axios({
-    //         method: "GET",
-    //         url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
-    //         params: {}
-    //     }).then((response) => {
-    //         console.log("doGetKeyspaceNames", response);
-    //         clusterDispatcher({
-    //             type: "SET_KEYSPACE_GENERAL_NAMES",
-    //             keyspaceNames: response.data.result.keyspaceNameMap.GENERAL,
-    //         })
-    //         clusterDispatcher({
-    //             type: "SET_KEYSPACE_SYSTEM_NAMES",
-    //             keyspaceNames: response.data.result.keyspaceNameMap.SYSTEM,
-    //         })
-    //     }).catch((error) => {
-    //         errorCatch(error)
-    //     }).finally(() => {
-    //         clusterDispatcher({
-    //             type: "SET_KEYSPACE_NAMES_LOADING",
-    //             loading: false,
-    //         })
-    //     });
-    // }
-
-    function doGetKeyspaceList() {
+    function doGetKeyspaceNames() {
         //console.log("keyspace : ", routeParams.clusterId);
         clusterDispatcher({
-            type: "SET_KEYSPACE_LIST_LOADING",
+            type: "SET_KEYSPACE_NAMES_LOADING",
             loading: true,
         })
 
         axios({
             method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace`,
+            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
             params: {}
         }).then((response) => {
-            console.log("doGetKeyspaceList", response);
+            console.log("doGetKeyspaceNames", response);
 
             const userCreatedList = [];
             const systemCreatedList = [];
 
-            const tempKeyspaceList = response.data.result.keyspaceList;
+            const tempKeyspaceList = response.data.result.keyspaceNameList;
 
             for (const ele of tempKeyspaceList) {
                 if (ele.systemKeyspace) {
@@ -68,26 +37,25 @@ export default function useCluster() {
             }
 
             clusterDispatcher({
-                type: "SET_KEYSPACE_LIST",
-                keyspaceList: userCreatedList,
+                type: "SET_KEYSPACE_GENERAL_NAMES",
+                keyspaceNames: userCreatedList,
             })
-
             clusterDispatcher({
-                type: "SET_SYSTEM_KEYSPACE_LIST",
-                keyspaceList: systemCreatedList,
+                type: "SET_KEYSPACE_SYSTEM_NAMES",
+                keyspaceNames: systemCreatedList,
             })
         }).catch((error) => {
             errorCatch(error)
         }).finally(() => {
             clusterDispatcher({
-                type: "SET_KEYSPACE_LIST_LOADING",
+                type: "SET_KEYSPACE_NAMES_LOADING",
                 loading: false,
             })
         });
     }
 
+
     return {
-        doGetKeyspaceList,
-        //doGetKeyspaceNames,
+        doGetKeyspaceNames,
     }
 }

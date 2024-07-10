@@ -1,5 +1,5 @@
 import {Link, useParams} from "react-router-dom";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
 import CassdioSidebar from "../../components/layout/cassdio-sidebar";
@@ -7,17 +7,17 @@ import CassdioSidebar from "../../components/layout/cassdio-sidebar";
 const ClusterView = (props) => {
     const routeParams = useParams();
 
-    const {doGetKeyspaceList} = useCluster();
+    const {doGetKeyspaceNames} = useCluster();
     const {
-        keyspaceList,
-        systemKeyspaceList,
-        keyspaceListLoading,
+        keyspaceGeneralNames,
+        keyspaceSystemNames,
+        keyspaceNamesLoading,
     } = useClusterState();
 
     useEffect(() => {
         //show component
 
-        doGetKeyspaceList();
+        doGetKeyspaceNames();
 
         return () => {
             //hide component
@@ -68,13 +68,13 @@ const ClusterView = (props) => {
                     </h6>
                     <ul className="nav flex-column">
                         {
-                            keyspaceListLoading ?
+                            keyspaceNamesLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </li> :
-                                keyspaceList && keyspaceList.length > 0 && keyspaceList.map((info, infoIndex) => {
+                                keyspaceGeneralNames && keyspaceGeneralNames.length > 0 && keyspaceGeneralNames.map((info, infoIndex) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
@@ -96,13 +96,13 @@ const ClusterView = (props) => {
                     </h6>
                     <ul className="nav flex-column">
                         {
-                            keyspaceListLoading ?
+                            keyspaceNamesLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
                                 </li> :
-                                systemKeyspaceList && systemKeyspaceList.length > 0 && systemKeyspaceList.map((info, infoIndex) => {
+                                keyspaceSystemNames && keyspaceSystemNames.length > 0 && keyspaceSystemNames.map((info, infoIndex) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link

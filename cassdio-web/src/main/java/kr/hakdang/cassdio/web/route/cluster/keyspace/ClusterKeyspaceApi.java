@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,12 +48,10 @@ public class ClusterKeyspaceApi {
     }
 
     @GetMapping("/keyspace")
-    public ApiResponse<Map<String, Object>> keyspaceList(
+    public ApiResponse<ClusterKeyspaceListResult> keyspaceList(
         @PathVariable String clusterId
     ) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("keyspaceList", clusterKeyspaceReader.allKeyspaceList(clusterId));
-        return ApiResponse.ok(result);
+        return ApiResponse.ok(clusterKeyspaceReader.listKeyspace(clusterId));
     }
 
     @GetMapping("/keyspace-name")
@@ -62,9 +59,7 @@ public class ClusterKeyspaceApi {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-
-
-
+        result.put("keyspaceNameList", clusterKeyspaceReader.allKeyspaceNameList(clusterId));
         return ApiResponse.ok(result);
     }
 

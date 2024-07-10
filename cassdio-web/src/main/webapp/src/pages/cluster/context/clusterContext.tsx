@@ -1,9 +1,6 @@
 import React, {createContext, Dispatch, useContext, useReducer} from "react";
 
 type ClusterState = {
-    keyspaceList: [],
-    systemKeyspaceList: [],
-    keyspaceListLoading: boolean,
     keyspaceGeneralNames: [],
     keyspaceSystemNames: [],
     keyspaceNamesLoading: boolean,
@@ -13,9 +10,6 @@ type Action =
     | { type: "SET_KEYSPACE_GENERAL_NAMES"; keyspaceNames: []; }
     | { type: "SET_KEYSPACE_SYSTEM_NAMES"; keyspaceNames: []; }
     | { type: "SET_KEYSPACE_NAMES_LOADING"; loading: boolean; }
-    | { type: "SET_KEYSPACE_LIST"; keyspaceList: []; }
-    | { type: "SET_SYSTEM_KEYSPACE_LIST"; keyspaceList: []; }
-    | { type: "SET_KEYSPACE_LIST_LOADING"; loading: boolean; }
 
 type ClusterDispatch = Dispatch<Action>;
 
@@ -24,9 +18,6 @@ const ClusterDispatchContext = createContext<ClusterDispatch | null>(null);
 
 export function ClusterProvider({children}: { children: React.ReactNode }) {
     const [state, dispatch] = useReducer(reducer, {
-        keyspaceList: [],
-        systemKeyspaceList: [],
-        keyspaceListLoading: false,
         keyspaceGeneralNames: [],
         keyspaceSystemNames: [],
         keyspaceNamesLoading: false
@@ -43,21 +34,6 @@ export function ClusterProvider({children}: { children: React.ReactNode }) {
 
 function reducer(state: ClusterState, action: Action): ClusterState {
     switch (action.type) {
-        case "SET_KEYSPACE_LIST":
-            return {
-                ...state,
-                keyspaceList: action.keyspaceList
-            };
-        case "SET_SYSTEM_KEYSPACE_LIST":
-            return {
-                ...state,
-                systemKeyspaceList: action.keyspaceList
-            };
-        case "SET_KEYSPACE_LIST_LOADING":
-            return {
-                ...state,
-                keyspaceListLoading: action.loading,
-            };
         case "SET_KEYSPACE_GENERAL_NAMES":
             return {
                 ...state,

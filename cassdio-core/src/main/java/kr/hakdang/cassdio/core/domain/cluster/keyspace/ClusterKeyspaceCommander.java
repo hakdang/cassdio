@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
-
 /**
  * ClusterKeyspaceDescribeCommander
  *
@@ -41,8 +39,8 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
      * @param session
      * @return
      */
-    public List<KeyspaceResult> allKeyspaceList(CqlSession session) {
-        List<KeyspaceResult> result = new ArrayList<>();
+    public List<KeyspaceNameResult> allKeyspaceList(CqlSession session) {
+        List<KeyspaceNameResult> result = new ArrayList<>();
 
         SimpleStatement generalSimpleStatement = makeKeyspaceListSelect(false);
 
@@ -53,7 +51,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
         while (0 < resultSet.getAvailableWithoutFetching()) {
             Row tempRow = iter.next();
-            result.add(KeyspaceResult.make(tempRow, keyspaceFilter));
+            result.add(KeyspaceNameResult.make(tempRow, keyspaceFilter));
         }
 
         if (ClusterUtils.cassandraVersion(session).compareTo(Version.V4_0_0) >= 0) {
@@ -64,7 +62,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
             while (0 < resultSet2.getAvailableWithoutFetching()) {
                 Row tempRow = iter2.next();
-                result.add(KeyspaceResult.make(tempRow, keyspaceFilter));
+                result.add(KeyspaceNameResult.make(tempRow, keyspaceFilter));
             }
         }
 
@@ -82,9 +80,6 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
                     CassandraSystemTable.SYSTEM_SCHEMA_KEYSPACES.getTableName()
                 )
                 .column("keyspace_name")
-                .column("replication")
-                .column("durable_writes")
-            //.all()
             ;
         } else {
             select = QueryBuilder
@@ -93,9 +88,6 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
                     CassandraSystemTable.SYSTEM_SCHEMA_KEYSPACES.getTableName()
                 )
                 .column("keyspace_name")
-                .column("replication")
-                .column("durable_writes")
-            //.all()
             ;
         }
 
