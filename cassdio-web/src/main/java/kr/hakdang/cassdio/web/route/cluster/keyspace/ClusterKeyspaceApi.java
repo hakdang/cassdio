@@ -80,7 +80,6 @@ public class ClusterKeyspaceApi {
         Map<String, Object> result = new HashMap<>();
 
         //TODO : keyspace validation
-
         try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
             result.put("describe", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
                 .keyspace(keyspace)
@@ -88,7 +87,9 @@ public class ClusterKeyspaceApi {
                 .pretty(true)
                 .build()));
 
-            if (withTableList) {
+            result.put("detail", clusterKeyspaceCommander.keyspaceDetail(session, keyspace));
+
+            if (withTableList) { //TODO 해당 값 외에 view 등의 기능은 탭을 생성하여 화면 이동하면 호출할 수 있도록 개발 예정
                 result.put("tableList", clusterTableCommander.allTables(session, ClusterDescTablesArgs.builder()
                     .keyspace(keyspace)
                     .pageSize(50)

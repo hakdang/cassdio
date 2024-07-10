@@ -6,6 +6,7 @@ import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
 import useCassdio from "../../../../../commons/hooks/useCassdio";
+import {CassdioUtils} from "../../../../../utils/cassdioUtils";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -58,15 +59,6 @@ const TableHome = (props) => {
             setQueryLoading(false);
         })
     }
-
-    const renderData = (data) => {
-        if (typeof data === "object") {
-            return JSON.stringify(data);
-        }
-
-        return data;
-    }
-
 
     useEffect(() => {
         //show component
@@ -151,7 +143,6 @@ const TableHome = (props) => {
 
             {/*TODO : 위치 변경*/}
 
-
             <div className="table-responsive small">
                 <table className="table table-sm table-fixed table-lock-height table-hover">
                     <thead>
@@ -203,7 +194,7 @@ const TableHome = (props) => {
                                                     <td className={"text-center text-break"}
                                                         key={`resultItem${infoIndex}`}>
                                                         {
-                                                            renderData(row[info])
+                                                            CassdioUtils.renderData(row[info])
                                                         }
                                                     </td>
                                                 )

@@ -49,7 +49,7 @@ export default function useCassdio() {
             const {status, statusText} = error.response;
 
             console.error(
-                `[API] ${method?.toUpperCase()} ${url} | Error ${status} ${statusText} | ${message}`
+                `[API] ${method?.toUpperCase()} ${url} | Error ${status} ${statusText} | ${message}`, error
             );
 
             switch (status) {

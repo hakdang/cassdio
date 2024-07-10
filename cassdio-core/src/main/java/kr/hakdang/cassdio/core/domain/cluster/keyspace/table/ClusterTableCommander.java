@@ -12,7 +12,9 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 
@@ -139,7 +142,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
             .build();
     }
 
-    public ClusterTableGetResult2 tableDetail(CqlSession session, ClusterTableArgs.ClusterTableGetArgs args) {
+    public CqlSessionSelectResult tableDetail(CqlSession session, ClusterTableArgs.ClusterTableGetArgs args) {
         SimpleStatement statement;
         int limit = 1;
         if (ClusterUtils.isVirtualKeyspace(session.getContext(), args.getKeyspace())) { //System
@@ -174,31 +177,30 @@ public class ClusterTableCommander extends BaseClusterCommander {
             throw new IllegalArgumentException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
         }
 
-        Map<String, Object> table = ClusterUtils.convertMap(codecRegistry, definitions, row);
-
-        return ClusterTableGetResult2.builder()
-            .table(table)
-            .describe(tableDescribe(session, args.getKeyspace(), args.getTable()))
+        return CqlSessionSelectResult.builder()
+            .row(ClusterUtils.convertMap(codecRegistry, definitions, row))
+            .columns(CassdioColumnDefinition.makes(definitions))
             .build();
     }
 
-    public Map<String, Object> tableDescribe(CqlSession session, String keyspace, String table) {
-        if (StringUtils.equals(keyspace, "system") && StringUtils.equals(table, "IndexInfo")) {
-            return Collections.emptyMap(); //해당 테이블은 데이터 제공이 안됨. 추후 확인
+    public String tableDescribe(CqlSession session, String keyspace, String table) {
+        if (ClusterUtils.isSystemKeyspace(session.getContext(), keyspace)) {
+            return "";
         }
 
-        //TODO : DESC 는 3버전에서 못씀. 제거하고 다른 방식으로 해야함.
-        SimpleStatement statement2 = SimpleStatement
-            .newInstance(String.format("DESC %s.%s", keyspace, table))
-            .setPageSize(1);
+        //DESC 를 통한 정보 조회는 Cassandra 3.x 에서는 지원 안됨
+        try {
+            return session.getMetadata()
+                .getKeyspace(keyspace)
+                .orElseThrow() //TODO : 에러처리
+                .getTable(table)
+                .orElseThrow()
+                .describe(true);
 
-        ResultSet resultSet2 = session.execute(statement2);
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
-
-        Row row = resultSet2.one();
-
-        ColumnDefinitions definitions2 = resultSet2.getColumnDefinitions();
-
-        return ClusterUtils.convertMap(codecRegistry, definitions2, row);
+        } catch (NoSuchElementException e) { //ignore
+            return "";
+        } catch (Throwable t) {
+            throw t;
+        }
     }
 }

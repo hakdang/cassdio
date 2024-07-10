@@ -22,10 +22,9 @@ public class ClusterTableArgs {
 
         private String keyspace;
         private String table;
-        private boolean withTableDescribe = false;
 
         @Builder
-        private ClusterTableGetArgs(String keyspace, String table, boolean withTableDescribe) {
+        private ClusterTableGetArgs(String keyspace, String table) {
             if (StringUtils.isBlank(keyspace)) {
                 throw new IllegalArgumentException("keyspace can't be null or empty");
             }
@@ -33,9 +32,9 @@ public class ClusterTableArgs {
             if (StringUtils.isBlank(table)) {
                 throw new IllegalArgumentException("table can't be null or empty");
             }
+
             this.keyspace = keyspace;
             this.table = table;
-            this.withTableDescribe = withTableDescribe;
         }
 
     }

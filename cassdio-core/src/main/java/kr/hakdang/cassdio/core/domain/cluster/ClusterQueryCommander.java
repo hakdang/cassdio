@@ -32,6 +32,9 @@ import java.util.Map;
 public class ClusterQueryCommander {
 
     public ClusterQueryCommanderResult execute(CqlSession session, ClusterQueryCommanderArgs args) {
+        //TODO
+        //InvalidQueryException 로 터지는건 내부 QueryException 만들어서 400 으로 잡아서 처리
+
         SimpleStatement statement = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout

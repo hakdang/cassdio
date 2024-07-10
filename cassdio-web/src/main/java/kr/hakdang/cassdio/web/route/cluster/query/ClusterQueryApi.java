@@ -50,7 +50,7 @@ public class ClusterQueryApi {
             map.put("wasApplied", result1.isWasApplied());
             map.put("nextCursor", result1.getNextCursor());
             map.put("rows", result1.getRows());
-            map.put("columnNames", result1.getColumnNames());
+            map.put("columnNames", result1.getColumnNames()); //TODO 변경 예정
         }
 
         return ApiResponse.ok(map);
