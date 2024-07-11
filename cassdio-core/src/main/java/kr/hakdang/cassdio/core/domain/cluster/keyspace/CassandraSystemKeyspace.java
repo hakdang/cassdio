@@ -3,6 +3,7 @@ package kr.hakdang.cassdio.core.domain.cluster.keyspace;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * CassandraSystemKeyspace
@@ -46,4 +47,15 @@ public enum CassandraSystemKeyspace {
             .anyMatch(keyspace -> keyspace.getKeyspaceName().equals(keyspaceName));
     }
 
+    public static List<CassandraSystemKeyspace> onlySystemKeyspaceList() {
+        return Arrays.stream(CassandraSystemKeyspace.values())
+            .filter(keyspace -> !keyspace.isVirtualKeyspace)
+            .toList();
+    }
+
+    public static List<CassandraSystemKeyspace> virtualSystemKeyspaceList() {
+        return Arrays.stream(CassandraSystemKeyspace.values())
+            .filter(keyspace -> keyspace.isVirtualKeyspace)
+            .toList();
+    }
 }

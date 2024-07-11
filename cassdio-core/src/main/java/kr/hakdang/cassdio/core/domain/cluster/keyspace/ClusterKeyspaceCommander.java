@@ -104,11 +104,14 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
     public ClusterKeyspaceListResult generalKeyspaceList(CqlSession session) {
         List<KeyspaceResult> keyspaceList = new ArrayList<>();
         for (Map.Entry<CqlIdentifier, KeyspaceMetadata> entry : session.getMetadata().getKeyspaces().entrySet()) {
+            String keyspaceName = entry.getKey().asCql(true);
+
             keyspaceList.add(
                 KeyspaceResult.builder()
-                    .keyspaceName(entry.getKey().asCql(true))
+                    .keyspaceName(keyspaceName)
                     .durableWrites(entry.getValue().isDurableWrites())
                     .replication(entry.getValue().getReplication())
+                    .systemKeyspace(ClusterUtils.isSystemKeyspace(session.getContext(), keyspaceName))
                     .build()
             );
         }
