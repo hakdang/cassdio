@@ -58,7 +58,7 @@ public class ClusterTableColumnCommander {
 
         return CqlSessionSelectResults.builder()
             .rows(rows) //TODO 리스트 정렬해서 이쁘게 보여주기
-            .columns(CassdioColumnDefinition.makes(definitions))
+            .columnHeader(CassdioColumnDefinition.makes(definitions))
             .build();
     }
 

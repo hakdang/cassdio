@@ -13,6 +13,7 @@ import com.datastax.oss.protocol.internal.util.Bytes;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
@@ -104,7 +105,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
             .build();
     }
 
-    public ClusterTablePureSelectResult pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
+    public CqlSessionSelectResults pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
         SimpleStatement statement = QueryBuilder.selectFrom(args.getKeyspace(), args.getTable())
             .all()
             .build()
@@ -129,14 +130,8 @@ public class ClusterTableCommander extends BaseClusterCommander {
             nextCursor = Bytes.toHexString(pagingState);
         }
 
-        List<String> columnNames = new ArrayList<>();
-        for (ColumnDefinition definition : definitions) {
-            columnNames.add(definition.getName().asCql(true));
-        }
-
-        return ClusterTablePureSelectResult.builder()
-            .wasApplied(resultSet.wasApplied())
-            .columnNames(columnNames)
+        return CqlSessionSelectResults.builder()
+            .columnHeader(CassdioColumnDefinition.makes(definitions))
             .rows(rows)
             .nextCursor(nextCursor)
             .build();

@@ -116,9 +116,8 @@ const KeyspaceHome = () => {
                     keyspaceDetail && <>
                         <div className="table-responsive small">
                             <table
-                                className="table table-sm table-fixed table-lock-height table-hover">
-                                <tbody className="table-group-divider"
-                                       style={{maxHeight: "100vh"}}>
+                                className="table table-sm table-hover">
+                                <tbody>
 
                                 {
                                     keyspaceDetail.columns.map((info, infoIndex) => {

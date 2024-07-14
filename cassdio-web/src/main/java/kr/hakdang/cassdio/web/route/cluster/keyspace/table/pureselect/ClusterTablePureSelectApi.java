@@ -1,9 +1,9 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table.pureselect;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTablePureSelectResult;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,13 +47,11 @@ public class ClusterTablePureSelectApi {
     ) {
         Map<String, Object> map = new HashMap<>();
         try (CqlSession session = tempClusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
-            ClusterTablePureSelectResult result1 = clusterTableCommander.pureSelect(session, request.makeArgs(keyspace, table));
+            CqlSessionSelectResults result1 = clusterTableCommander.pureSelect(session, request.makeArgs(keyspace, table));
 
-            map.put("wasApplied", result1.isWasApplied());
             map.put("nextCursor", result1.getNextCursor());
             map.put("rows", result1.getRows());
-            map.put("columnNames", result1.getColumnNames());
-
+            map.put("columnHeader", result1.getColumnHeader());
         }
 
         return ApiResponse.ok(map);

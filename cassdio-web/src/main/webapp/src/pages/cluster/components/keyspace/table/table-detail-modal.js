@@ -35,6 +35,7 @@ const TableDetailModal = (props) => {
             return;
         }
         setTableLoading(true);
+
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`,

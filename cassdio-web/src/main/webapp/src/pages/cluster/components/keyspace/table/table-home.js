@@ -17,9 +17,8 @@ const TableHome = (props) => {
     const [tableName, setTableName] = useState('');
     const {errorCatch, openToast} = useCassdio();
     const initQueryResult = {
-        wasApplied: null,
         rows: [],
-        columnNames: [],
+        columnHeader: [],
     };
 
     const [queryLoading, setQueryLoading] = useState(false)
@@ -29,9 +28,8 @@ const TableHome = (props) => {
     const getList = (cursor) => {
         if (cursor === null) {
             setQueryResult({
-                wasApplied: null,
                 rows: [],
-                columnNames: [],
+                columnHeader: [],
             })
         }
 
@@ -49,9 +47,8 @@ const TableHome = (props) => {
             setNextCursor(response.data.result.nextCursor)
 
             setQueryResult({
-                wasApplied: response.data.result.wasApplied,
                 rows: [...queryResult.rows, ...response.data.result.rows],
-                columnNames: response.data.result.columnNames,
+                columnHeader: response.data.result.columnHeader,
             })
         }).catch((error) => {
             errorCatch(error);
@@ -62,15 +59,15 @@ const TableHome = (props) => {
 
     useEffect(() => {
         //show component
-
+        setTableName(routeParams.tableName);
         setQueryResult(initQueryResult);
         getList(null)
 
         return () => {
             //hide component
-
+            setTableName('');
         };
-    }, []);
+    }, [tableName]);
 
     return (
         <>
@@ -110,7 +107,6 @@ const TableHome = (props) => {
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <button type="button" className="btn btn-sm btn-outline-secondary me-2"
                             onClick={() => {
-                                setTableName(routeParams.tableName);
                                 setShowDetail(true);
                             }}>
                         Detail
@@ -119,6 +115,7 @@ const TableHome = (props) => {
                     <div className="btn-group me-2">
                         <button type="button" className="btn btn-sm btn-outline-secondary"
                                 onClick={() => {
+
                                     setShowExport(true);
                                 }}
                         >Export
@@ -151,10 +148,13 @@ const TableHome = (props) => {
                             scope="col">#
                         </th>
                         {
-                            queryResult.columnNames.map((info, infoIndex) => {
+                            queryResult.columnHeader.map((info, infoIndex) => {
                                 return (
                                     <th className={"text-center"} key={`resultHeader${infoIndex}`}
-                                        scope="col">{info}</th>
+                                        scope="col">
+                                        {info.columnName}
+                                        <small>({info.type})</small>
+                                    </th>
                                 )
                             })
                         }
@@ -164,7 +164,7 @@ const TableHome = (props) => {
                     {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
-                                    <td className={"text-center"} colSpan={queryResult.columnNames.length + 1}>
+                                    <td className={"text-center"} colSpan={queryResult.columnHeader.length + 1}>
                                         데이터가 없습니다.
                                     </td>
                                 </tr>
@@ -189,12 +189,12 @@ const TableHome = (props) => {
                                             </div>
                                         </td>
                                         {
-                                            queryResult.columnNames.map((info, infoIndex) => {
+                                            queryResult.columnHeader.map((info, infoIndex) => {
                                                 return (
                                                     <td className={"text-center text-break"}
                                                         key={`resultItem${infoIndex}`}>
                                                         {
-                                                            CassdioUtils.renderData(row[info])
+                                                            CassdioUtils.renderData(row[info.columnName])
                                                         }
                                                     </td>
                                                 )
@@ -219,29 +219,39 @@ const TableHome = (props) => {
                 </div>
             }
 
-            <TableDetailModal
-                show={showDetail}
-                clusterId={routeParams.clusterId}
-                keyspaceName={routeParams.keyspaceName}
-                tableName={tableName}
-                handleClose={() => setShowDetail(false)}
-            />
+            {
+                showDetail && <TableDetailModal
+                    show={showDetail}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={tableName}
+                    handleClose={() => setShowDetail(false)}
+                />
+            }
 
-            <TableDataManageModal
-                show={showDataManage}
-                handleClose={() => setShowDataManage(false)}
-            />
+            {
+                showDataManage && <TableDataManageModal
+                    show={showDataManage}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={tableName}
+                    handleClose={() => setShowDataManage(false)}
+                />
+            }
 
-            <TableExportModal
-                show={showExport}
-                handleClose={() => setShowExport(false)}
-            />
+            {
+                showExport && <TableExportModal
+                    show={showExport}
+                    handleClose={() => setShowExport(false)}
+                />
+            }
 
-            <TableImportModal
-                show={showImport}
-                handleClose={() => setShowImport(false)}
-            />
-
+            {
+                showImport && <TableImportModal
+                    show={showImport}
+                    handleClose={() => setShowImport(false)}
+                />
+            }
         </>
     )
 }
