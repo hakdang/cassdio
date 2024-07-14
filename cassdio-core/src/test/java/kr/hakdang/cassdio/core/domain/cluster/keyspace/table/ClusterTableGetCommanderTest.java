@@ -30,7 +30,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)
             .table("test_table_1")
-            .withTableDescribe(true)
             .build();
 
         // when
@@ -88,7 +87,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace("system_schema")
             .table("tables")
-            .withTableDescribe(true)
             .build();
 
         // when

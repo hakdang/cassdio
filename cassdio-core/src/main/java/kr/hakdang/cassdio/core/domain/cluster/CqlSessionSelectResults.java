@@ -6,33 +6,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * CqlSessionSelectResult
+ * CqlSessionSelectResults
  *
  * @author akageun
  * @since 2024-07-09
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CqlSessionSelectResult {
+public class CqlSessionSelectResults {
 
-    private Map<String, Object> row;
+    private List<Map<String, Object>> rows;
     private List<CassdioColumnDefinition> columns;
 
     @Builder
-    public CqlSessionSelectResult(Map<String, Object> row, List<CassdioColumnDefinition> columns) {
-        this.row = row;
+    public CqlSessionSelectResults(List<Map<String, Object>> rows, List<CassdioColumnDefinition> columns) {
+        this.rows = rows;
         this.columns = columns;
-    }
-
-    public static CqlSessionSelectResult empty() {
-        return CqlSessionSelectResult.builder()
-            .row(Collections.emptyMap())
-            .columns(Collections.emptyList())
-            .build();
     }
 }

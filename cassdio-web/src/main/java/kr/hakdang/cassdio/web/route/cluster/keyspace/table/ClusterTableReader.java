@@ -49,15 +49,4 @@ public class ClusterTableReader {
         }
     }
 
-    public ClusterTableGetResult2 getTable(String clusterId, String keyspace, String table, boolean withTableDescribe) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
-
-            return clusterTableCommander.tableDetail(session, ClusterTableArgs.ClusterTableGetArgs.builder()
-                .keyspace(keyspace)
-                .table(table)
-                .withTableDescribe(withTableDescribe)
-                .build());
-        }
-    }
-
 }

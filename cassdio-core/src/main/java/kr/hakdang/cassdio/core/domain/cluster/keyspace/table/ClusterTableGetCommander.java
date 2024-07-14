@@ -48,7 +48,7 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
         }
 
         String tableDescribe = "";
-        if (!CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace()) && args.isWithTableDescribe()) {
+        if (!CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace())) {
             TableMetadata tableMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
                 .orElseThrow(() -> new ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", args.getKeyspace())))
                 .getTable(args.getTable())
