@@ -4,6 +4,7 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-sql";
 import "ace-builds/src-noconflict/theme-sqlserver"
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 const QueryEditor = (props) => {
 
@@ -46,7 +47,7 @@ const QueryEditor = (props) => {
     return (
         <>
             <div className="btn-toolbar pb-1" role="toolbar" aria-label="Toolbar with button groups">
-                <div className="btn-group btn-group-sm me-2 " role="group" aria-label="Third group">
+                <div className="btn-group btn-group-sm me-1 " role="group" aria-label="Third group">
                     <button type="button" className="btn btm-sm btn-danger" onClick={() => queryExecute(null)}>
                         {
                             queryLoading ?
@@ -56,7 +57,7 @@ const QueryEditor = (props) => {
                         }
                     </button>
                 </div>
-                <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
+                <div className="btn-group btn-group-sm me-1" role="group" aria-label="First group">
                     <button className="btn btn-sm btn-outline-secondary" type="button"
                             onClick={e => {
                                 editorRef.current.editor.undo()
@@ -70,12 +71,52 @@ const QueryEditor = (props) => {
                         <i className="bi bi-arrow-right"></i>
                     </button>
                 </div>
+
+                <div className="btn-group btn-group-sm me-1" role="group" aria-label="First group">
+                    <OverlayTrigger placement="top" overlay={
+                        <Tooltip id="tooltip">
+                            Query Save
+                        </Tooltip>
+                    }>
+                        <button className="btn btn-sm btn-outline-primary" type="button"
+                                onClick={e => alert("쿼리 저장하기 옵션 구현 필요.")}>
+                            <i className="bi bi-floppy2-fill"></i>
+                        </button>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={
+                        <Tooltip id="tooltip">
+                            Query Auto Save <br/>(per 30 sec)
+                        </Tooltip>
+                    }>
+                        <button className="btn btn-sm btn-outline-primary" type="button"
+                                onClick={e => alert("자동저장 옵션 구현 필요(query option 에 대한 localstorage 필요)")}>
+                            <i className="bi bi-clock"></i>
+                        </button>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={
+                        <Tooltip id="tooltip">
+                            Query Editor Clean
+                        </Tooltip>
+                    }>
+                        <button className="btn btn-sm btn-outline-primary" type="button"
+                                onClick={e => alert("에디터 비우기")}>
+                            <i className="bi bi-eraser-fill"></i>
+                        </button>
+                    </OverlayTrigger>
+                </div>
+
                 <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
-                    <button className="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#queryOptionCollapse" aria-expanded="false"
-                            aria-controls="queryOptionCollapse">
-                        <i className="bi bi-gear-wide-connected"></i>
-                    </button>
+                <OverlayTrigger placement="top" overlay={
+                        <Tooltip id="tooltip">
+                            Query Command Options
+                        </Tooltip>
+                    }>
+                        <button className="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#queryOptionCollapse" aria-expanded="false"
+                                aria-controls="queryOptionCollapse">
+                            <i className="bi bi-gear-wide-connected"></i>
+                        </button>
+                    </OverlayTrigger>
                 </div>
                 {/*<div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">*/}
                 {/*    <button type="button" className="btn btm-sm btn-primary">*/}

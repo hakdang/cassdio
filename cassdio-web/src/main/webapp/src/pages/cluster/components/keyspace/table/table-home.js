@@ -36,9 +36,9 @@ const TableHome = (props) => {
         setQueryLoading(true);
 
         axios({
-            method: "POST",
+            method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`,
-            data: {
+            params: {
                 pageSize: 50,
                 timeoutSeconds: 3,
                 cursor: cursor,
@@ -128,13 +128,14 @@ const TableHome = (props) => {
                         </button>
                     </div>
 
-                    <button type="button"
-                            className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
-                            onClick={() => {
-                                setShowDataManage(true);
-                            }}>
-                        New Line
-                    </button>
+                    {/* MAP, Set 등 다 구현하려면 어려움 추후 대응 필요해보임*/}
+                    {/*<button type="button"*/}
+                    {/*        className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"*/}
+                    {/*        onClick={() => {*/}
+                    {/*            setShowDataManage(true);*/}
+                    {/*        }}>*/}
+                    {/*    New Line*/}
+                    {/*</button>*/}
                 </div>
             </div>
 
@@ -178,10 +179,11 @@ const TableHome = (props) => {
                                                         onClick={() => openToast("복사")}>
                                                     <i className="bi bi-clipboard2"></i>
                                                 </button>
-                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => openToast("수정")}>
-                                                    <i className="bi bi-pencil-square"></i>
-                                                </button>
+                                                {/*UI 구성 등 오래걸릴 듯*/}
+                                                {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
+                                                {/*        onClick={() => openToast("수정")}>*/}
+                                                {/*    <i className="bi bi-pencil-square"></i>*/}
+                                                {/*</button>*/}
                                                 <button type="button" className={"btn btn-sm btn-outline-danger"}
                                                         onClick={() => openToast("삭제")}>
                                                     <i className="bi bi-trash3-fill"></i>
