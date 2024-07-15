@@ -23,9 +23,22 @@ const QueryEditor = (props) => {
         } else {
             props.queryExecute(query, cursor, setQueryLoading);
         }
-
-
     }
+
+    const commands = [{
+        name: 'saveFile',
+        bindKey: {win: 'Ctrl-S', mac: 'Command-S'},
+        exec: function(editor) {
+            alert('File saved');
+            // Implement save logic here
+        }
+    },{
+        name: 'commandExecute',
+        bindKey: {win: 'Ctrl-Enter', mac: 'Command-Enter'},
+        exec: function(editor) {
+            queryExecute(null);
+        }
+    }];
 
     function onSelectionChange(value, event) {
         const content = editorRef.current.editor.getSelectedText();
@@ -190,6 +203,7 @@ const QueryEditor = (props) => {
                 highlightActiveLine={true}
                 value={query || ''}
                 width={'100%'}
+                commands={commands}
             />
         </>
     )
