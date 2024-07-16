@@ -1,5 +1,6 @@
 import axios from "axios";
 import {useCassdioDispatch} from "../context/cassdioContext";
+import {toast} from "react-toastify";
 
 
 export default function useCassdio() {
@@ -31,17 +32,6 @@ export default function useCassdio() {
         });
     }
 
-    function openToast(message) {
-        if (!message) {
-            return;
-        }
-        cassdioDispatcher({
-            type: "SET_TOAST",
-            message: message,
-            delay: 3000,
-        })
-    }
-
     function errorCatch(error) {
         if (axios.isAxiosError(error)) {
             const {message} = error;
@@ -54,40 +44,39 @@ export default function useCassdio() {
 
             switch (status) {
                 case 400:
-                    alert(`${status} 잘못된 요청입니다.`);
+                    toast.warn(`${status} 잘못된 요청입니다.`);
                     break;
                 case 401: {
-                    alert(`${status} 인증 실패입니다.`);
+                    toast.warn(`${status} 인증 실패입니다.`);
                     break;
                 }
                 case 403: {
-                    alert(`${status} 권한이 없습니다.`);
+                    toast.warn(`${status} 권한이 없습니다.`);
                     break;
                 }
                 case 404: {
-                    alert(`${status} 찾을 수 없는 페이지입니다.`);
+                    toast.warn(`${status} 찾을 수 없는 페이지입니다.`);
                     break;
                 }
                 case 500: {
-                    openToast(`${status} 서버 오류입니다.`);
+                    toast.error(`${status} 서버 오류입니다. ${error.message}`);
                     break;
                 }
                 default: {
-                    alert(`${status} 에러가 발생했습니다. ${error.message}`);
+                    toast.error(`${status} 에러가 발생했습니다. ${error.message}`);
                 }
             }
         } else if (error instanceof Error && error.name === "TimeoutError") {
             console.error(`[API] | TimeError ${error.toString()}`);
-            alert(`${0} 요청 시간이 초과되었습니다.`);
+            toast.error(`${0} 요청 시간이 초과되었습니다.`);
         } else {
             console.error(`[API] | Error ${error.toString()}`);
-            alert(`${0} 에러가 발생했습니다. ${error.toString()}`);
+            toast.error(`${0} 에러가 발생했습니다. ${error.toString()}`);
         }
     }
 
     return {
         doBootstrap,
-        openToast,
         errorCatch,
     }
 }

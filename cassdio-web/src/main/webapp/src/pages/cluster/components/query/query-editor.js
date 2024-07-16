@@ -5,11 +5,12 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-sql";
 import "ace-builds/src-noconflict/theme-sqlserver"
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import {toast} from "react-toastify";
 
 const QueryEditor = (props) => {
 
     const [queryLoading, setQueryLoading] = useState(false)
-    const [query, setQuery] = useState("SELECT * FROM testdb.test_table_1;")
+    const [query, setQuery] = useState("")
 
     const queryOptions = props.queryOptions;
     const setQueryOptions = props.setQueryOptions;
@@ -29,21 +30,25 @@ const QueryEditor = (props) => {
     const commands = [{
         name: 'saveFile',
         bindKey: {win: 'Ctrl-S', mac: 'Command-S'},
-        exec: function(editor) {
-            alert('File saved');
+        exec: (editor) => {
+            toast.info('File saved');
             // Implement save logic here
         }
-    },{
+    }, {
         name: 'commandExecute',
         bindKey: {win: 'Ctrl-Enter', mac: 'Command-Enter'},
-        exec: function(editor) {
-            queryExecute(null);
+        exec: (editor) => {
+            const tempQuery = editor.getSelectedText();
+            if (tempQuery) {
+                props.queryExecute(tempQuery, null, setQueryLoading);
+            } else {
+                props.queryExecute(query, null, setQueryLoading);
+            }
         }
     }];
 
     function onSelectionChange(value, event) {
         const content = editorRef.current.editor.getSelectedText();
-        console.log("content : ", content)
         // use content
         setSelectedQuery(editorRef.current.editor.getSelectedText());
     }
@@ -119,7 +124,7 @@ const QueryEditor = (props) => {
                 </div>
 
                 <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
-                <OverlayTrigger placement="top" overlay={
+                    <OverlayTrigger placement="top" overlay={
                         <Tooltip id="tooltip">
                             Query Command Options
                         </Tooltip>
