@@ -30,19 +30,23 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                                 <li key={infoIndex}
                                     className="list-group-item d-flex justify-content-between align-items-start">
                                     <div className="ms-2 me-auto">
-                                        <div className="fw-bold" role={"button"}
-                                             onClick={() => {
-                                                 setTableName(info.table_name);
-                                                 setShowDetail(true);
-                                             }}>
-                                            {info.table_name}
+                                        <div className="fw-bold">
+                                            <Link
+                                                className={"link-body-emphasis text-decoration-none"}
+                                                to={`/cluster/${clusterId}/keyspace/${keyspaceName}/table/${info.table_name}`}>
+                                                {info.table_name}
+                                            </Link>
                                         </div>
                                         {info.comment}
                                     </div>
                                     <div className={"btn-group btn-group-sm"}>
-                                        <Link
-                                            className={"btn btn-sm btn-outline-primary"}
-                                            to={`/cluster/${clusterId}/keyspace/${keyspaceName}/table/${info.table_name}`}>Rows</Link>
+                                        <a className={"btn btn-sm btn-outline-primary"} role={"button"}
+                                           onClick={() => {
+                                               setTableName(info.table_name);
+                                               setShowDetail(true);
+                                           }}>
+                                            Detail
+                                        </a>
                                     </div>
                                 </li>
                             ))}

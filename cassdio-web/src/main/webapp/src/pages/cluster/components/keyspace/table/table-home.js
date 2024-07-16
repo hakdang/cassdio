@@ -6,7 +6,8 @@ import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
 import useCassdio from "../../../../../commons/hooks/useCassdio";
-import {CassdioUtils} from "../../../../../utils/cassdioUtils";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import DataRowItem from "../../data-row-item";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -17,9 +18,8 @@ const TableHome = (props) => {
     const [tableName, setTableName] = useState('');
     const {errorCatch, openToast} = useCassdio();
     const initQueryResult = {
-        wasApplied: null,
         rows: [],
-        columnNames: [],
+        columnHeader: [],
     };
 
     const [queryLoading, setQueryLoading] = useState(false)
@@ -29,18 +29,17 @@ const TableHome = (props) => {
     const getList = (cursor) => {
         if (cursor === null) {
             setQueryResult({
-                wasApplied: null,
                 rows: [],
-                columnNames: [],
+                columnHeader: [],
             })
         }
 
         setQueryLoading(true);
 
         axios({
-            method: "POST",
+            method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`,
-            data: {
+            params: {
                 pageSize: 50,
                 timeoutSeconds: 3,
                 cursor: cursor,
@@ -49,9 +48,8 @@ const TableHome = (props) => {
             setNextCursor(response.data.result.nextCursor)
 
             setQueryResult({
-                wasApplied: response.data.result.wasApplied,
                 rows: [...queryResult.rows, ...response.data.result.rows],
-                columnNames: response.data.result.columnNames,
+                columnHeader: response.data.result.columnHeader,
             })
         }).catch((error) => {
             errorCatch(error);
@@ -62,15 +60,15 @@ const TableHome = (props) => {
 
     useEffect(() => {
         //show component
-
+        setTableName(routeParams.tableName);
         setQueryResult(initQueryResult);
         getList(null)
 
         return () => {
             //hide component
-
+            setTableName('');
         };
-    }, []);
+    }, [tableName]);
 
     return (
         <>
@@ -110,7 +108,6 @@ const TableHome = (props) => {
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <button type="button" className="btn btn-sm btn-outline-secondary me-2"
                             onClick={() => {
-                                setTableName(routeParams.tableName);
                                 setShowDetail(true);
                             }}>
                         Detail
@@ -119,6 +116,7 @@ const TableHome = (props) => {
                     <div className="btn-group me-2">
                         <button type="button" className="btn btn-sm btn-outline-secondary"
                                 onClick={() => {
+
                                     setShowExport(true);
                                 }}
                         >Export
@@ -131,13 +129,14 @@ const TableHome = (props) => {
                         </button>
                     </div>
 
-                    <button type="button"
-                            className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
-                            onClick={() => {
-                                setShowDataManage(true);
-                            }}>
-                        New Line
-                    </button>
+                    {/* MAP, Set 등 다 구현하려면 어려움 추후 대응 필요해보임*/}
+                    {/*<button type="button"*/}
+                    {/*        className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"*/}
+                    {/*        onClick={() => {*/}
+                    {/*            setShowDataManage(true);*/}
+                    {/*        }}>*/}
+                    {/*    New Line*/}
+                    {/*</button>*/}
                 </div>
             </div>
 
@@ -147,14 +146,19 @@ const TableHome = (props) => {
                 <table className="table table-sm table-fixed table-lock-height table-hover">
                     <thead>
                     <tr className={"table-dark"}>
-                        <th className={"text-center"}
-                            scope="col">#
-                        </th>
+                        <th className={"text-center"} scope="col">#</th>
                         {
-                            queryResult.columnNames.map((info, infoIndex) => {
+                            queryResult.columnHeader.map((info, infoIndex) => {
                                 return (
-                                    <th className={"text-center"} key={`resultHeader${infoIndex}`}
-                                        scope="col">{info}</th>
+                                    <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`} scope="col">
+                                        <OverlayTrigger placement="bottom" overlay={
+                                            <Tooltip id="tooltip">
+                                                {info.columnName}
+                                            </Tooltip>
+                                        }>
+                                            <span style={{cursor: "pointer"}}>{info.columnName}</span>
+                                        </OverlayTrigger>
+                                    </th>
                                 )
                             })
                         }
@@ -164,7 +168,7 @@ const TableHome = (props) => {
                     {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
-                                    <td className={"text-center"} colSpan={queryResult.columnNames.length + 1}>
+                                    <td className={"text-center"} colSpan={queryResult.columnHeader.length + 1}>
                                         데이터가 없습니다.
                                     </td>
                                 </tr>
@@ -178,10 +182,11 @@ const TableHome = (props) => {
                                                         onClick={() => openToast("복사")}>
                                                     <i className="bi bi-clipboard2"></i>
                                                 </button>
-                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => openToast("수정")}>
-                                                    <i className="bi bi-pencil-square"></i>
-                                                </button>
+                                                {/*UI 구성 등 오래걸릴 듯*/}
+                                                {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
+                                                {/*        onClick={() => openToast("수정")}>*/}
+                                                {/*    <i className="bi bi-pencil-square"></i>*/}
+                                                {/*</button>*/}
                                                 <button type="button" className={"btn btn-sm btn-outline-danger"}
                                                         onClick={() => openToast("삭제")}>
                                                     <i className="bi bi-trash3-fill"></i>
@@ -189,13 +194,11 @@ const TableHome = (props) => {
                                             </div>
                                         </td>
                                         {
-                                            queryResult.columnNames.map((info, infoIndex) => {
+                                            queryResult.columnHeader.map((info, infoIndex) => {
                                                 return (
-                                                    <td className={"text-center text-break"}
+                                                    <td className={"text-center text-break text-truncate"}
                                                         key={`resultItem${infoIndex}`}>
-                                                        {
-                                                            CassdioUtils.renderData(row[info])
-                                                        }
+                                                        <DataRowItem data={row[info.columnName]}/>
                                                     </td>
                                                 )
                                             })
@@ -219,29 +222,39 @@ const TableHome = (props) => {
                 </div>
             }
 
-            <TableDetailModal
-                show={showDetail}
-                clusterId={routeParams.clusterId}
-                keyspaceName={routeParams.keyspaceName}
-                tableName={tableName}
-                handleClose={() => setShowDetail(false)}
-            />
+            {
+                showDetail && <TableDetailModal
+                    show={showDetail}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={tableName}
+                    handleClose={() => setShowDetail(false)}
+                />
+            }
 
-            <TableDataManageModal
-                show={showDataManage}
-                handleClose={() => setShowDataManage(false)}
-            />
+            {
+                showDataManage && <TableDataManageModal
+                    show={showDataManage}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={tableName}
+                    handleClose={() => setShowDataManage(false)}
+                />
+            }
 
-            <TableExportModal
-                show={showExport}
-                handleClose={() => setShowExport(false)}
-            />
+            {
+                showExport && <TableExportModal
+                    show={showExport}
+                    handleClose={() => setShowExport(false)}
+                />
+            }
 
-            <TableImportModal
-                show={showImport}
-                handleClose={() => setShowImport(false)}
-            />
-
+            {
+                showImport && <TableImportModal
+                    show={showImport}
+                    handleClose={() => setShowImport(false)}
+                />
+            }
         </>
     )
 }

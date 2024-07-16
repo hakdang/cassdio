@@ -8,7 +8,7 @@ const TableDetailModalColumnList = (props) => {
                 <thead>
                 <tr className={"table-dark"}>
                     {
-                        columnList.columns.map((info, infoIndex) => {
+                        columnList.columnHeader.map((info, infoIndex) => {
                             return (
                                 <th className={"text-center"}
                                     key={`resultHeader${infoIndex}`} scope="col">
@@ -24,7 +24,7 @@ const TableDetailModalColumnList = (props) => {
                     columnList.rows.length <= 0 ? <>
                             <tr>
                                 <td className={"text-center"}
-                                    colSpan={columnList.columns.length}>
+                                    colSpan={columnList.columnHeader.length}>
                                     데이터가 없습니다.
                                 </td>
                             </tr>
@@ -33,7 +33,7 @@ const TableDetailModalColumnList = (props) => {
                             return (
                                 <tr key={`resultBody${rowIndex}`}>
                                     {
-                                        columnList.columns.map((info, infoIndex) => {
+                                        columnList.columnHeader.map((info, infoIndex) => {
                                             return (
                                                 <td className={"text-center text-break"}
                                                     key={`resultItem${infoIndex}`}>

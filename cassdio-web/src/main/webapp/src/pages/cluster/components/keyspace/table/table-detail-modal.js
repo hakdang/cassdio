@@ -24,7 +24,7 @@ const TableDetailModal = (props) => {
         describe: '',
         columnList: {
             rows: [],
-            columns: [],
+            columnHeader: [],
         },
     })
 
@@ -35,6 +35,7 @@ const TableDetailModal = (props) => {
             return;
         }
         setTableLoading(true);
+
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`,
@@ -42,6 +43,7 @@ const TableDetailModal = (props) => {
                 withTableDescribe: true,
             }
         }).then((response) => {
+            console.log("detail : ", response);
             setTableInfo({
                 detail: response.data.result.detail,
                 describe: response.data.result.describe,

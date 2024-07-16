@@ -1,4 +1,4 @@
-package kr.hakdang.cassdio.web.route.cluster.keyspace.table.pureselect;
+package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
 import lombok.AccessLevel;
@@ -17,11 +17,18 @@ import lombok.NoArgsConstructor;
 public class ClusterTablePureSelectRequest {
     private String cursor;
     private int pageSize;
+    private int timeoutSeconds;
 
     @Builder
-    public ClusterTablePureSelectRequest(String cursor, int pageSize) {
+    public ClusterTablePureSelectRequest(String cursor, int pageSize, int timeoutSeconds) {
         this.cursor = cursor;
         this.pageSize = pageSize;
+        if (timeoutSeconds <= 0 || timeoutSeconds > 30) {
+            this.timeoutSeconds = 3;
+        } else {
+            this.timeoutSeconds = timeoutSeconds;
+        }
+
     }
 
     public ClusterTablePureSelectArgs makeArgs(String keyspace, String table) {
@@ -30,6 +37,7 @@ public class ClusterTablePureSelectRequest {
             .table(table)
             .cursor(cursor)
             .pageSize(pageSize)
+            .timeoutSeconds(timeoutSeconds)
             .build();
     }
 }

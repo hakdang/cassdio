@@ -20,11 +20,17 @@ import java.util.Map;
 public class CqlSessionSelectResults {
 
     private List<Map<String, Object>> rows;
-    private List<CassdioColumnDefinition> columns;
+    private List<CassdioColumnDefinition> columnHeader;
+    private String nextCursor;
 
     @Builder
-    public CqlSessionSelectResults(List<Map<String, Object>> rows, List<CassdioColumnDefinition> columns) {
+    public CqlSessionSelectResults(
+        List<Map<String, Object>> rows,
+        List<CassdioColumnDefinition> columnHeader,
+        String nextCursor
+    ) {
         this.rows = rows;
-        this.columns = columns;
+        this.columnHeader = columnHeader;
+        this.nextCursor = nextCursor;
     }
 }

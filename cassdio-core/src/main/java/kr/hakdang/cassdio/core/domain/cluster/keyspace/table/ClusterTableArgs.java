@@ -74,11 +74,12 @@ public class ClusterTableArgs {
         private String table;
 
         private int pageSize;
+        private int timeoutSeconds;
 
         private String cursor;
 
         @Builder
-        public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, String cursor) {
+        public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, int timeoutSeconds, String cursor) {
             if (StringUtils.isBlank(keyspace)) {
                 throw new IllegalArgumentException("keyspace can't be null or empty");
             }
@@ -94,6 +95,7 @@ public class ClusterTableArgs {
             this.keyspace = keyspace;
             this.table = table;
             this.pageSize = pageSize;
+            this.timeoutSeconds = timeoutSeconds;
             this.cursor = cursor;
         }
     }
