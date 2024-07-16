@@ -1,5 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster.info;
 
+import io.micrometer.common.util.StringUtils;
+import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.common.utils.Jsons;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,7 @@ public class ClusterManager implements InitializingBean {
                 .hashMap("cluster", Serializer.STRING, Serializer.STRING)
                 .createOrOpen();
 
-            String clusterId = ClusterUtils.generateClusterId();
+            String clusterId = IdGenerator.makeId();
 
             map.put(clusterId, Jsons.toJson(args.makeClusterInfo(clusterId)));
 
@@ -45,9 +47,27 @@ public class ClusterManager implements InitializingBean {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 log.info("key : {}, value : {}", entry.getKey(), entry.getValue());
             }
+
+            map.values();
         }
     }
 
+    //TODO : Cache
+    public ClusterInfo findById(String clusterId) {
+        try (DB db = makeDB(false)) {
+            ConcurrentMap<String, String> map = db
+                .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+                .createOrOpen();
+
+            String value = map.get(clusterId);
+
+            if (StringUtils.isBlank(value)) {
+                throw new RuntimeException("not found clusterId");
+            }
+
+            return Jsons.toObject(value, ClusterInfo.class);
+        }
+    }
 
     private DB makeDB(boolean transactionEnable) {
         DBMaker.Maker maker = DBMaker

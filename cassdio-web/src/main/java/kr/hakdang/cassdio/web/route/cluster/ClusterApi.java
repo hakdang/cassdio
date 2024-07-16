@@ -72,7 +72,7 @@ public class ClusterApi {
 
         result.put("clusters", clusters);
 
-        clusterManager.findAll();
+        //clusterManager.findAll(); 교체
 
         return ApiResponse.ok(result);
     }

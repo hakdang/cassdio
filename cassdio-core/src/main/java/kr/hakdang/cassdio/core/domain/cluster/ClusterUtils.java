@@ -107,13 +107,4 @@ public abstract class ClusterUtils {
     public static boolean isSystemKeyspace(DriverContext context, String keyspace) {
         return !makeKeyspaceFilter(context).includes(keyspace);
     }
-
-    public static String generateClusterId() {
-        String uuid = UUID.randomUUID().toString();
-
-        CRC32 crc = new CRC32();
-        crc.update(uuid.getBytes());
-
-        return Long.toString(crc.getValue());
-    }
 }
