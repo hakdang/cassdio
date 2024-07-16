@@ -6,7 +6,8 @@ import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
 import useCassdio from "../../../../../commons/hooks/useCassdio";
-import {CassdioUtils} from "../../../../../utils/cassdioUtils";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
+import DataRowItem from "../../data-row-item";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -145,16 +146,18 @@ const TableHome = (props) => {
                 <table className="table table-sm table-fixed table-lock-height table-hover">
                     <thead>
                     <tr className={"table-dark"}>
-                        <th className={"text-center"}
-                            scope="col">#
-                        </th>
+                        <th className={"text-center"} scope="col">#</th>
                         {
                             queryResult.columnHeader.map((info, infoIndex) => {
                                 return (
-                                    <th className={"text-center"} key={`resultHeader${infoIndex}`}
-                                        scope="col">
-                                        {info.columnName}
-                                        <small>({info.type})</small>
+                                    <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`} scope="col">
+                                        <OverlayTrigger placement="bottom" overlay={
+                                            <Tooltip id="tooltip">
+                                                {info.columnName}
+                                            </Tooltip>
+                                        }>
+                                            <span style={{cursor: "pointer"}}>{info.columnName}</span>
+                                        </OverlayTrigger>
                                     </th>
                                 )
                             })
@@ -193,11 +196,9 @@ const TableHome = (props) => {
                                         {
                                             queryResult.columnHeader.map((info, infoIndex) => {
                                                 return (
-                                                    <td className={"text-center text-break"}
+                                                    <td className={"text-center text-break text-truncate"}
                                                         key={`resultItem${infoIndex}`}>
-                                                        {
-                                                            CassdioUtils.renderData(row[info.columnName])
-                                                        }
+                                                        <DataRowItem data={row[info.columnName]}/>
                                                     </td>
                                                 )
                                             })
