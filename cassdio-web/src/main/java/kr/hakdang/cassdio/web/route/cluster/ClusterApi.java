@@ -8,6 +8,7 @@ import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoManager;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoProvider;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoRegisterArgs;
+import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,17 +43,19 @@ public class ClusterApi {
     private final ClusterInfoManager clusterInfoManager;
 
     private final TempClusterConnector tempClusterConnector;
+    private final ClusterManager clusterManager;
 
     public ClusterApi(
         BootstrapProvider bootstrapProvider,
         ClusterInfoProvider clusterInfoProvider,
         ClusterInfoManager clusterInfoManager,
-        TempClusterConnector tempClusterConnector
+        TempClusterConnector tempClusterConnector, ClusterManager clusterManager
     ) {
         this.bootstrapProvider = bootstrapProvider;
         this.clusterInfoProvider = clusterInfoProvider;
         this.clusterInfoManager = clusterInfoManager;
         this.tempClusterConnector = tempClusterConnector;
+        this.clusterManager = clusterManager;
     }
 
     @GetMapping("")
@@ -68,6 +71,8 @@ public class ClusterApi {
         }
 
         result.put("clusters", clusters);
+
+        clusterManager.findAll();
 
         return ApiResponse.ok(result);
     }
@@ -93,6 +98,7 @@ public class ClusterApi {
             //실행 안되면 exception
 
             clusterInfoManager.register(args);
+            clusterManager.register(args);
 
             bootstrapProvider.updateMinClusterCountCheck(clusterInfoProvider.checkMinClusterCount());
         }

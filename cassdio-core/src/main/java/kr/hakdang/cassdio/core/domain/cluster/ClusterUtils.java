@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.zip.CRC32;
 
 /**
  * ClusterUtils
@@ -109,20 +110,10 @@ public abstract class ClusterUtils {
 
     public static String generateClusterId() {
         String uuid = UUID.randomUUID().toString();
-        byte[] temp = uuid.getBytes(StandardCharsets.UTF_8);
-        byte[] test;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            test = digest.digest(temp);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
 
-        StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < 4; j++) {
-            sb.append(String.format("%02x", test[j]));
-        }
+        CRC32 crc = new CRC32();
+        crc.update(uuid.getBytes());
 
-        return sb.toString();
+        return Long.toString(crc.getValue());
     }
 }
