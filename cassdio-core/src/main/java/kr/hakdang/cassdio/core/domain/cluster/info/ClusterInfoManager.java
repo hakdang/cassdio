@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster.info;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.common.utils.Jsons;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class ClusterInfoManager extends BaseClusterInfo {
             }
 
             List<ClusterInfo> result = om.readValue(clusterJsonFile, TYPED);
-            result.add(args.makeClusterInfo(ClusterUtils.generateClusterId()));
+            result.add(args.makeClusterInfo(IdGenerator.makeId()));
 
             om.writeValue(clusterJsonFile, result);
 
