@@ -1,4 +1,6 @@
 import {useEffect, useState} from "react";
+import DataRowItem from "../data-row-item";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 const QueryResult = (props) => {
     const queryOptions = props.queryOptions;
@@ -36,8 +38,17 @@ const QueryResult = (props) => {
                                 {
                                     result.columnNames.map((info, infoIndex) => {
                                         return (
-                                            <th className={"text-center"} key={`resultHeader${infoIndex}`}
-                                                scope="col">{info}</th>
+                                            <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
+                                                scope="col">
+
+                                                <OverlayTrigger placement="bottom" overlay={
+                                                    <Tooltip id="tooltip">
+                                                        {info}
+                                                    </Tooltip>
+                                                }>
+                                                    <span style={{cursor: "pointer"}}>{info}</span>
+                                                </OverlayTrigger>
+                                            </th>
                                         )
                                     })
                                 }
@@ -58,9 +69,9 @@ const QueryResult = (props) => {
                                                 {
                                                     result.columnNames.map((info, infoIndex) => {
                                                         return (
-                                                            <td className={"text-center"}
+                                                            <td className={`text-center text-break text-truncate`}
                                                                 key={`resultItem${infoIndex}`}>
-                                                                <p className={"text-break"}>{row[info]}</p>
+                                                                <DataRowItem data={row[info]}/>
                                                             </td>
                                                         )
                                                     })
@@ -79,7 +90,6 @@ const QueryResult = (props) => {
                         <div className="d-grid gap-2 col-6 mx-auto">
                             <button className="btn btn-outline-secondary" type="button"
                                     onClick={() => queryExecute(query, nextCursor, setMoreQueryLoading)}>More
-
                                 {
                                     moreQueryLoading &&
                                     <div className="ms-2 spinner-border spinner-border-sm" role="status">

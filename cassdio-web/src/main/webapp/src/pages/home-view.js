@@ -3,15 +3,14 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import CassdioSidebar from "../components/layout/cassdio-sidebar";
 import useCassdio from "../commons/hooks/useCassdio";
+import {toast} from "react-toastify";
 
 const HomeView = () => {
 
-    const {openToast, errorCatch} = useCassdio();
+    const {errorCatch} = useCassdio();
 
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
-
-    const [test, setTest] = useState(0);
 
     useEffect(() => {
         //show component
@@ -123,12 +122,19 @@ const HomeView = () => {
                         </table>
                     </div>
 
-                    <button className={"btn btn-danger"}
+                    <button className={"btn btn-danger btn-sm"}
                             onClick={e => {
-                                openToast('안녕' + test);
-                                setTest(test + 1);
+                                toast.error('🦄 Wow so easy!', {
+                                    autoClose: 500,
+                                });
                             }}>
                         Open Toast
+                    </button>
+                    <button className={"btn btn-danger btn-sm"}
+                            onClick={e => {
+                                toast.error('🦄 Wow so easy!');
+                            }}>
+                        Open Toast2
                     </button>
                 </main>
 

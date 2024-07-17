@@ -8,6 +8,7 @@ import TableImportModal from "./table-import-modal";
 import useCassdio from "../../../../../commons/hooks/useCassdio";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import DataRowItem from "../../data-row-item";
+import {toast} from "react-toastify";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -16,7 +17,7 @@ const TableHome = (props) => {
     const [showImport, setShowImport] = useState(false);
     const [showDataManage, setShowDataManage] = useState(false);
     const [tableName, setTableName] = useState('');
-    const {errorCatch, openToast} = useCassdio();
+    const {errorCatch} = useCassdio();
     const initQueryResult = {
         rows: [],
         columnHeader: [],
@@ -153,7 +154,8 @@ const TableHome = (props) => {
                                     <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`} scope="col">
                                         <OverlayTrigger placement="bottom" overlay={
                                             <Tooltip id="tooltip">
-                                                {info.columnName}
+                                                {info.columnName} <br/>
+                                                (type : {info.type})
                                             </Tooltip>
                                         }>
                                             <span style={{cursor: "pointer"}}>{info.columnName}</span>
@@ -179,7 +181,7 @@ const TableHome = (props) => {
                                         <td className={"text-center"}>
                                             <div className="btn-group btn-group-sm">
                                                 <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => openToast("복사")}>
+                                                        onClick={() => toast.info("복사")}>
                                                     <i className="bi bi-clipboard2"></i>
                                                 </button>
                                                 {/*UI 구성 등 오래걸릴 듯*/}
@@ -188,7 +190,7 @@ const TableHome = (props) => {
                                                 {/*    <i className="bi bi-pencil-square"></i>*/}
                                                 {/*</button>*/}
                                                 <button type="button" className={"btn btn-sm btn-outline-danger"}
-                                                        onClick={() => openToast("삭제")}>
+                                                        onClick={() => toast.info("삭제")}>
                                                     <i className="bi bi-trash3-fill"></i>
                                                 </button>
                                             </div>
