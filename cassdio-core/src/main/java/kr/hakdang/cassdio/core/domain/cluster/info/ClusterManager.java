@@ -12,6 +12,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,10 +26,11 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 public class ClusterManager implements InitializingBean, DisposableBean {
 
-    private static DB db;
+    private static DB mapDb;
+
 
     public void register(ClusterInfoArgs args) {
-        ConcurrentMap<String, String> map = db
+        ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
@@ -36,21 +38,21 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
         map.put(clusterId, Jsons.toJson(args.makeClusterInfo(clusterId)));
 
-        db.commit();
+        mapDb.commit();
     }
 
     public void update(String clusterId, ClusterInfoArgs args) {
-        ConcurrentMap<String, String> map = db
+        ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         map.put(clusterId, Jsons.toJson(args.makeClusterInfo(clusterId)));
 
-        db.commit();
+        mapDb.commit();
     }
 
     public List<ClusterInfo> findAll() {
-        ConcurrentMap<String, String> map = db
+        ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
@@ -61,7 +63,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     //TODO : Cache
     public ClusterInfo findById(String clusterId) {
-        ConcurrentMap<String, String> map = db
+        ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
@@ -75,44 +77,42 @@ public class ClusterManager implements InitializingBean, DisposableBean {
     }
 
     public void deleteById(String clusterId) {
-        ConcurrentMap<String, String> map = db
+        ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         map.remove(clusterId);
 
-        db.commit();
+        mapDb.commit();
     }
 
-    private DB makeDB() {
-        DBMaker.Maker maker = DBMaker
+    @Override
+    public void destroy() throws Exception {
+        if (mapDb != null) {
+            mapDb.close();
+        }
+    }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        File file = new File(System.getProperty("user.home") + "/.cassdio");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+
+        DBMaker.Maker maker = DBMaker
             //TODO : 추후 프로퍼티 받아서 주입할 수 있도록 변경 예정
             .fileDB(System.getProperty("user.home") + "/.cassdio/cassdio_v1.db")
             .fileMmapEnable()            // Always enable mmap
             .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
             .fileMmapPreclearDisable()   // Make mmap file faster
             .transactionEnable()
+            .fileLockDisable()
             // Unmap (release resources) file when its closed.
             // That can cause JVM crash if file is accessed after it was unmapped
             // (there is possible race condition).
             .cleanerHackEnable();
 
-        return maker.make();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (db == null) {
-            db = makeDB();
-        }
-
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        if (db != null) {
-            db.close();
-        }
+        mapDb = maker.make();
     }
 }
