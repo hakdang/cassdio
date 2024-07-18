@@ -47,7 +47,7 @@ const NodesHome = () => {
             const nodes = response.data.result.items
             setNodeList(nodes)
             setTotalNodeSize(nodes.length)
-            setAvailableNodeSize(nodes.filter(node => node.nodeState === 'UP').length)
+            setAvailableNodeSize(nodes.filter(node => node.nodeState === 'UP' || node.nodeState === 'UNKNOWN').length)
         }).catch((error) => {
             errorCatch(error);
         }).finally(() => {
@@ -93,7 +93,7 @@ const NodesHome = () => {
                                         <tbody>
                                         {nodesByDcAndRack[datacenter][rack].map((node) => (
                                             <tr key={node.nodeId}
-                                                className={node.nodeState !== 'UP' ? 'table-danger' : ''}>
+                                                className={node.nodeState === 'UP' || node.nodeState === 'UNKNOWN' ? '' : 'table-danger'}>
                                                 <td className="text-center">{node.nodeId}</td>
                                                 <td className="text-center">{node.nodeState}</td>
                                                 <td className="text-center">{node.hostIp.replace('/', '')}</td>
