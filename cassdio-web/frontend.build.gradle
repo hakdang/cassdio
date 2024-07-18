@@ -1,0 +1,34 @@
+apply plugin: "com.github.node-gradle.node"
+
+def projectDir = file("${project.rootDir}/cassdio-web/src/main/webapp")
+
+node {
+    version = '20.15.1'
+    npmVersion = '9.8.0'
+    download = true
+
+    nodeProjectDir.set(projectDir)
+}
+
+task npmInstall2(type: NpmTask) {
+    args = ['install']
+}
+
+task npmBuild(type: NpmTask, dependsOn: npmInstall2) {
+    args = ['run', 'build']
+}
+
+task copyDist(type: Copy, dependsOn: npmBuild) {
+    from("${projectDir}/build") {
+        include '**/*'
+    }
+    into "${project.rootDir}/cassdio-web/src/main/resources/static"
+    includeEmptyDirs = true
+}
+
+task deleteDist(type: Delete, dependsOn: copyDist) {
+    delete "${projectDir}/build"
+}
+
+processResources { dependsOn "deleteDist" }
+

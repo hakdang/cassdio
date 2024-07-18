@@ -1,5 +1,6 @@
-application {
-    mainClass.set("kr.hakdang.cassdio.web.WebApplication")
+apply plugin: 'application'
+bootJar {
+    mainClass= "kr.hakdang.cassdio.web.CassdioWebApplication"
 }
 
 dependencies {
@@ -15,7 +16,11 @@ dependencies {
 
 bootJar {
     enabled = true
+    archiveVersion.set(cassdioVersion)
 }
 jar {
     enabled = true
+    archiveVersion.set(cassdioVersion)
 }
+
+apply from: "${project.rootDir}/cassdio-web/frontend.build.gradle"
