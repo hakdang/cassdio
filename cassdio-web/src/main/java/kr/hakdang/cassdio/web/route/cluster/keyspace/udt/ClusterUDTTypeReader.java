@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.udt;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTType;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeGetArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeListArgs;
@@ -22,22 +22,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClusterUDTTypeReader {
 
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterUDTTypeListCommander clusterUDTTypeListCommander;
     private final ClusterUDTTypeGetCommander clusterUDTTypeGetCommander;
 
     public ClusterUDTTypeReader(
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterUDTTypeListCommander clusterUDTTypeListCommander,
         ClusterUDTTypeGetCommander clusterUDTTypeGetCommander
     ) {
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterUDTTypeListCommander = clusterUDTTypeListCommander;
         this.clusterUDTTypeGetCommander = clusterUDTTypeGetCommander;
     }
 
     public ItemListWithCursorResponse<ClusterUDTType, String> listTypes(String clusterId, String keyspace, CursorRequest cursorRequest) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             ClusterUDTTypeListResult result = clusterUDTTypeListCommander.listTypes(session, ClusterUDTTypeListArgs.builder()
                 .keyspace(keyspace)
                 .pageSize(cursorRequest.getSize())
@@ -49,7 +49,7 @@ public class ClusterUDTTypeReader {
     }
 
     public ClusterUDTType getType(String clusterId, String keyspace, String type) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             return clusterUDTTypeGetCommander.getType(session, ClusterUDTTypeGetArgs.builder()
                 .keyspace(keyspace)
                 .type(type)

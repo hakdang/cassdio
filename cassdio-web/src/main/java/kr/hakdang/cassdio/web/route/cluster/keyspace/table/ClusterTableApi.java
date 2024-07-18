@@ -1,14 +1,9 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.BoundStatement;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
-import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
-import com.datastax.oss.driver.api.querybuilder.term.Term;
 import jakarta.validation.Valid;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
@@ -19,10 +14,7 @@ import kr.hakdang.cassdio.web.common.dto.response.ItemListWithCursorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -41,18 +33,18 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 public class ClusterTableApi {
 
     private final ClusterTableReader clusterTableReader;
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterTableCommander clusterTableCommander;
     private final ClusterTableColumnCommander clusterTableColumnCommander;
 
     public ClusterTableApi(
         ClusterTableReader clusterTableReader,
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterTableCommander clusterTableCommander,
         ClusterTableColumnCommander clusterTableColumnCommander
     ) {
         this.clusterTableReader = clusterTableReader;
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterTableCommander = clusterTableCommander;
         this.clusterTableColumnCommander = clusterTableColumnCommander;
     }
@@ -75,7 +67,7 @@ public class ClusterTableApi {
     ) {
         Map<String, Object> result = new HashMap<>();
 
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
             result.put("detail", clusterTableCommander.tableDetail(session, ClusterTableArgs.ClusterTableGetArgs.builder()
                 .keyspace(keyspace)
                 .table(table)
@@ -96,7 +88,7 @@ public class ClusterTableApi {
     ) {
         Map<String, Object> result = new HashMap<>();
 
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
             result.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
         }
 
@@ -111,7 +103,7 @@ public class ClusterTableApi {
         @ModelAttribute ClusterTablePureSelectRequest request
     ) {
         Map<String, Object> map = new HashMap<>();
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
             CqlSessionSelectResults result1 = clusterTableCommander.pureSelect(session, request.makeArgs(keyspace, table));
 
             map.put("nextCursor", result1.getNextCursor());

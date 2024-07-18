@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClusterInfoRegisterArgs {
+public class ClusterInfoArgs {
     private String clusterName;
     private String contactPoints;
     private int port;
@@ -25,7 +25,7 @@ public class ClusterInfoRegisterArgs {
     //Append
 
     @Builder
-    public ClusterInfoRegisterArgs(String clusterName, String contactPoints, int port, String localDatacenter, String username, String password) {
+    public ClusterInfoArgs(String clusterName, String contactPoints, int port, String localDatacenter, String username, String password) {
         if (StringUtils.isBlank(clusterName)) {
             throw new IllegalArgumentException("Cluster name is blank");
         }

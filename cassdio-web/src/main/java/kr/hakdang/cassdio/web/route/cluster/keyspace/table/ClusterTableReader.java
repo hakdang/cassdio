@@ -1,12 +1,10 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTable;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableGetResult2;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListResult;
 import kr.hakdang.cassdio.web.common.dto.request.CursorRequest;
@@ -23,22 +21,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClusterTableReader {
 
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterTableListCommander clusterTableListCommander;
     private final ClusterTableCommander clusterTableCommander;
 
     public ClusterTableReader(
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterTableListCommander clusterTableListCommander,
         ClusterTableCommander clusterTableCommander
     ) {
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterTableListCommander = clusterTableListCommander;
         this.clusterTableCommander = clusterTableCommander;
     }
 
     public ItemListWithCursorResponse<ClusterTable, String> listTables(String clusterId, String keyspace, CursorRequest cursorRequest) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
             ClusterTableListResult result = clusterTableListCommander.listTables(session, ClusterTableListArgs.builder()
                 .keyspace(keyspace)
                 .pageSize(cursorRequest.getSize())

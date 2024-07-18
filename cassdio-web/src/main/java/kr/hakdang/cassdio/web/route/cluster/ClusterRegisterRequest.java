@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster;
 
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnection;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoRegisterArgs;
+import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +22,7 @@ public class ClusterRegisterRequest {
     private String username;
     private String password;
 
+
     @Builder
     public ClusterRegisterRequest(String contactPoints, int port, String localDatacenter, String username, String password) {
         this.contactPoints = contactPoints;
@@ -31,8 +32,8 @@ public class ClusterRegisterRequest {
         this.password = password;
     }
 
-    public ClusterInfoRegisterArgs makeArgs(String clusterName) {
-        return ClusterInfoRegisterArgs.builder()
+    public ClusterInfoArgs makeArgs(String clusterName) {
+        return ClusterInfoArgs.builder()
             .clusterName(clusterName)
             .contactPoints(contactPoints)
             .port(port)

@@ -4,7 +4,7 @@ import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
 import CassdioSidebar from "../../components/layout/cassdio-sidebar";
 
-const ClusterView = (props) => {
+const ClusterMainView = (props) => {
     const routeParams = useParams();
 
     const {doGetKeyspaceNames} = useCluster();
@@ -52,13 +52,13 @@ const ClusterView = (props) => {
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link
-                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${routeParams.clusterId}/metrics`}>
-                                <i className="bi bi-laptop"></i> Metrics
-                            </Link>
-                        </li>
+                        {/*<li className="nav-item">*/}
+                        {/*    <Link*/}
+                        {/*        className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}*/}
+                        {/*        to={`/cluster/${routeParams.clusterId}/metrics`}>*/}
+                        {/*        <i className="bi bi-laptop"></i> Metrics*/}
+                        {/*    </Link>*/}
+                        {/*</li>*/}
                     </ul>
 
                     <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">
@@ -114,7 +114,6 @@ const ClusterView = (props) => {
                                     )
                                 })
                         }
-
                     </ul>
                 </CassdioSidebar>
 
@@ -126,4 +125,4 @@ const ClusterView = (props) => {
     )
 }
 
-export default ClusterView;
+export default ClusterMainView;
