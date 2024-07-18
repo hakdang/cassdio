@@ -1,12 +1,22 @@
+import {Modal} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import useCassdio from "../commons/hooks/useCassdio";
+import useCassdio from "../../commons/hooks/useCassdio";
+import Spinner from "../../components/spinner";
+import {toast} from "react-toastify";
 
-const InitializeView = (props) => {
-    const {doBootstrap, errorCatch} = useCassdio();
+const ClusterManageModal = (props) => {
+    const {errorCatch} = useCassdio();
+
+    const show = props.show;
+    const handleClose = props.handleClose;
+    const getClusterList = props.getClusterList;
+    const clusterId = props.clusterId || null;
+    const [clusterDetailLoading, setClusterDetailLoading] = useState(false);
 
     const [clusterInfo, setClusterInfo] = useState(
         {
+            clusterId: null,
             contactPoints: "127.0.0.1",
             port: 29042,
             localDatacenter: "dc1",
@@ -25,40 +35,46 @@ const InitializeView = (props) => {
     );
 
     const [saveLoading, setSaveLoading] = useState(false);
-
     const save = () => {
         if (!clusterInfo.contactPoints) {
-            alert("contactPoints 를 입력해주세요.");
+            toast.warn("contactPoints 를 입력해주세요.");
             return;
         }
 
         if (!clusterInfo.port || clusterInfo.port === 0) {
-            alert("clusterPort 를 입력해주세요.");
+            toast.warn("clusterPort 를 입력해주세요.");
             return;
         }
 
         if (!clusterInfo.localDatacenter) {
-            alert("localDatacenter 를 입력해주세요.");
+            toast.warn("localDatacenter 를 입력해주세요.");
             return;
         }
 
         if (clusterInfo.clusterAuthCredentials) {
             if (!clusterInfo.username) {
-                alert("username 를 입력해주세요.");
+                toast.warn("username 를 입력해주세요.");
                 return;
             }
 
             if (!clusterInfo.password) {
-                alert("password 를 입력해주세요.");
+                toast.warn("password 를 입력해주세요.");
                 return;
             }
         }
 
         setSaveLoading(true);
 
+        let method = "POST"
+        let url = "/api/cassandra/cluster";
+        if (clusterId) {
+            method = "PUT";
+            url = `/api/cassandra/cluster/${clusterId}`;
+        }
+
         axios({
-            method: "POST",
-            url: "/api/cassandra/cluster",
+            method: method,
+            url: url,
             data: {
                 contactPoints: clusterInfo.contactPoints,
                 port: clusterInfo.port,
@@ -67,8 +83,9 @@ const InitializeView = (props) => {
                 password: clusterInfo.password,
             },
         }).then((response) => {
-            alert("등록되었습니다.");
-            doBootstrap();
+            toast.info("등록 완료.");
+            getClusterList();
+            handleClose();
         }).catch((error) => {
             errorCatch(error);
         }).finally(() => {
@@ -76,27 +93,43 @@ const InitializeView = (props) => {
         })
     }
 
+    const getCluster = () => {
+        setClusterDetailLoading(true)
+
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${clusterId}`,
+            params: {}
+        }).then((response) => {
+            setClusterInfo(response.data.result.cluster)
+        }).catch((error) => {
+            errorCatch(error)
+        }).finally(() => {
+            setClusterDetailLoading(false)
+        });
+    }
+
     useEffect(() => {
         //show component
 
+        if (clusterId) {
+            getCluster();
+        }
+
+
         return () => {
             //hide component
-
         };
     }, []);
 
     return (
-        <div className={"container"}>
-            <main>
-                <div className="py-5 text-center">
-                    <h2>Cassdio Initialize View</h2>
-                    <p className="lead">Cluster 정보 최소 한개를 등록해 주세요.</p>
-                </div>
-
-                <div className="row g-5">
-                    <div className="col-lg-8 col-xxl-6 my-5 mx-auto">
-                        <h4 className="mb-3">Cluster</h4>
-
+        <Modal show={show} size={"xl"} onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Cluster Manage</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Spinner loading={clusterDetailLoading}>
+                    <div className={"row"}>
                         <div className="col-12 mb-2">
                             <label htmlFor="contactPoints" className="form-label">Contact Points</label>
                             <div className="input-group">
@@ -131,16 +164,18 @@ const InitializeView = (props) => {
 
                         <hr className="my-4"/>
 
-                        <div className="form-check mb-3">
-                            <input type="checkbox" className="form-check-input" id="clusterAuthCredentials"
-                                   checked={clusterInfo.clusterAuthCredentials}
-                                   onChange={evt => setClusterInfo(t => {
-                                       return {...t, clusterAuthCredentials: !t.clusterAuthCredentials}
-                                   })}
-                            />
-                            <label className="form-check-label" htmlFor="clusterAuthCredentials">
-                                Enable
-                                AuthCredentials</label>
+                        <div className={"col-12 mb-2"}>
+                            <div className="form-check mb-3">
+                                <input type="checkbox" className="form-check-input" id="clusterAuthCredentials"
+                                       checked={clusterInfo.clusterAuthCredentials}
+                                       onChange={evt => setClusterInfo(t => {
+                                           return {...t, clusterAuthCredentials: !t.clusterAuthCredentials}
+                                       })}
+                                />
+                                <label className="form-check-label" htmlFor="clusterAuthCredentials">
+                                    Enable
+                                    AuthCredentials</label>
+                            </div>
                         </div>
 
                         {
@@ -166,7 +201,7 @@ const InitializeView = (props) => {
                                     </label>
                                     <div className="input-group">
                                         <input type="password" className="form-control" id="clusterPassword"
-                                               placeholder="cluster Password"
+                                               placeholder="Cluster Password"
                                                value={clusterInfo.password || ''}
                                                onChange={evt => setClusterInfo(t => {
                                                    return {...t, password: evt.target.value}
@@ -178,27 +213,27 @@ const InitializeView = (props) => {
                             </>
                         }
                     </div>
-                </div>
+                </Spinner>
 
-                <div className={"row"}>
-                    <div className="col-lg-6 col-xxl-4  mx-auto">
-                        <div className="d-grid gap-2">
-                            {/*<button className="btn btn-danger" type="button">Validation</button>*/}
-                            <button className="btn btn-primary" type="button" onClick={save}>
-                                Save
-                                {
-                                    saveLoading &&
-                                    <div className="ms-2 spinner-border spinner-border-sm" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                }
-                            </button>
+            </Modal.Body>
+            <Modal.Footer>
+                <button className={"btn btn-sm btn-outline-primary"} onClick={e => {
+                    save()
+                }}>
+                    Save
+                    {
+                        saveLoading &&
+                        <div className="ms-2 spinner-border spinner-border-sm" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+                    }
+                </button>
+                <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>
+                    Close
+                </button>
+            </Modal.Footer>
+        </Modal>
     )
 }
 
-export default InitializeView;
+export default ClusterManageModal;

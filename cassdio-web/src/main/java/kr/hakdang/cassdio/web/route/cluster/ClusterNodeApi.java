@@ -4,7 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterNode;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterNodeGetCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterNodeListCommander;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cassdio.web.common.dto.response.ItemListWithCursorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,16 +25,16 @@ import java.util.UUID;
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
 public class ClusterNodeApi {
 
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterNodeListCommander clusterNodeListCommander;
     private final ClusterNodeGetCommander clusterNodeGetCommander;
 
     public ClusterNodeApi(
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterNodeListCommander clusterNodeListCommander,
         ClusterNodeGetCommander clusterNodeGetCommander
     ) {
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterNodeListCommander = clusterNodeListCommander;
         this.clusterNodeGetCommander = clusterNodeGetCommander;
     }
@@ -43,7 +43,7 @@ public class ClusterNodeApi {
     public ApiResponse<ItemListWithCursorResponse<ClusterNode, String>> nodeList(
         @PathVariable String clusterId
     ) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             List<ClusterNode> nodes = clusterNodeListCommander.listNodes(session);
             return ApiResponse.ok(ItemListWithCursorResponse.noMore(nodes));
         }
@@ -54,7 +54,7 @@ public class ClusterNodeApi {
         @PathVariable String clusterId,
         @PathVariable UUID nodeId
     ) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             ClusterNode result = clusterNodeGetCommander.getNode(session, nodeId);
             return ApiResponse.ok(result);
         }

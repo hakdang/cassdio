@@ -5,7 +5,7 @@ import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoProvider;
+import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TempClusterConnector
+ * ClusterConnector
  * - 임시 목적으로 사용할 connector
  *
  * @author akageun
@@ -24,14 +24,14 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class TempClusterConnector {
+public class ClusterConnector {
 
-    private final ClusterInfoProvider clusterInfoProvider;
+    private final ClusterManager clusterManager;
 
-    public TempClusterConnector(
-        ClusterInfoProvider clusterInfoProvider
+    public ClusterConnector(
+        ClusterManager clusterManager
     ) {
-        this.clusterInfoProvider = clusterInfoProvider;
+        this.clusterManager = clusterManager;
     }
 
     public List<InetSocketAddress> makeContactPoint(String contactPoints, int port) {
@@ -73,7 +73,7 @@ public class TempClusterConnector {
     }
 
     public CqlSession makeSession(String clusterId) {
-        ClusterInfo info = clusterInfoProvider.findClusterInfo(clusterId);
+        ClusterInfo info = clusterManager.findById(clusterId);
         if (info == null) {
             throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
         }
@@ -81,7 +81,7 @@ public class TempClusterConnector {
     }
 
     public CqlSession makeSession(String clusterId, String keyspace) {
-        ClusterInfo info = clusterInfoProvider.findClusterInfo(clusterId);
+        ClusterInfo info = clusterManager.findById(clusterId);
         if (info == null) {
             throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
         }

@@ -39,6 +39,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, null, Collections.emptyList(), result);
     }
 
+    public static ApiResponse<Void> ok() {
+        return new ApiResponse<>(true, null, Collections.emptyList(), null);
+    }
+
     public static <T> ApiResponse<T> fail(ErrorCode errorCode) {
         return new ApiResponse<>(false, errorCode.getCode(), Collections.emptyList(), null);
     }

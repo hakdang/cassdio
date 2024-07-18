@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceNameResult;
@@ -23,20 +23,20 @@ import java.util.List;
 @Service
 public class ClusterKeyspaceReader {
 
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterKeyspaceCommander clusterKeyspaceCommander;
 
     public ClusterKeyspaceReader(
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterKeyspaceCommander clusterKeyspaceCommander
     ) {
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterKeyspaceCommander = clusterKeyspaceCommander;
     }
 
     //TODO: 리네임
     public List<KeyspaceNameResult> allKeyspaceNameList(String clusterId) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
 
             List<KeyspaceNameResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceList(session);
 
@@ -46,7 +46,7 @@ public class ClusterKeyspaceReader {
 
     @Cacheable(value = CacheType.CacheTypeNames.CLUSTER_LIST)
     public ClusterKeyspaceListResult listKeyspace(String clusterId) {
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             return clusterKeyspaceCommander.generalKeyspaceList(session);
         }
     }

@@ -4,14 +4,12 @@ import axios from "axios";
 import Spinner from "../../../../components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
 import useCassdio from "../../../../commons/hooks/useCassdio";
-import {Tooltip} from "react-bootstrap";
 import {CassdioUtils} from "../../../../utils/cassdioUtils";
 
 const KeyspaceHome = () => {
 
     const routeParams = useParams();
     const {errorCatch} = useCassdio();
-    //const {doGetKeyspaceList} = useCluster();
 
     const [detailLoading, setDetailLoading] = useState(false);
     const [keyspaceDescribe, setKeyspaceDescribe] = useState('');
@@ -19,15 +17,12 @@ const KeyspaceHome = () => {
         columns: [],
         row: {}
     });
-    const [tableLoading, setTableLoading] = useState(false);
-    const [tableCursor, setTableCursor] = useState(null)
     const [tableList, setTableList] = useState([]);
 
     useEffect(() => {
         //show component
         setKeyspaceDescribe('');
         setDetailLoading(true)
-        setTableList([]);
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
@@ -35,14 +30,10 @@ const KeyspaceHome = () => {
                 withTableList: true,
             }
         }).then((response) => {
-            console.log("res ", response);
             setKeyspaceDescribe(response.data.result.describe)
             setKeyspaceDetail(response.data.result.detail);
 
             setTableList(response.data.result.tableList.rows)
-            if (response.data.result.tableList.nextCursor) {
-                setTableCursor(response.data.result.tableList.nextCursor)
-            }
 
         }).catch((error) => {
             errorCatch(error)
@@ -165,11 +156,11 @@ const KeyspaceHome = () => {
                                            tableList={tableList}/>
 
                     </div>
-                    <div className={"col-md-6 col-sm-12"}>
-                        <h2 className="h3">Views</h2>
+                    {/*<div className={"col-md-6 col-sm-12"}>*/}
+                    {/*    <h2 className="h3">Views</h2>*/}
 
 
-                    </div>
+                    {/*</div>*/}
                 </div>
             </Spinner>
         </>

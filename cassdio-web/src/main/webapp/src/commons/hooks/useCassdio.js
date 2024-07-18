@@ -19,7 +19,6 @@ export default function useCassdio() {
             cassdioDispatcher({
                 type: "SET_SYSTEM_AVAILABLE",
                 systemAvailable: response.data.result.systemAvailable,
-                //systemAvailable: false,
             })
 
         }).catch((error) => {

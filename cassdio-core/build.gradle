@@ -1,7 +1,7 @@
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter")
-
+    implementation("org.mapdb:mapdb:3.1.0")
     //TODO ClusterFactory 만들어지면 변경
     api("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
     api("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")

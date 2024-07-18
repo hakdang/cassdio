@@ -42,7 +42,7 @@ const QueryEditor = (props) => {
             if (tempQuery) {
                 props.queryExecute(tempQuery, null, setQueryLoading);
             } else {
-                props.queryExecute(query, null, setQueryLoading);
+                props.queryExecute(editor.getValue(), null, setQueryLoading);
             }
         }
     }];

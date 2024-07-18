@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.TempClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
@@ -30,18 +30,18 @@ import java.util.Map;
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
 public class ClusterKeyspaceApi {
 
-    private final TempClusterConnector tempClusterConnector;
+    private final ClusterConnector clusterConnector;
     private final ClusterKeyspaceReader clusterKeyspaceReader;
     private final ClusterTableCommander clusterTableCommander;
     private final ClusterKeyspaceCommander clusterKeyspaceCommander;
 
     public ClusterKeyspaceApi(
-        TempClusterConnector tempClusterConnector,
+        ClusterConnector clusterConnector,
         ClusterKeyspaceReader clusterKeyspaceReader,
         ClusterTableCommander clusterTableCommander,
         ClusterKeyspaceCommander clusterKeyspaceCommander
     ) {
-        this.tempClusterConnector = tempClusterConnector;
+        this.clusterConnector = clusterConnector;
         this.clusterKeyspaceReader = clusterKeyspaceReader;
         this.clusterTableCommander = clusterTableCommander;
         this.clusterKeyspaceCommander = clusterKeyspaceCommander;
@@ -80,7 +80,7 @@ public class ClusterKeyspaceApi {
         Map<String, Object> result = new HashMap<>();
 
         //TODO : keyspace validation
-        try (CqlSession session = tempClusterConnector.makeSession(clusterId, keyspace)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
             result.put("describe", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
                 .keyspace(keyspace)
                 .withChildren(false)
