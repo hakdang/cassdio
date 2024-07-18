@@ -103,11 +103,16 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        db = makeDB();
+        if (db == null) {
+            db = makeDB();
+        }
+
     }
 
     @Override
     public void destroy() throws Exception {
-        db.close();
+        if (db != null) {
+            db.close();
+        }
     }
 }
