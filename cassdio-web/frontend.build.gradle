@@ -1,34 +1,38 @@
-apply plugin: "com.github.node-gradle.node"
+def frontend = project.findProperty('frontend') ?: false
+if (frontend.toBoolean()) {
 
-def projectDir = file("${project.rootDir}/cassdio-web/src/main/webapp")
+    apply plugin: "com.github.node-gradle.node"
 
-node {
-    version = '20.15.1'
-    npmVersion = '9.8.0'
-    download = true
+    def projectDir = file("${project.rootDir}/cassdio-web/src/main/webapp")
 
-    nodeProjectDir.set(projectDir)
-}
+    node {
+        version = '20.15.1'
+        npmVersion = '9.8.0'
+        download = true
 
-task npmInstall2(type: NpmTask) {
-    args = ['install']
-}
-
-task npmBuild(type: NpmTask, dependsOn: npmInstall2) {
-    args = ['run', 'build']
-}
-
-task copyDist(type: Copy, dependsOn: npmBuild) {
-    from("${projectDir}/build") {
-        include '**/*'
+        nodeProjectDir.set(projectDir)
     }
-    into "${project.rootDir}/cassdio-web/src/main/resources/static"
-    includeEmptyDirs = true
+
+    task npmInstall2(type: NpmTask) {
+        args = ['install']
+    }
+
+    task npmBuild(type: NpmTask, dependsOn: npmInstall2) {
+        args = ['run', 'build']
+    }
+
+    task copyDist(type: Copy, dependsOn: npmBuild) {
+        from("${projectDir}/build") {
+            include '**/*'
+        }
+        into "${project.rootDir}/cassdio-web/src/main/resources/static"
+        includeEmptyDirs = true
+    }
+
+    task deleteDist(type: Delete, dependsOn: copyDist) {
+        delete "${projectDir}/build"
+    }
+
+    processResources { dependsOn "deleteDist" }
+
 }
-
-task deleteDist(type: Delete, dependsOn: copyDist) {
-    delete "${projectDir}/build"
-}
-
-processResources { dependsOn "deleteDist" }
-
