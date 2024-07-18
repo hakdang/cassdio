@@ -13,6 +13,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -87,8 +88,13 @@ public class ClusterManager implements InitializingBean, DisposableBean {
     }
 
     private DB makeDB() {
-        DBMaker.Maker maker = DBMaker
 
+        File file = new File(System.getProperty("user.home") + "/.cassdio");
+        if(!file.exists()){
+            file.mkdir();
+        }
+
+        DBMaker.Maker maker = DBMaker
             //TODO : 추후 프로퍼티 받아서 주입할 수 있도록 변경 예정
             .fileDB(System.getProperty("user.home") + "/.cassdio/cassdio_v1.db")
             .fileMmapEnable()            // Always enable mmap
