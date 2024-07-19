@@ -1,4 +1,4 @@
-import {CassdioUtils} from "../../../../../../utils/cassdioUtils";
+import {CassdioUtils} from "utils/cassdioUtils";
 
 const TableDetailModalColumnList = (props) => {
     const columnList = props.columnList;

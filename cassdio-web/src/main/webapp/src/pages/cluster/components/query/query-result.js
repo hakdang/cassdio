@@ -3,7 +3,7 @@ import DataRowItem from "../data-row-item";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 const QueryResult = (props) => {
-    const queryOptions = props.queryOptions;
+    //const queryOptions = props.queryOptions;
     const queryExecute = props.queryExecute;
     const result = props.result;
 

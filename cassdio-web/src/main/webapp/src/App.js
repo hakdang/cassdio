@@ -1,3 +1,4 @@
+import {useEffect} from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import './App.css';
@@ -12,7 +13,7 @@ import ClusterHome from "./pages/cluster/components/cluster-home";
 import TableHome from "./pages/cluster/components/keyspace/table/table-home";
 import QueryHome from "./pages/cluster/components/query-home";
 import MetricsHome from "./pages/cluster/components/metrics-home";
-import {useEffect} from "react";
+
 import useCassdio from "./commons/hooks/useCassdio";
 import {useCassdioState} from "./commons/context/cassdioContext";
 import NodesHome from "./pages/cluster/components/nodes-home";
@@ -27,10 +28,10 @@ function App() {
 
         doBootstrap();
 
-        return () => {
-            //hide component
-
-        };
+        // return () => {
+        //     //hide component
+        //
+        // };
     }, []);
 
     return (

@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Modal} from "react-bootstrap";
-import useCassdio from "../../../../../commons/hooks/useCassdio";
+import useCassdio from "commons/hooks/useCassdio";
 import TableDetailModalInfo from "./detail-modal/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail-modal/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail-modal/table-detail-modal-column-list";
@@ -59,6 +59,7 @@ const TableDetailModal = (props) => {
             //hide component
 
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableName]);
 
     return (

@@ -1,11 +1,14 @@
-import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
+
 import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
-import CassdioSidebar from "../../components/layout/cassdio-sidebar";
+import CassdioSidebar from "components/layout/cassdio-sidebar";
 
 const ClusterMainView = (props) => {
     const routeParams = useParams();
+
+    const clusterId = useState(routeParams.clusterId);
 
     const {doGetKeyspaceNames} = useCluster();
     const {
@@ -34,28 +37,28 @@ const ClusterMainView = (props) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${routeParams.clusterId}`}>
+                                to={`/cluster/${clusterId}`}>
                                 <i className="bi bi-house"></i> Cluster Home
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${routeParams.clusterId}/nodes`}>
+                                to={`/cluster/${clusterId}/nodes`}>
                                 <i className="bi bi-server"></i> Node List
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${routeParams.clusterId}/query`}>
+                                to={`/cluster/${clusterId}/query`}>
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
                         </li>
                         {/*<li className="nav-item">*/}
                         {/*    <Link*/}
                         {/*        className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}*/}
-                        {/*        to={`/cluster/${routeParams.clusterId}/metrics`}>*/}
+                        {/*        to={`/cluster/${clusterId}/metrics`}>*/}
                         {/*        <i className="bi bi-laptop"></i> Metrics*/}
                         {/*    </Link>*/}
                         {/*</li>*/}
@@ -78,7 +81,7 @@ const ClusterMainView = (props) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
@@ -106,7 +109,7 @@ const ClusterMainView = (props) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>

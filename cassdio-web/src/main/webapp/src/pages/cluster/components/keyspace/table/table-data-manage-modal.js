@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {Modal} from "react-bootstrap";
-import useCassdio from "../../../../../commons/hooks/useCassdio";
+import useCassdio from "commons/hooks/useCassdio";
 import axios from "axios";
 
 const TableDataManageModal = (props) => {
@@ -122,6 +122,7 @@ const TableDataManageModal = (props) => {
             //hide component
 
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

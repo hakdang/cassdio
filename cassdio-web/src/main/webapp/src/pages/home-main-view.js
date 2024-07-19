@@ -1,6 +1,6 @@
-import {Link} from "react-router-dom";
 import {useEffect} from "react";
-import CassdioSidebar from "../components/layout/cassdio-sidebar";
+import {Link} from "react-router-dom";
+import CassdioSidebar from "components/layout/cassdio-sidebar";
 import ClusterList from "./cluster/cluster-list";
 
 const HomeMainView = () => {

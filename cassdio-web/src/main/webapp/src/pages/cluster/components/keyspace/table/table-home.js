@@ -5,10 +5,10 @@ import axios from "axios";
 import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
-import useCassdio from "../../../../../commons/hooks/useCassdio";
+import useCassdio from "commons/hooks/useCassdio";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import DataRowItem from "../../data-row-item";
 import {toast} from "react-toastify";
+import DataRowItem from "../../data-row-item";
 
 const TableHome = (props) => {
     const routeParams = useParams();
@@ -69,6 +69,7 @@ const TableHome = (props) => {
             //hide component
             setTableName('');
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableName]);
 
     return (
