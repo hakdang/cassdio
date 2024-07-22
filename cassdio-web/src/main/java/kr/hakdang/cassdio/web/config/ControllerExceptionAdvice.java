@@ -4,7 +4,6 @@ import kr.hakdang.cassdio.common.error.BaseException;
 import kr.hakdang.cassdio.common.error.ErrorCode;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -12,10 +11,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-
 import static kr.hakdang.cassdio.common.error.ErrorCode.E400_INVALID_PARAMETER;
 
+/**
+ * ControllerExceptionAdvice
+ *
+ * @author seungh0
+ * @since 2024-07-01
+ */
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
@@ -23,11 +26,8 @@ public class ControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     private ApiResponse<Object> handleBadRequest(BindException exception) {
-        List<String> reasons = exception.getBindingResult().getFieldErrors().stream()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-            .toList();
         log.warn(exception.getMessage(), exception);
-        return ApiResponse.fail(E400_INVALID_PARAMETER, reasons);
+        return ApiResponse.fail(E400_INVALID_PARAMETER);
     }
 
     @ExceptionHandler(BaseException.class)

@@ -11,6 +11,12 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/**
+ * Jsons
+ *
+ * @author seungh0
+ * @since 2024-07-01
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Jsons {
 

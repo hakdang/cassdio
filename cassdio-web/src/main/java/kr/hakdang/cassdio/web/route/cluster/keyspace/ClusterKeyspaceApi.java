@@ -64,11 +64,11 @@ public class ClusterKeyspaceApi {
     }
 
     @PutMapping("/keyspace/cache-evict")
-    public ApiResponse<Object> evictKeyspaceListCache(
+    public ApiResponse<Void> evictKeyspaceListCache(
         @PathVariable String clusterId
     ) {
         clusterKeyspaceReader.refreshKeyspaceCache(clusterId);
-        return ApiResponse.OK;
+        return ApiResponse.ok();
     }
 
     @GetMapping("/keyspace/{keyspace}")

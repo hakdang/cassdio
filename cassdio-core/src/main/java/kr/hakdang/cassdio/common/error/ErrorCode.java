@@ -2,6 +2,12 @@ package kr.hakdang.cassdio.common.error;
 
 import lombok.Getter;
 
+/**
+ * ErrorCode
+ *
+ * @author seungh0
+ * @since 2024-07-01
+ */
 @Getter
 public enum ErrorCode {
 

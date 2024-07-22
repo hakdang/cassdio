@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.web.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -14,6 +15,7 @@ import java.io.IOException;
  * @author akageun
  * @since 2024-07-18
  */
+@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override

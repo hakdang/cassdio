@@ -6,9 +6,8 @@ import kr.hakdang.cassdio.common.error.ErrorCode;
 /**
  * ClusterTableException
  *
- * @author Seungho Kang (will.seungho@webtoonscorp.com)
- * @version 1.0.0
- * @since 2024. 07. 07.
+ * @author seungh0
+ * @since 2024-07-07
  */
 public class ClusterTableException {
 

@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.util.Collections.emptyMap;
-
 /**
  * ClusterApi
  *
@@ -75,7 +73,7 @@ public class ClusterApi {
     }
 
     @PostMapping("")
-    public ApiResponse<Map<String, Object>> clusterRegister(
+    public ApiResponse<Void> clusterRegister(
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
         try (CqlSession session = clusterConnector.makeSession(request.makeClusterConnector())) {
@@ -88,11 +86,11 @@ public class ClusterApi {
             clusterManager.register(args);
         }
 
-        return ApiResponse.ok(emptyMap());
+        return ApiResponse.ok();
     }
 
     @PutMapping("/{clusterId}")
-    public ApiResponse<Map<String, Object>> clusterUpdate(
+    public ApiResponse<Void> clusterUpdate(
         @PathVariable String clusterId,
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
@@ -105,7 +103,7 @@ public class ClusterApi {
             clusterManager.update(clusterId, args);
         }
 
-        return ApiResponse.ok(emptyMap());
+        return ApiResponse.ok();
     }
 
     @DeleteMapping("/{clusterId}")

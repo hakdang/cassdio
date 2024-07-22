@@ -4,7 +4,6 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListResult;
 import kr.hakdang.cassdio.web.common.dto.request.CursorRequest;
@@ -23,16 +22,13 @@ public class ClusterTableReader {
 
     private final ClusterConnector clusterConnector;
     private final ClusterTableListCommander clusterTableListCommander;
-    private final ClusterTableCommander clusterTableCommander;
 
     public ClusterTableReader(
         ClusterConnector clusterConnector,
-        ClusterTableListCommander clusterTableListCommander,
-        ClusterTableCommander clusterTableCommander
+        ClusterTableListCommander clusterTableListCommander
     ) {
         this.clusterConnector = clusterConnector;
         this.clusterTableListCommander = clusterTableListCommander;
-        this.clusterTableCommander = clusterTableCommander;
     }
 
     public ItemListWithCursorResponse<ClusterTable, String> listTables(String clusterId, String keyspace, CursorRequest cursorRequest) {

@@ -10,9 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * ClusterUDTTypeListCommanderTest
  *
- * @author Seungho Kang (will.seungho@webtoonscorp.com)
- * @version 1.0.0
- * @since 2024. 07. 07.
+ * @author seungh0
+ * @since 2024-07-07
  */
 class ClusterUDTTypeListCommanderTest extends IntegrationTest {
 
