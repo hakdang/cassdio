@@ -6,8 +6,8 @@ import "bootstrap"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import {ClusterProvider} from "./pages/cluster/context/clusterContext";
-import {CassdioProvider} from "./commons/context/cassdioContext";
+import {ClusterProvider} from "pages/cluster/context/clusterContext";
+import {CassdioProvider} from "commons/context/cassdioContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

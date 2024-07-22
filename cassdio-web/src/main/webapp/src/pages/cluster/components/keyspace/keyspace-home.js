@@ -1,10 +1,10 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import Spinner from "../../../../components/spinner";
+import Spinner from "components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
-import useCassdio from "../../../../commons/hooks/useCassdio";
-import {CassdioUtils} from "../../../../utils/cassdioUtils";
+import useCassdio from "commons/hooks/useCassdio";
+import {CassdioUtils} from "utils/cassdioUtils";
 
 const KeyspaceHome = () => {
 

@@ -4,6 +4,7 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/mode-sql";
 import "ace-builds/src-noconflict/theme-sqlserver"
+
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {toast} from "react-toastify";
 
@@ -48,17 +49,16 @@ const QueryEditor = (props) => {
     }];
 
     function onSelectionChange(value, event) {
-        const content = editorRef.current.editor.getSelectedText();
         // use content
         setSelectedQuery(editorRef.current.editor.getSelectedText());
     }
 
     function onLoad(newValue) {
-        console.log("load", newValue);
+        //console.log("load", newValue);
     }
 
     function onChange(newValue) {
-        console.log("change", newValue);
+        //console.log("change", newValue);
         setQuery(newValue)
     }
 

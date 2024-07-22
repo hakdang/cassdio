@@ -1,9 +1,12 @@
-import QueryEditor from "./query/query-editor";
-import axios from "axios";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+
+import axios from "axios";
+
+import QueryEditor from "./query/query-editor";
 import QueryResult from "./query/query-result";
-import useCassdio from "../../../commons/hooks/useCassdio";
+import useCassdio from "commons/hooks/useCassdio";
+import {toast} from "react-toastify";
 
 const QueryHome = () => {
     const routeParams = useParams();
@@ -32,7 +35,7 @@ const QueryHome = () => {
 
     const queryExecute = (query, cursor, setLoading) => {
         if (!query) {
-            alert("쿼리를 입력해 주세요.")
+            toast.warn("쿼리를 입력해 주세요.")
             return;
         }
 
@@ -57,7 +60,6 @@ const QueryHome = () => {
                 cursor: cursor,
             },
         }).then((response) => {
-            console.log("response query execute ", response.data.result.nextCursor)
             setQueryParam({
                 query: query,
                 nextCursor: response.data.result.nextCursor
@@ -83,6 +85,7 @@ const QueryHome = () => {
             //hide component
 
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 

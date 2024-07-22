@@ -1,9 +1,12 @@
-import {Modal} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import useCassdio from "../../commons/hooks/useCassdio";
-import Spinner from "../../components/spinner";
+
+import {Modal} from "react-bootstrap";
+
 import {toast} from "react-toastify";
+
+import axios from "axios";
+import useCassdio from "commons/hooks/useCassdio";
+import Spinner from "components/spinner";
 
 const ClusterManageModal = (props) => {
     const {errorCatch} = useCassdio();
@@ -17,9 +20,9 @@ const ClusterManageModal = (props) => {
     const [clusterInfo, setClusterInfo] = useState(
         {
             clusterId: null,
-            contactPoints: "127.0.0.1",
-            port: 29042,
-            localDatacenter: "dc1",
+            contactPoints: "",
+            port: 9042,
+            localDatacenter: "",
             clusterAuthCredentials: false,
             username: "",
             password: "",
@@ -116,7 +119,6 @@ const ClusterManageModal = (props) => {
             getCluster();
         }
 
-
         return () => {
             //hide component
         };
@@ -173,8 +175,8 @@ const ClusterManageModal = (props) => {
                                        })}
                                 />
                                 <label className="form-check-label" htmlFor="clusterAuthCredentials">
-                                    Enable
-                                    AuthCredentials</label>
+                                    Enable AuthCredentials
+                                </label>
                             </div>
                         </div>
 

@@ -1,4 +1,4 @@
-import {CassdioUtils} from "../../../../../../utils/cassdioUtils";
+import {CassdioUtils} from "utils/cassdioUtils";
 
 const TableDetailModalInfo = (props) => {
 

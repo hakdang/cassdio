@@ -1,9 +1,9 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {DateUtils} from "../../../utils/timeUtils";
-import Spinner from "../../../components/spinner";
-import useCassdio from "../../../commons/hooks/useCassdio";
+import {DateUtils} from "utils/timeUtils";
+import Spinner from "components/spinner";
+import useCassdio from "commons/hooks/useCassdio";
 
 const NodesHome = () => {
 
@@ -23,6 +23,7 @@ const NodesHome = () => {
             //hide component
 
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [routeParams.clusterId, routeParams.keyspaceName]);
 
     const nodesByDcAndRack = nodeList.reduce((acc, node) => {

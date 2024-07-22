@@ -1,10 +1,13 @@
-import Spinner from "../../components/spinner";
-import {Link} from "react-router-dom";
-import useCassdio from "../../commons/hooks/useCassdio";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import ClusterManageModal from "./cluster-manage-modal";
+import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
+
+import axios from "axios";
+
+import Spinner from "components/spinner";
+import useCassdio from "commons/hooks/useCassdio";
+
+import ClusterManageModal from "./cluster-manage-modal";
 
 const ClusterList = () => {
 
@@ -113,12 +116,16 @@ const ClusterList = () => {
                                             </a>
                                         </td>
                                         <td className={"text-center"}>
-                                            <Link to={`/cluster/${info.clusterId}`}>
+                                            <Link
+                                                className={"text-decoration-none"}
+                                                to={`/cluster/${info.clusterId}`}>
                                                 {info.clusterId}
                                             </Link>
                                         </td>
                                         <td className={"text-center"}>
-                                            <Link to={`/cluster/${info.clusterId}`}>
+                                            <Link
+                                                className={"text-decoration-none"}
+                                                to={`/cluster/${info.clusterId}`}>
                                                 {info.clusterName}
                                             </Link>
                                         </td>
@@ -128,7 +135,7 @@ const ClusterList = () => {
                                     </tr>
                                 )
                             }) : <tr>
-                                <td className={"text-center"} scope="col" colSpan={6}>No Data</td>
+                                <td className={"text-center"} colSpan={6}>No Data</td>
                             </tr>
                         }
                         </tbody>
