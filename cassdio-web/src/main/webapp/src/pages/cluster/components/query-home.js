@@ -35,7 +35,7 @@ const QueryHome = () => {
 
     const queryExecute = (query, cursor, setLoading) => {
         if (!query) {
-            toast.warn("쿼리를 입력해 주세요.")
+            toast.warn("Please enter a Query!")
             return;
         }
 

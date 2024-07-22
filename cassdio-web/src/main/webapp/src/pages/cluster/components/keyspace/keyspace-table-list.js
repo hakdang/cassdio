@@ -22,7 +22,7 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                     tableList && tableList.length <= 0 ? <>
                         <li
                             className="list-group-item d-flex justify-content-between align-items-start">
-                            등록된 테이블이 없습니다.
+                            No Data
                         </li>
                     </> : <>
                         {

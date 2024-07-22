@@ -22,7 +22,7 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
         try (CqlSession session = makeSession()) {
 
             //system keyspace 체크
-            List<String> keyspaceNameList = clusterKeyspaceCommander.allKeyspaceList(session).stream()
+            List<String> keyspaceNameList = clusterKeyspaceCommander.allKeyspaceNameList(session).stream()
                 .filter(KeyspaceNameResult::isSystemKeyspace)
                 .map(KeyspaceNameResult::getKeyspaceName).toList();
 

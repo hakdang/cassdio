@@ -90,38 +90,38 @@ const QueryEditor = (props) => {
                     </button>
                 </div>
 
-                <div className="btn-group btn-group-sm me-1" role="group" aria-label="First group">
-                    <OverlayTrigger placement="top" overlay={
-                        <Tooltip id="tooltip">
-                            Query Save
-                        </Tooltip>
-                    }>
-                        <button className="btn btn-sm btn-outline-primary" type="button"
-                                onClick={e => alert("쿼리 저장하기 옵션 구현 필요.")}>
-                            <i className="bi bi-floppy2-fill"></i>
-                        </button>
-                    </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={
-                        <Tooltip id="tooltip">
-                            Query Auto Save <br/>(per 30 sec)
-                        </Tooltip>
-                    }>
-                        <button className="btn btn-sm btn-outline-primary" type="button"
-                                onClick={e => alert("자동저장 옵션 구현 필요(query option 에 대한 localstorage 필요)")}>
-                            <i className="bi bi-clock"></i>
-                        </button>
-                    </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={
-                        <Tooltip id="tooltip">
-                            Query Editor Clean
-                        </Tooltip>
-                    }>
-                        <button className="btn btn-sm btn-outline-primary" type="button"
-                                onClick={e => alert("에디터 비우기")}>
-                            <i className="bi bi-eraser-fill"></i>
-                        </button>
-                    </OverlayTrigger>
-                </div>
+                {/*<div className="btn-group btn-group-sm me-1" role="group" aria-label="First group">*/}
+                {/*    <OverlayTrigger placement="top" overlay={*/}
+                {/*        <Tooltip id="tooltip">*/}
+                {/*            Query Save*/}
+                {/*        </Tooltip>*/}
+                {/*    }>*/}
+                {/*        <button className="btn btn-sm btn-outline-primary" type="button"*/}
+                {/*                onClick={e => alert("쿼리 저장하기 옵션 구현 필요.")}>*/}
+                {/*            <i className="bi bi-floppy2-fill"></i>*/}
+                {/*        </button>*/}
+                {/*    </OverlayTrigger>*/}
+                {/*    <OverlayTrigger placement="top" overlay={*/}
+                {/*        <Tooltip id="tooltip">*/}
+                {/*            Query Auto Save <br/>(per 30 sec)*/}
+                {/*        </Tooltip>*/}
+                {/*    }>*/}
+                {/*        <button className="btn btn-sm btn-outline-primary" type="button"*/}
+                {/*                onClick={e => alert("자동저장 옵션 구현 필요(query option 에 대한 localstorage 필요)")}>*/}
+                {/*            <i className="bi bi-clock"></i>*/}
+                {/*        </button>*/}
+                {/*    </OverlayTrigger>*/}
+                {/*    <OverlayTrigger placement="top" overlay={*/}
+                {/*        <Tooltip id="tooltip">*/}
+                {/*            Query Editor Clean*/}
+                {/*        </Tooltip>*/}
+                {/*    }>*/}
+                {/*        <button className="btn btn-sm btn-outline-primary" type="button"*/}
+                {/*                onClick={e => alert("에디터 비우기")}>*/}
+                {/*            <i className="bi bi-eraser-fill"></i>*/}
+                {/*        </button>*/}
+                {/*    </OverlayTrigger>*/}
+                {/*</div>*/}
 
                 <div className="btn-group btn-group-sm me-2" role="group" aria-label="First group">
                     <OverlayTrigger placement="top" overlay={
@@ -191,22 +191,22 @@ const QueryEditor = (props) => {
 
                     <div className="row g-3 mt-1">
                         <div className="col">
-                            <div className="form-check form-switch">
-                                <input className="form-check-input" type="checkbox" role="switch"
-                                       id="tracingOnSwitch"
-                                       checked={queryOptions.trace}
-                                       onChange={
-                                           e => {
-                                               setQueryOptions(t => {
-                                                   return {...t, trace: !queryOptions.trace}
-                                               })
-                                           }
-                                       }
-                                />
-                                <label className="form-check-label" htmlFor="tracingOnSwitch">
-                                    Tracing On
-                                </label>
-                            </div>
+                            {/*<div className="form-check form-switch">*/}
+                            {/*    <input className="form-check-input" type="checkbox" role="switch"*/}
+                            {/*           id="tracingOnSwitch"*/}
+                            {/*           checked={queryOptions.trace}*/}
+                            {/*           onChange={*/}
+                            {/*               e => {*/}
+                            {/*                   setQueryOptions(t => {*/}
+                            {/*                       return {...t, trace: !queryOptions.trace}*/}
+                            {/*                   })*/}
+                            {/*               }*/}
+                            {/*           }*/}
+                            {/*    />*/}
+                            {/*    <label className="form-check-label" htmlFor="tracingOnSwitch">*/}
+                            {/*        Tracing On*/}
+                            {/*    </label>*/}
+                            {/*</div>*/}
                         </div>
                         <div className="col">
 

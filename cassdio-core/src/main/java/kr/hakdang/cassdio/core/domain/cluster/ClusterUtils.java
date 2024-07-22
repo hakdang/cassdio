@@ -101,7 +101,7 @@ public abstract class ClusterUtils {
     }
 
     public static boolean isVirtualKeyspace(DriverContext context, String keyspace) {
-        return !makeKeyspaceFilter(context).includes(keyspace) && CassandraSystemKeyspace.isVirtualSystemKeyspace(keyspace);
+        return isSystemKeyspace(context, keyspace) && CassandraSystemKeyspace.isVirtualSystemKeyspace(keyspace);
     }
 
     public static boolean isSystemKeyspace(DriverContext context, String keyspace) {

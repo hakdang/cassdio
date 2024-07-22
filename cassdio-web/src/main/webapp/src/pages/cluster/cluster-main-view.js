@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {Link, useParams} from "react-router-dom";
 
 import useCluster from "./hooks/useCluster";
@@ -7,8 +7,6 @@ import CassdioSidebar from "components/layout/cassdio-sidebar";
 
 const ClusterMainView = (props) => {
     const routeParams = useParams();
-
-    const clusterId = useState(routeParams.clusterId);
 
     const {doGetKeyspaceNames} = useCluster();
     const {
@@ -37,21 +35,21 @@ const ClusterMainView = (props) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}`}>
+                                to={`/cluster/${routeParams.clusterId}`}>
                                 <i className="bi bi-house"></i> Cluster Home
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/nodes`}>
+                                to={`/cluster/${routeParams.clusterId}/nodes`}>
                                 <i className="bi bi-server"></i> Node List
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/query`}>
+                                to={`/cluster/${routeParams.clusterId}/query`}>
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
                         </li>
@@ -81,7 +79,7 @@ const ClusterMainView = (props) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
@@ -109,7 +107,7 @@ const ClusterMainView = (props) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>

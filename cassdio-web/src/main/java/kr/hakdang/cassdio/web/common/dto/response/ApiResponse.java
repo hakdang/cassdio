@@ -17,7 +17,7 @@ public class ApiResponse<T> {
     private String error;
     private T result;
 
-    private ApiResponse(boolean ok, String error,, T result) {
+    private ApiResponse(boolean ok, String error, T result) {
         this.ok = ok;
         this.error = error;
         this.result = result;

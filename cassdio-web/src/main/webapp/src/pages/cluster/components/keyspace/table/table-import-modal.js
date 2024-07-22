@@ -19,10 +19,10 @@ const TableImportModal = (props) => {
         <>
             <Modal show={show} size={"xl"} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>데이터 추가</Modal.Title>
+                    <Modal.Title>Data Importer</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Import 기능
+                    Import
                 </Modal.Body>
                 <Modal.Footer>
                     <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>

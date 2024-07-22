@@ -172,7 +172,7 @@ const TableHome = (props) => {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
                                     <td className={"text-center"} colSpan={queryResult.columnHeader.length + 1}>
-                                        데이터가 없습니다.
+                                       No Data
                                     </td>
                                 </tr>
                             </> :
@@ -181,19 +181,19 @@ const TableHome = (props) => {
                                     <tr key={`resultBody${rowIndex}`}>
                                         <td className={"text-center"}>
                                             <div className="btn-group btn-group-sm">
-                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => toast.info("복사")}>
-                                                    <i className="bi bi-clipboard2"></i>
-                                                </button>
+                                                {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
+                                                {/*        onClick={() => toast.info("복사")}>*/}
+                                                {/*    <i className="bi bi-clipboard2"></i>*/}
+                                                {/*</button>*/}
                                                 {/*UI 구성 등 오래걸릴 듯*/}
                                                 {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
                                                 {/*        onClick={() => openToast("수정")}>*/}
                                                 {/*    <i className="bi bi-pencil-square"></i>*/}
                                                 {/*</button>*/}
-                                                <button type="button" className={"btn btn-sm btn-outline-danger"}
-                                                        onClick={() => toast.info("삭제")}>
-                                                    <i className="bi bi-trash3-fill"></i>
-                                                </button>
+                                                {/*<button type="button" className={"btn btn-sm btn-outline-danger"}*/}
+                                                {/*        onClick={() => toast.info("삭제")}>*/}
+                                                {/*    <i className="bi bi-trash3-fill"></i>*/}
+                                                {/*</button>*/}
                                             </div>
                                         </td>
                                         {
@@ -219,8 +219,8 @@ const TableHome = (props) => {
                 nextCursor &&
                 <div className="d-grid gap-2 col-6 mx-auto">
                     <button className="btn btn-outline-secondary" type="button"
-                            onClick={() => getList(nextCursor)}>More
-
+                            onClick={() => getList(nextCursor)}>
+                        More
                     </button>
                 </div>
             }

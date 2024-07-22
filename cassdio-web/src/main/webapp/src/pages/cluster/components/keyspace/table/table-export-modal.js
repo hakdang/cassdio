@@ -19,10 +19,10 @@ const TableExportModal = (props) => {
         <>
             <Modal show={show} size={"xl"} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>데이터 추출</Modal.Title>
+                    <Modal.Title>Data Exporter</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Export 기능
+                    Export
                 </Modal.Body>
                 <Modal.Footer>
                     <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>

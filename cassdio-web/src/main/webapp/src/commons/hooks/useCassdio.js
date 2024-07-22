@@ -43,34 +43,34 @@ export default function useCassdio() {
 
             switch (status) {
                 case 400:
-                    toast.warn(`${status} 잘못된 요청입니다.`);
+                    toast.warn(`Invalid request : ${status}`);
                     break;
                 case 401: {
-                    toast.warn(`${status} 인증 실패입니다.`);
+                    toast.warn(`Unauthorized error : ${status}`);
                     break;
                 }
                 case 403: {
-                    toast.warn(`${status} 권한이 없습니다.`);
+                    toast.warn(`Forbidden error : ${status}`);
                     break;
                 }
                 case 404: {
-                    toast.warn(`${status} 찾을 수 없는 페이지입니다.`);
+                    toast.warn(`Not Found : ${status}`);
                     break;
                 }
                 case 500: {
-                    toast.error(`${status} 서버 오류입니다. ${error.message}`);
+                    toast.error(`Internal Server Error : ${status}, ${error.message}`);
                     break;
                 }
                 default: {
-                    toast.error(`${status} 에러가 발생했습니다. ${error.message}`);
+                    toast.error(`Error : ${status}, ${error.message}`);
                 }
             }
         } else if (error instanceof Error && error.name === "TimeoutError") {
             console.error(`[API] | TimeError ${error.toString()}`);
-            toast.error(`${0} 요청 시간이 초과되었습니다.`);
+            toast.error(`Timeout ${0}`);
         } else {
             console.error(`[API] | Error ${error.toString()}`);
-            toast.error(`${0} 에러가 발생했습니다. ${error.toString()}`);
+            toast.error(`Error ${0}, ${error.toString()}`);
         }
     }
 
