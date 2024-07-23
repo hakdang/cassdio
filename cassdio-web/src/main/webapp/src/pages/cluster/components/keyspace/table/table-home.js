@@ -1,69 +1,40 @@
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import TableDetailModal from "./table-detail-modal";
-import axios from "axios";
 import TableDataManageModal from "./table-data-manage-modal";
 import TableExportModal from "./table-export-modal";
 import TableImportModal from "./table-import-modal";
-import useCassdio from "commons/hooks/useCassdio";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import {toast} from "react-toastify";
 import DataRowItem from "../../data-row-item";
+import ClusterBreadcrumb from "pages/cluster/components/cluster-breadcrumb";
+import useTable from "pages/cluster/hooks/useTable";
+import TableRowDetailModal from "./detail-modal/table-row-detail-modal";
 
 const TableHome = (props) => {
+
+    const {
+        doTableTruncate,
+        doTableDrop,
+        doGetList,
+        queryLoading,
+        queryResult,
+        nextCursor,
+    } = useTable();
+
     const routeParams = useParams();
     const [showDetail, setShowDetail] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showImport, setShowImport] = useState(false);
     const [showDataManage, setShowDataManage] = useState(false);
+    const [showRowDetail, setShowRowDetail] = useState(false);
     const [tableName, setTableName] = useState('');
-    const {errorCatch} = useCassdio();
-    const initQueryResult = {
-        rows: [],
-        columnHeader: [],
-    };
-
-    const [queryLoading, setQueryLoading] = useState(false)
-    const [queryResult, setQueryResult] = useState(initQueryResult)
-    const [nextCursor, setNextCursor] = useState('')
-
-    const getList = (cursor) => {
-        if (cursor === null) {
-            setQueryResult({
-                rows: [],
-                columnHeader: [],
-            })
-        }
-
-        setQueryLoading(true);
-
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`,
-            params: {
-                pageSize: 50,
-                timeoutSeconds: 3,
-                cursor: cursor,
-            },
-        }).then((response) => {
-            setNextCursor(response.data.result.nextCursor)
-
-            setQueryResult({
-                rows: [...queryResult.rows, ...response.data.result.rows],
-                columnHeader: response.data.result.columnHeader,
-            })
-        }).catch((error) => {
-            errorCatch(error);
-        }).finally(() => {
-            setQueryLoading(false);
-        })
-    }
+    const [moreQueryLoading, setMoreQueryLoading] = useState(false)
 
     useEffect(() => {
         //show component
         setTableName(routeParams.tableName);
-        setQueryResult(initQueryResult);
-        getList(null)
+
+        doGetList(null)
 
         return () => {
             //hide component
@@ -74,27 +45,12 @@ const TableHome = (props) => {
 
     return (
         <>
-            <div className={"row pt-3"}>
-                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item">
-                            <Link to={`/cluster/${routeParams.clusterId}`}
-                                  className={"link-body-emphasis text-decoration-none"}>
-                                Cluster
-                            </Link>
-                        </li>
-                        <li className="breadcrumb-item">
-                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`}
-                                  className={"link-body-emphasis text-decoration-none"}>
-                                {routeParams.keyspaceName}
-                            </Link>
-                        </li>
-                        <li className="breadcrumb-item active" aria-current="page">
-                            {routeParams.tableName}
-                        </li>
-                    </ol>
-                </nav>
-            </div>
+            <ClusterBreadcrumb
+                clusterId={routeParams.clusterId}
+                keyspaceName={routeParams.keyspaceName}
+                tableName={routeParams.tableName}
+                active={"TABLE"}
+            />
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -139,11 +95,22 @@ const TableHome = (props) => {
                     {/*        }}>*/}
                     {/*    New Line*/}
                     {/*</button>*/}
+
+                    <div className="dropdown">
+                        <button className="btn btn-outline-danger btn-sm dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i className="bi bi-three-dots"></i>
+                        </button>
+                        <ul className="dropdown-menu">
+                            <li><a className="dropdown-item" role={"button"} onClick={doTableTruncate}>Truncate</a></li>
+                            <li><a className="dropdown-item" role={"button"} onClick={doTableDrop}>Drop</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             {/*TODO : 위치 변경*/}
-
             <div className="table-responsive small">
                 <table className="table table-sm table-fixed table-lock-height table-hover">
                     <thead>
@@ -152,7 +119,8 @@ const TableHome = (props) => {
                         {
                             queryResult.columnHeader.map((info, infoIndex) => {
                                 return (
-                                    <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`} scope="col">
+                                    <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
+                                        scope="col">
                                         <OverlayTrigger placement="bottom" overlay={
                                             <Tooltip id="tooltip">
                                                 {info.columnName} <br/>
@@ -172,7 +140,7 @@ const TableHome = (props) => {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
                                     <td className={"text-center"} colSpan={queryResult.columnHeader.length + 1}>
-                                       No Data
+                                        No Data
                                     </td>
                                 </tr>
                             </> :
@@ -181,10 +149,10 @@ const TableHome = (props) => {
                                     <tr key={`resultBody${rowIndex}`}>
                                         <td className={"text-center"}>
                                             <div className="btn-group btn-group-sm">
-                                                {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
-                                                {/*        onClick={() => toast.info("복사")}>*/}
-                                                {/*    <i className="bi bi-clipboard2"></i>*/}
-                                                {/*</button>*/}
+                                                <button type="button" className={"btn btn-sm btn-outline-primary"}
+                                                        onClick={() => setShowRowDetail(true)}>
+                                                    <i className="bi bi-book"></i>
+                                                </button>
                                                 {/*UI 구성 등 오래걸릴 듯*/}
                                                 {/*<button type="button" className={"btn btn-sm btn-outline-primary"}*/}
                                                 {/*        onClick={() => openToast("수정")}>*/}
@@ -217,11 +185,20 @@ const TableHome = (props) => {
 
             {
                 nextCursor &&
-                <div className="d-grid gap-2 col-6 mx-auto">
-                    <button className="btn btn-outline-secondary" type="button"
-                            onClick={() => getList(nextCursor)}>
-                        More
-                    </button>
+                <div className={"row"}>
+                    <div className="d-grid gap-2 col-6 mx-auto">
+                        <button className="btn btn-outline-secondary" type="button"
+                                onClick={() => doGetList(nextCursor, setMoreQueryLoading)}>
+                            More
+
+                            {
+                                moreQueryLoading &&
+                                <div className="ms-2 spinner-border spinner-border-sm" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            }
+                        </button>
+                    </div>
                 </div>
             }
 
@@ -256,6 +233,12 @@ const TableHome = (props) => {
                 showImport && <TableImportModal
                     show={showImport}
                     handleClose={() => setShowImport(false)}
+                />
+            }
+            {
+                showRowDetail && <TableRowDetailModal
+                    show={showRowDetail}
+                    handleClose={() => setShowRowDetail(false)}
                 />
             }
         </>

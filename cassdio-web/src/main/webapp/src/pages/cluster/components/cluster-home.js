@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import useCassdio from "commons/hooks/useCassdio";
 import Spinner from "components/spinner";
+import ClusterBreadcrumb from "./cluster-breadcrumb";
 
 const ClusterHome = () => {
     const {errorCatch} = useCassdio();
@@ -36,15 +37,10 @@ const ClusterHome = () => {
 
     return (
         <>
-            <div className={"row pt-3"}>
-                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item active">
-                            Cluster
-                        </li>
-                    </ol>
-                </nav>
-            </div>
+            <ClusterBreadcrumb
+                clusterId={routeParams.clusterId}
+                active={"CLUSTER"}
+            />
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

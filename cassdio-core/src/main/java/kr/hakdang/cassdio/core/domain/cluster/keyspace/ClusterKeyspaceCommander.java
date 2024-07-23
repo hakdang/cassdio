@@ -11,6 +11,7 @@ import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
@@ -169,5 +170,10 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             .row(rowResult)
             .columns(CassdioColumnDefinition.makes(definitions))
             .build();
+    }
+
+    public void keyspaceDrop(CqlSession session, String keyspace) {
+        ResultSet resultSet = session.execute(SchemaBuilder.dropKeyspace(keyspace).build());
+        log.info("Keyspace Drop Result - keyspace: {}, ok: {}", keyspace, resultSet.wasApplied());
     }
 }

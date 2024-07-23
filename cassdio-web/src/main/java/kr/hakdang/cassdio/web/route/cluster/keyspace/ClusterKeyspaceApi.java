@@ -2,14 +2,17 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceNameResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,13 +90,32 @@ public class ClusterKeyspaceApi {
             result.put("detail", clusterKeyspaceCommander.keyspaceDetail(session, keyspace));
 
             if (withTableList) { //TODO 해당 값 외에 view 등의 기능은 탭을 생성하여 화면 이동하면 호출할 수 있도록 개발 예정
-                result.put("tableList", clusterTableCommander.allTables(session, ClusterDescTablesArgs.builder()
+                ClusterDescTablesArgs args = ClusterDescTablesArgs.builder()
                     .keyspace(keyspace)
-                    .pageSize(50)
-                    .build()));
+                    .pageSize(100)
+                    .build();
+
+                CqlSessionSelectResults tableListResult = clusterTableCommander.allTables(session, args);
+
+                result.put("tableList", tableListResult);
             }
         }
 
         return ApiResponse.ok(result);
     }
+
+    @DeleteMapping("/keyspace/{keyspace}")
+    public ApiResponse<Void> keyspaceDrop(
+        @PathVariable String clusterId,
+        @PathVariable String keyspace
+    ) {
+
+        //TODO : keyspace validation
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
+            clusterKeyspaceCommander.keyspaceDrop(session, keyspace);
+        }
+
+        return ApiResponse.ok();
+    }
+
 }

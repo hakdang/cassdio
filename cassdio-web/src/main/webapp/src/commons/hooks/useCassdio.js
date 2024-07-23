@@ -35,7 +35,7 @@ export default function useCassdio() {
         if (axios.isAxiosError(error)) {
             const {message} = error;
             const {method, url} = error.config;
-            const {status, statusText} = error.response;
+            const {status, statusText, data} = error.response;
 
             console.error(
                 `[API] ${method?.toUpperCase()} ${url} | Error ${status} ${statusText} | ${message}`, error
@@ -58,11 +58,11 @@ export default function useCassdio() {
                     break;
                 }
                 case 500: {
-                    toast.error(`Internal Server Error : ${status}, ${error.message}`);
+                    toast.error(`Internal Server Error : ${status}\n ${data.message}`);
                     break;
                 }
                 default: {
-                    toast.error(`Error : ${status}, ${error.message}`);
+                    toast.error(`Error : ${status}, ${data.message}`);
                 }
             }
         } else if (error instanceof Error && error.name === "TimeoutError") {
