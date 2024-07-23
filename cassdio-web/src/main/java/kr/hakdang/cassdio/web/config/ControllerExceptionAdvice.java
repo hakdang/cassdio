@@ -27,21 +27,21 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(BindException.class)
     private ApiResponse<Object> handleBadRequest(BindException exception) {
         log.warn(exception.getMessage(), exception);
-        return ApiResponse.fail(E400_INVALID_PARAMETER);
+        return ApiResponse.fail(E400_INVALID_PARAMETER, exception.getMessage());
     }
 
     @ExceptionHandler(BaseException.class)
     private ResponseEntity<ApiResponse<Object>> handleBaseException(BaseException exception) {
         log.error(exception.getMessage(), exception);
         return ResponseEntity.status(exception.getErrorCode().getHttpStatusCode())
-            .body(ApiResponse.fail(exception.getErrorCode()));
+            .body(ApiResponse.fail(exception.getErrorCode(), exception.getMessage()));
     }
 
     @ExceptionHandler(Throwable.class)
     private ResponseEntity<ApiResponse<Object>> handleThrowable(Throwable throwable) {
         log.error(throwable.getMessage(), throwable);
         return ResponseEntity.internalServerError()
-            .body(ApiResponse.fail(ErrorCode.E500_INTERNAL_SERVER_ERROR));
+            .body(ApiResponse.fail(ErrorCode.E500_INTERNAL_SERVER_ERROR, throwable.getMessage()));
     }
 
 }

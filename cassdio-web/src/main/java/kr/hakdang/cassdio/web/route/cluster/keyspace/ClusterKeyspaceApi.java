@@ -2,21 +2,25 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceNameResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,18 +35,15 @@ import java.util.Map;
 public class ClusterKeyspaceApi {
 
     private final ClusterConnector clusterConnector;
-    private final ClusterKeyspaceReader clusterKeyspaceReader;
     private final ClusterTableCommander clusterTableCommander;
     private final ClusterKeyspaceCommander clusterKeyspaceCommander;
 
     public ClusterKeyspaceApi(
         ClusterConnector clusterConnector,
-        ClusterKeyspaceReader clusterKeyspaceReader,
         ClusterTableCommander clusterTableCommander,
         ClusterKeyspaceCommander clusterKeyspaceCommander
     ) {
         this.clusterConnector = clusterConnector;
-        this.clusterKeyspaceReader = clusterKeyspaceReader;
         this.clusterTableCommander = clusterTableCommander;
         this.clusterKeyspaceCommander = clusterKeyspaceCommander;
     }
@@ -51,7 +52,10 @@ public class ClusterKeyspaceApi {
     public ApiResponse<ClusterKeyspaceListResult> keyspaceList(
         @PathVariable String clusterId
     ) {
-        return ApiResponse.ok(clusterKeyspaceReader.listKeyspace(clusterId));
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+            return ApiResponse.ok(clusterKeyspaceCommander.generalKeyspaceList(session));
+        }
+
     }
 
     @GetMapping("/keyspace-name")
@@ -59,16 +63,12 @@ public class ClusterKeyspaceApi {
         @PathVariable String clusterId
     ) {
         Map<String, Object> result = new HashMap<>();
-        result.put("keyspaceNameList", clusterKeyspaceReader.allKeyspaceNameList(clusterId));
-        return ApiResponse.ok(result);
-    }
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+            List<KeyspaceNameResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceNameList(session);
+            result.put("keyspaceNameList", allKeyspaceList);
+        }
 
-    @PutMapping("/keyspace/cache-evict")
-    public ApiResponse<Void> evictKeyspaceListCache(
-        @PathVariable String clusterId
-    ) {
-        clusterKeyspaceReader.refreshKeyspaceCache(clusterId);
-        return ApiResponse.ok();
+        return ApiResponse.ok(result);
     }
 
     @GetMapping("/keyspace/{keyspace}")
@@ -90,13 +90,32 @@ public class ClusterKeyspaceApi {
             result.put("detail", clusterKeyspaceCommander.keyspaceDetail(session, keyspace));
 
             if (withTableList) { //TODO 해당 값 외에 view 등의 기능은 탭을 생성하여 화면 이동하면 호출할 수 있도록 개발 예정
-                result.put("tableList", clusterTableCommander.allTables(session, ClusterDescTablesArgs.builder()
+                ClusterDescTablesArgs args = ClusterDescTablesArgs.builder()
                     .keyspace(keyspace)
-                    .pageSize(50)
-                    .build()));
+                    .pageSize(100)
+                    .build();
+
+                CqlSessionSelectResults tableListResult = clusterTableCommander.allTables(session, args);
+
+                result.put("tableList", tableListResult);
             }
         }
 
         return ApiResponse.ok(result);
     }
+
+    @DeleteMapping("/keyspace/{keyspace}")
+    public ApiResponse<Void> keyspaceDrop(
+        @PathVariable String clusterId,
+        @PathVariable String keyspace
+    ) {
+
+        //TODO : keyspace validation
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
+            clusterKeyspaceCommander.keyspaceDrop(session, keyspace);
+        }
+
+        return ApiResponse.ok();
+    }
+
 }

@@ -40,7 +40,7 @@ const ClusterList = () => {
         });
     }
     const removeClusterId = (clusterId) => {
-        if (!window.confirm("제거하시겠습니까?")) {
+        if (!window.confirm("Do you want to remove this?")) {
             return;
         }
 
@@ -49,7 +49,7 @@ const ClusterList = () => {
             url: `/api/cassandra/cluster/${clusterId}`,
             params: {}
         }).then((response) => {
-            toast.info("제거 완료");
+            toast.info("Complete");
             getClusterList();
         }).catch((error) => {
             errorCatch(error)

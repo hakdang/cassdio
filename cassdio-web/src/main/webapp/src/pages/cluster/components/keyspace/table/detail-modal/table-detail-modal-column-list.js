@@ -25,7 +25,7 @@ const TableDetailModalColumnList = (props) => {
                             <tr>
                                 <td className={"text-center"}
                                     colSpan={columnList.columnHeader.length}>
-                                    데이터가 없습니다.
+                                    No Data
                                 </td>
                             </tr>
                         </> :

@@ -1,32 +1,59 @@
 import {Link} from "react-router-dom";
 import TableDetailModal from "./table/table-detail-modal";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import useCassdio from "../../../../commons/hooks/useCassdio";
 
 const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
+    const [moreLoading, setMoreLoading] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
     const [tableName, setTableName] = useState('');
 
+    const [rows, setRows] = useState(tableList.rows || []);
+    const [nextCursor, setNextCursor] = useState(tableList.nextCursor);
+
+    const {errorCatch} = useCassdio();
+
+    const moreList = (cursor) => {
+        setMoreLoading(true)
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table`,
+            params: {
+                cursor: cursor
+            }
+        }).then((response) => {
+            setRows([...rows, ...response.data.result.tableList.rows]);
+            setNextCursor(response.data.result.tableList.nextCursor);
+
+        }).catch((error) => {
+            errorCatch(error)
+        }).finally(() => {
+            setMoreLoading(false)
+        });
+    }
+
+    useEffect(() => {
+        //show component
+
+        return () => {
+            //hide component
+
+        };
+    }, []);
+
     return (
         <>
-
-            <TableDetailModal
-                show={showDetail}
-                clusterId={clusterId}
-                keyspaceName={keyspaceName}
-                tableName={tableName}
-                handleClose={() => setShowDetail(false)}
-            />
-
             <ol className="list-group ">
                 {
-                    tableList && tableList.length <= 0 ? <>
+                    rows && rows.length <= 0 ? <>
                         <li
                             className="list-group-item d-flex justify-content-between align-items-start">
-                            등록된 테이블이 없습니다.
+                            No Data
                         </li>
                     </> : <>
                         {
-                            tableList.map((info, infoIndex) => (
+                            rows.map((info, infoIndex) => (
                                 <li key={infoIndex}
                                     className="list-group-item d-flex justify-content-between align-items-start">
                                     <div className="ms-2 me-auto">
@@ -53,6 +80,33 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                     </>
                 }
             </ol>
+
+            {
+                nextCursor &&
+                <div className={"row mt-3"}>
+                    <div className="d-grid gap-2 col-8 mx-auto">
+                        <button className="btn btn-outline-secondary" type="button"
+                                onClick={() => moreList(nextCursor)}>
+                            More
+                            {
+                                moreLoading &&
+                                <div className="ms-2 spinner-border spinner-border-sm" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            }
+
+                        </button>
+                    </div>
+                </div>
+            }
+
+            <TableDetailModal
+                show={showDetail}
+                clusterId={clusterId}
+                keyspaceName={keyspaceName}
+                tableName={tableName}
+                handleClose={() => setShowDetail(false)}
+            />
         </>
     )
 }

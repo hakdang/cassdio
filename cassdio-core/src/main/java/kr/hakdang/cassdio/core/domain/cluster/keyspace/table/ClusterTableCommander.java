@@ -9,6 +9,8 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
+import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
@@ -16,6 +18,7 @@ import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import lombok.extern.slf4j.Slf4j;
@@ -51,28 +54,14 @@ public class ClusterTableCommander extends BaseClusterCommander {
      * @param args
      * @return
      */
-    public ClusterDescTablesResult allTables(CqlSession session, ClusterDescTablesArgs args) {
-        SimpleStatement statement;
-        int limit = 200; //cursor 적용 후 줄일 예정
-        if (ClusterUtils.isVirtualKeyspace(session.getContext(), args.getKeyspace())) { //System
-            statement = QueryBuilder
-                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
-                .all()
-                .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .limit(limit)
-                .build()
-                .setPageSize(limit)
-                .setTimeout(Duration.ofSeconds(3));
-        } else {
-            statement = QueryBuilder
-                .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
-                .all()
-                .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .limit(limit)
-                .build()
-                .setPageSize(limit)
-                .setTimeout(Duration.ofSeconds(3));
-        }
+    public CqlSessionSelectResults allTables(CqlSession session, ClusterDescTablesArgs args) {
+        SimpleStatement statement = getTable(session, args.getKeyspace())
+            .all()
+            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .build()
+            .setPageSize(args.getPageSize())
+            .setTimeout(Duration.ofSeconds(3))
+            .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null);
 
         PreparedStatement preparedStatement = session.prepare(statement);
 
@@ -92,17 +81,21 @@ public class ClusterTableCommander extends BaseClusterCommander {
             nextCursor = Bytes.toHexString(pagingState);
         }
 
-        List<String> columnNames = new ArrayList<>();
-        for (ColumnDefinition definition : definitions) {
-            columnNames.add(definition.getName().asCql(true));
-        }
-
-        return ClusterDescTablesResult.builder()
-            .wasApplied(resultSet.wasApplied())
-            .columnNames(columnNames)
+        return CqlSessionSelectResults.builder()
+            .columnHeader(CassdioColumnDefinition.makes(definitions))
             .rows(rows)
             .nextCursor(nextCursor)
             .build();
+    }
+
+    private SelectFrom getTable(CqlSession session, String keyspace) {
+        if (ClusterUtils.isVirtualKeyspace(session.getContext(), keyspace)) {
+            return QueryBuilder
+                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
+        }
+
+        return QueryBuilder
+            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
     }
 
     public CqlSessionSelectResults pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
@@ -138,31 +131,15 @@ public class ClusterTableCommander extends BaseClusterCommander {
     }
 
     public CqlSessionSelectResult tableDetail(CqlSession session, ClusterTableArgs.ClusterTableGetArgs args) {
-        SimpleStatement statement;
         int limit = 1;
-        if (ClusterUtils.isVirtualKeyspace(session.getContext(), args.getKeyspace())) { //System
-
-            statement = QueryBuilder
-                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
-                .all()
-                .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .limit(limit)
-                .build(args.getKeyspace(), args.getTable())
-                .setPageSize(limit)
-                .setTimeout(Duration.ofSeconds(3));
-
-        } else {
-            statement = QueryBuilder
-                .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
-                .all()
-                .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
-                .limit(limit)
-                .build(args.getKeyspace(), args.getTable())
-                .setPageSize(limit)
-                .setTimeout(Duration.ofSeconds(3));
-        }
+        SimpleStatement statement = getTable(session, args.getKeyspace())
+            .all()
+            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .limit(limit)
+            .build(args.getKeyspace(), args.getTable())
+            .setPageSize(limit)
+            .setTimeout(Duration.ofSeconds(3));
 
         ResultSet resultSet = session.execute(statement);
         CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
@@ -187,15 +164,23 @@ public class ClusterTableCommander extends BaseClusterCommander {
         try {
             return session.getMetadata()
                 .getKeyspace(keyspace)
-                .orElseThrow() //TODO : 에러처리
+                .orElseThrow(() -> new ClusterKeyspaceException.ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", keyspace)))
                 .getTable(table)
-                .orElseThrow()
+                .orElseThrow(() -> new ClusterTableException.CLusterTableNotFoundException(String.format("not found table(%s)", table)))
                 .describe(true);
 
         } catch (NoSuchElementException e) { //ignore
             return "";
-        } catch (Throwable t) {
-            throw t;
         }
+    }
+
+    public void tableDrop(CqlSession session, String keyspace, String table) {
+        ResultSet resultSet = session.execute(SchemaBuilder.dropTable(keyspace, table).build());
+        log.info("Table Drop Result - keyspace: {}, table: {}, ok: {}", keyspace, table, resultSet.wasApplied());
+    }
+
+    public void tableTruncate(CqlSession session, String keyspace, String table) {
+        ResultSet resultSet = session.execute(QueryBuilder.truncate(keyspace, table).build());
+        log.info("Table Truncate Result - keyspace: {}, table: {}, ok: {}", keyspace, table, resultSet.wasApplied());
     }
 }

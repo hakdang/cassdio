@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 
 import {Modal} from "react-bootstrap";
-
 import {toast} from "react-toastify";
 
 import axios from "axios";
@@ -40,28 +39,28 @@ const ClusterManageModal = (props) => {
     const [saveLoading, setSaveLoading] = useState(false);
     const save = () => {
         if (!clusterInfo.contactPoints) {
-            toast.warn("contactPoints 를 입력해주세요.");
+            toast.warn("Please enter ContactPoints");
             return;
         }
 
         if (!clusterInfo.port || clusterInfo.port === 0) {
-            toast.warn("clusterPort 를 입력해주세요.");
+            toast.warn("Please enter Port");
             return;
         }
 
         if (!clusterInfo.localDatacenter) {
-            toast.warn("localDatacenter 를 입력해주세요.");
+            toast.warn("Please enter local Datacenter");
             return;
         }
 
         if (clusterInfo.clusterAuthCredentials) {
             if (!clusterInfo.username) {
-                toast.warn("username 를 입력해주세요.");
+                toast.warn("Please enter username.");
                 return;
             }
 
             if (!clusterInfo.password) {
-                toast.warn("password 를 입력해주세요.");
+                toast.warn("Please enter your password.");
                 return;
             }
         }
@@ -86,7 +85,7 @@ const ClusterManageModal = (props) => {
                 password: clusterInfo.password,
             },
         }).then((response) => {
-            toast.info("등록 완료.");
+            toast.info("Complete");
             getClusterList();
             handleClose();
         }).catch((error) => {

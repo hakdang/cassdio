@@ -87,16 +87,19 @@ const QueryResult = (props) => {
 
                     {
                         nextCursor &&
-                        <div className="d-grid gap-2 col-6 mx-auto">
-                            <button className="btn btn-outline-secondary" type="button"
-                                    onClick={() => queryExecute(query, nextCursor, setMoreQueryLoading)}>More
-                                {
-                                    moreQueryLoading &&
-                                    <div className="ms-2 spinner-border spinner-border-sm" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                }
-                            </button>
+                        <div className={"row"}>
+                            <div className="d-grid gap-2 col-6 mx-auto">
+                                <button className="btn btn-outline-secondary" type="button"
+                                        onClick={() => queryExecute(query, nextCursor, setMoreQueryLoading)}>
+                                    More
+                                    {
+                                        moreQueryLoading &&
+                                        <div className="ms-2 spinner-border spinner-border-sm" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    }
+                                </button>
+                            </div>
                         </div>
                     }
                 </>

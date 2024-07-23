@@ -5,6 +5,7 @@ import Spinner from "components/spinner";
 import KeyspaceTableList from "./keyspace-table-list";
 import useCassdio from "commons/hooks/useCassdio";
 import {CassdioUtils} from "utils/cassdioUtils";
+import ClusterBreadcrumb from "../cluster-breadcrumb";
 
 const KeyspaceHome = () => {
 
@@ -17,7 +18,7 @@ const KeyspaceHome = () => {
         columns: [],
         row: {}
     });
-    const [tableList, setTableList] = useState([]);
+    const [tableList, setTableList] = useState({});
 
     useEffect(() => {
         //show component
@@ -30,35 +31,18 @@ const KeyspaceHome = () => {
                 withTableList: true,
             }
         }).then((response) => {
+            console.log("response.data.result.tableList : ", response.data.result.tableList);
+
             setKeyspaceDescribe(response.data.result.describe)
             setKeyspaceDetail(response.data.result.detail);
 
-            setTableList(response.data.result.tableList.rows)
+            setTableList(response.data.result.tableList)
 
         }).catch((error) => {
             errorCatch(error)
         }).finally(() => {
             setDetailLoading(false)
         });
-        //
-        // axios({
-        //     method: "GET",
-        //     url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table`,
-        //     params: {
-        //         size: 50,
-        //         cursor: tableCursor // TODO: 스크롤 페이지네이션 처리
-        //     }
-        // }).then((response) => {
-        //     console.log("KeyspaceHome ", response);
-        //     setTableList(response.data.result.items)
-        //     if (response.data.result.cursor.hasNext) {
-        //         setTableCursor(response.data.result.cursor.next)
-        //     }
-        // }).catch((error) => {
-        //     axiosCatch(error)
-        // }).finally(() => {
-        //     setTableLoading(false)
-        // });
 
         return () => {
             //hide component
@@ -68,21 +52,11 @@ const KeyspaceHome = () => {
 
     return (
         <>
-            <div className={"row pt-3"}>
-                <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
-                    <ol className="breadcrumb">
-                        <li className="breadcrumb-item">
-                            <Link to={`/cluster/${routeParams.clusterId}`}
-                                  className={"link-body-emphasis text-decoration-none"}>
-                                Cluster
-                            </Link>
-                        </li>
-                        <li className="breadcrumb-item active" aria-current="page">
-                            {routeParams.keyspaceName}
-                        </li>
-                    </ol>
-                </nav>
-            </div>
+            <ClusterBreadcrumb
+                clusterId={routeParams.clusterId}
+                keyspaceName={routeParams.keyspaceName}
+                active={"KEYSPACE"}
+            />
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -150,10 +124,13 @@ const KeyspaceHome = () => {
                 <div className={"row mt-3"}>
                     <div className={"col-md-6 col-sm-12"}>
                         <h2 className="h3">Tables</h2>
+                        {
+                            tableList &&
+                            <KeyspaceTableList clusterId={routeParams.clusterId}
+                                               keyspaceName={routeParams.keyspaceName}
+                                               tableList={tableList}/>
+                        }
 
-                        <KeyspaceTableList clusterId={routeParams.clusterId}
-                                           keyspaceName={routeParams.keyspaceName}
-                                           tableList={tableList}/>
 
                     </div>
                     {/*<div className={"col-md-6 col-sm-12"}>*/}

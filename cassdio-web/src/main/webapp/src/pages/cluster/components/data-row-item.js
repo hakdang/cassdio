@@ -21,8 +21,9 @@ export default function DataRowItem(props) {
     const handleCopyClipBoard = async (data) => {
         try {
             await navigator.clipboard.writeText(data);
+            await toast.info("Copied")
         } catch (e) {
-            toast.error('복사에 실패하였습니다');
+            toast.error('Fail Copy');
         }
     };
 

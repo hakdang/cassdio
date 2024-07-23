@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * ClusterTableApi
+ * ClusterUDTTypeApi
  *
  * @author seungh0
  * @since 2024-07-01

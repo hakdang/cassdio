@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.validation.Valid;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTable;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
@@ -11,6 +12,7 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTable
 import kr.hakdang.cassdio.web.common.dto.request.CursorRequest;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cassdio.web.common.dto.response.ItemListWithCursorResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,13 +52,25 @@ public class ClusterTableApi {
     }
 
     @GetMapping("/table")
-    public ApiResponse<ItemListWithCursorResponse<ClusterTable, String>> listTables(
+    public ApiResponse<Map<String, Object>> listTables(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
         @Valid CursorRequest cursorRequest
     ) {
-        ItemListWithCursorResponse<ClusterTable, String> tables = clusterTableReader.listTables(clusterId, keyspace, cursorRequest);
-        return ApiResponse.ok(tables);
+        Map<String, Object> result = new HashMap<>();
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+            ClusterDescTablesArgs args = ClusterDescTablesArgs.builder()
+                .keyspace(keyspace)
+                .pageSize(cursorRequest.getSize())
+                .cursor(cursorRequest.getCursor())
+                .build();
+
+            CqlSessionSelectResults tableListResult = clusterTableCommander.allTables(session, args);
+
+            result.put("tableList", tableListResult);
+        }
+
+        return ApiResponse.ok(result);
     }
 
     @GetMapping("/table/{table}")
@@ -109,9 +123,41 @@ public class ClusterTableApi {
             map.put("nextCursor", result1.getNextCursor());
             map.put("rows", result1.getRows());
             map.put("columnHeader", result1.getColumnHeader());
+
+            map.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
         }
 
         return ApiResponse.ok(map);
+    }
+
+    //권한 추가해서 ADMIN 만 동작할 수 있도록 해야함.
+    @DeleteMapping("/table/{table}")
+    public ApiResponse<Void> tableDrop(
+        @PathVariable String clusterId,
+        @PathVariable String keyspace,
+        @PathVariable String table
+    ) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
+
+            clusterTableCommander.tableDrop(session, keyspace, table);
+
+            return ApiResponse.ok();
+        }
+    }
+
+    //권한 추가해서 ADMIN 만 동작할 수 있도록 해야함.
+    @DeleteMapping("/table/{table}/truncate")
+    public ApiResponse<Void> tableTruncate(
+        @PathVariable String clusterId,
+        @PathVariable String keyspace,
+        @PathVariable String table
+    ) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
+
+            clusterTableCommander.tableTruncate(session, keyspace, table);
+
+            return ApiResponse.ok();
+        }
     }
 
 //    @PostMapping("/table/{table}/row/insert/query")

@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {Modal} from "react-bootstrap";
 
-const TableImportModal = (props) => {
+const TableRowDetailModal = (props) => {
 
     const show = props.show;
     const handleClose = props.handleClose;
@@ -19,10 +19,10 @@ const TableImportModal = (props) => {
         <>
             <Modal show={show} size={"xl"} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Data Importer</Modal.Title>
+                    <Modal.Title>Row Detail</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Import
+                   Row Detail
                 </Modal.Body>
                 <Modal.Footer>
                     <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>
@@ -34,4 +34,4 @@ const TableImportModal = (props) => {
     )
 }
 
-export default TableImportModal;
+export default TableRowDetailModal;
