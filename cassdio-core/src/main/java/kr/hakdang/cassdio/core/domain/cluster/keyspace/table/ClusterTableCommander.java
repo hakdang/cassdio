@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +144,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
         Row row = resultSet.one();
         if (row == null) {
-            throw new IllegalArgumentException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
+            throw new ClusterTableException.ClusterTableNotFoundException(String.format("not found table(%s)", args.getTable()));
         }
 
         return CqlSessionSelectResult.builder()
@@ -166,7 +164,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
                 .getKeyspace(keyspace)
                 .orElseThrow(() -> new ClusterKeyspaceException.ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", keyspace)))
                 .getTable(table)
-                .orElseThrow(() -> new ClusterTableException.CLusterTableNotFoundException(String.format("not found table(%s)", table)))
+                .orElseThrow(() -> new ClusterTableException.ClusterTableNotFoundException(String.format("not found table(%s)", table)))
                 .describe(true);
 
         } catch (NoSuchElementException e) { //ignore

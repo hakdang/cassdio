@@ -11,9 +11,9 @@ import kr.hakdang.cassdio.common.error.ErrorCode;
  */
 public class ClusterTableException {
 
-    public static class CLusterTableNotFoundException extends BaseException {
+    public static class ClusterTableNotFoundException extends BaseException {
 
-        protected CLusterTableNotFoundException(String message) {
+        protected ClusterTableNotFoundException(String message) {
             super(message, ErrorCode.E404_NOT_FOUND_CLUSTER_NODE);
         }
     }

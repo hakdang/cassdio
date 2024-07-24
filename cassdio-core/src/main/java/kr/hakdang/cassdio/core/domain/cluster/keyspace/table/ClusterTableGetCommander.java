@@ -9,7 +9,7 @@ import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceException.ClusterKeyspaceNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.CLusterTableNotFoundException;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.ClusterTableNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Column;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
 
         Row tableRow = session.execute(statement).one();
         if (tableRow == null) {
-            throw new CLusterTableNotFoundException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
+            throw new ClusterTableNotFoundException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
         }
 
         String tableDescribe = "";
@@ -52,7 +52,7 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
             TableMetadata tableMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
                 .orElseThrow(() -> new ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", args.getKeyspace())))
                 .getTable(args.getTable())
-                .orElseThrow(() -> new CLusterTableNotFoundException(String.format("not found table(%s)", args.getTable())));
+                .orElseThrow(() -> new ClusterTableNotFoundException(String.format("not found table(%s)", args.getTable())));
 
             tableDescribe = tableMetadata.describe(true);
         }
