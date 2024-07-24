@@ -3,6 +3,7 @@ import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
 import useCassdio from "commons/hooks/useCassdio";
+import {CassdioUtils} from "../../../utils/cassdioUtils";
 
 export default function useTable() {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function useTable() {
             params: {},
         }).then((response) => {
             toast.info("complete")
-            doGetList(null);
+            doGetTableList(null);
         }).catch((error) => {
             errorCatch(error);
         }).finally(() => {
@@ -51,7 +52,7 @@ export default function useTable() {
 
     const initQueryResult = {
         rows: [],
-        columnHeader: [],
+        rowHeader: [],
         columnList: [],
     };
 
@@ -59,12 +60,9 @@ export default function useTable() {
     const [queryResult, setQueryResult] = useState(initQueryResult)
     const [nextCursor, setNextCursor] = useState('')
 
-    const doGetList = (cursor, setLoading) => {
+    const doGetTableList = (cursor, setLoading) => {
         if (cursor === null) {
-            setQueryResult({
-                rows: [],
-                columnHeader: [],
-            })
+            setQueryResult(initQueryResult)
         }
         if (!setLoading) {
             setQueryLoading(true);
@@ -83,10 +81,18 @@ export default function useTable() {
         }).then((response) => {
             setNextCursor(response.data.result.nextCursor)
 
+            const tempRowHeader = response.data.result.rowHeader;
+
+            CassdioUtils.rowHeaderSorting(response.data.result.columnList, tempRowHeader)
+
+            const sortedColumnList = CassdioUtils.columnListSorting(
+                response.data.result.columnList
+            );
+
             setQueryResult({
                 rows: [...queryResult.rows, ...response.data.result.rows],
-                columnHeader: response.data.result.columnHeader,
-                columnList: response.data.result.columnList,
+                rowHeader: response.data.result.rowHeader,
+                columnList: sortedColumnList,
             })
         }).catch((error) => {
             errorCatch(error);
@@ -102,7 +108,7 @@ export default function useTable() {
     return {
         doTableTruncate,
         doTableDrop,
-        doGetList,
+        doGetTableList,
         queryLoading,
         queryResult,
         nextCursor

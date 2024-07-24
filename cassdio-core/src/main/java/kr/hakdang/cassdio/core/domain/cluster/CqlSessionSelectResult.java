@@ -21,18 +21,18 @@ import java.util.Map;
 public class CqlSessionSelectResult {
 
     private Map<String, Object> row;
-    private List<CassdioColumnDefinition> columns;
+    private List<CassdioColumnDefinition> rowHeader;
 
     @Builder
-    public CqlSessionSelectResult(Map<String, Object> row, List<CassdioColumnDefinition> columns) {
+    public CqlSessionSelectResult(Map<String, Object> row, List<CassdioColumnDefinition> rowHeader) {
         this.row = row;
-        this.columns = columns;
+        this.rowHeader = rowHeader;
     }
 
     public static CqlSessionSelectResult empty() {
         return CqlSessionSelectResult.builder()
             .row(Collections.emptyMap())
-            .columns(Collections.emptyList())
+            .rowHeader(Collections.emptyList())
             .build();
     }
 }

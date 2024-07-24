@@ -28,7 +28,7 @@ const QueryHome = () => {
     const initQueryResult = {
         wasApplied: null,
         rows: [],
-        columnNames: [],
+        rowHeader: [],
     };
 
     const [queryResult, setQueryResult] = useState(initQueryResult)
@@ -40,11 +40,7 @@ const QueryHome = () => {
         }
 
         if (cursor === null) {
-            setQueryResult({
-                wasApplied: null,
-                rows: [],
-                columnNames: [],
-            })
+            setQueryResult(initQueryResult)
         }
 
         setLoading(true);
@@ -68,7 +64,7 @@ const QueryHome = () => {
             setQueryResult({
                 wasApplied: response.data.result.wasApplied,
                 rows: [...queryResult.rows, ...response.data.result.rows],
-                columnNames: response.data.result.columnNames,
+                rowHeader: response.data.result.rowHeader,
             })
         }).catch((error) => {
             errorCatch(error);
@@ -111,13 +107,17 @@ const QueryHome = () => {
                 queryOptions={queryOptions}
                 setQueryOptions={setQueryOptions}
             />
-            <QueryResult
-                queryExecute={queryExecute}
-                result={queryResult}
-                query={queryParam.query}
-                queryOptions={queryOptions}
-                nextCursor={queryParam.nextCursor}
-            />
+            {
+                queryResult && <QueryResult
+                    queryExecute={queryExecute}
+                    result={queryResult}
+                    query={queryParam.query}
+                    queryOptions={queryOptions}
+                    nextCursor={queryParam.nextCursor}
+                />
+            }
+
+
         </>
     )
 }

@@ -24,7 +24,7 @@ const QueryResult = (props) => {
     return (
         <>
             {
-                result.wasApplied && <>
+                result && result.wasApplied && <>
                     <h4 className={"h4 mt-3"}>Result</h4>
 
                     <code className={"mb-3"}>
@@ -36,17 +36,19 @@ const QueryResult = (props) => {
                             <thead>
                             <tr className={"table-dark"}>
                                 {
-                                    result.columnNames.map((info, infoIndex) => {
+                                    result.rowHeader.map((info, infoIndex) => {
                                         return (
-                                            <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
+                                            <th className={"text-center text-truncate"}
+                                                key={`resultHeader${infoIndex}`}
                                                 scope="col">
 
                                                 <OverlayTrigger placement="bottom" overlay={
                                                     <Tooltip id="tooltip">
-                                                        {info}
+                                                        {info.columnName}<br/>
+                                                        ({info.type})
                                                     </Tooltip>
                                                 }>
-                                                    <span style={{cursor: "pointer"}}>{info}</span>
+                                                    <span style={{cursor: "pointer"}}>{info.columnName}</span>
                                                 </OverlayTrigger>
                                             </th>
                                         )
@@ -58,8 +60,8 @@ const QueryResult = (props) => {
                             {
                                 result.rows.length <= 0 ? <>
                                         <tr>
-                                            <td className={"text-center"} colSpan={result.columnNames.length}>
-                                                데이터가 없습니다.
+                                            <td className={"text-center"} colSpan={result.rowHeader.length}>
+                                                No Data
                                             </td>
                                         </tr>
                                     </> :
@@ -67,11 +69,11 @@ const QueryResult = (props) => {
                                         return (
                                             <tr key={`resultBody${rowIndex}`}>
                                                 {
-                                                    result.columnNames.map((info, infoIndex) => {
+                                                    result.rowHeader.map((info, infoIndex) => {
                                                         return (
                                                             <td className={`text-center text-break text-truncate`}
                                                                 key={`resultItem${infoIndex}`}>
-                                                                <DataRowItem data={row[info]}/>
+                                                                <DataRowItem data={row[info.columnName]}/>
                                                             </td>
                                                         )
                                                     })

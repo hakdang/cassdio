@@ -11,6 +11,7 @@ import com.datastax.oss.driver.api.core.cql.TraceEvent;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +33,6 @@ import java.util.Map;
 public class ClusterQueryCommander {
 
     public ClusterQueryCommanderResult execute(CqlSession session, ClusterQueryCommanderArgs args) {
-        //TODO
-        //InvalidQueryException 로 터지는건 내부 QueryException 만들어서 400 으로 잡아서 처리
-
         SimpleStatement statement = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
@@ -56,12 +54,6 @@ public class ClusterQueryCommander {
 
         ByteBuffer pagingStateAsBytes = resultSet.getExecutionInfo().getPagingState();
 
-        List<String> columnNames = new ArrayList<>();
-        for (ColumnDefinition definition : definitions) {
-            //TODO : 컬럼 정보 이름 외에도 추가하기
-            columnNames.add(definition.getName().asCql(true));
-        }
-
         if (args.isTrace()) {
             QueryTrace queryTrace = resultSet.getExecutionInfo().getQueryTrace();
             log.info("query Trace : {}", queryTrace.getTracingId());
@@ -73,7 +65,7 @@ public class ClusterQueryCommander {
 
         return ClusterQueryCommanderResult.builder()
             .wasApplied(resultSet.wasApplied())
-            .columnNames(columnNames)
+            .rowHeader(CassdioColumnDefinition.makes(definitions))
             .rows(rows)
             .nextCursor(pagingStateAsBytes != null ? Bytes.toHexString(pagingStateAsBytes) : null)
             .build();

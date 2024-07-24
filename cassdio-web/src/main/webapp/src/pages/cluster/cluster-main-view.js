@@ -1,14 +1,13 @@
 import {useEffect} from "react";
 import {Link, useParams} from "react-router-dom";
-
-import useCluster from "./hooks/useCluster";
 import {useClusterState} from "./context/clusterContext";
 import CassdioSidebar from "components/layout/cassdio-sidebar";
+import useKeyspace from "./hooks/useKeyspace";
 
 const ClusterMainView = (props) => {
     const routeParams = useParams();
 
-    const {doGetKeyspaceNames} = useCluster();
+    const {doGetKeyspaceNames} = useKeyspace();
     const {
         keyspaceGeneralNames,
         keyspaceSystemNames,

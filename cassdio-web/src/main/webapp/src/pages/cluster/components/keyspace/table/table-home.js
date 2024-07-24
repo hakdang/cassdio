@@ -9,13 +9,14 @@ import DataRowItem from "../../data-row-item";
 import ClusterBreadcrumb from "pages/cluster/components/cluster-breadcrumb";
 import useTable from "pages/cluster/hooks/useTable";
 import TableRowDetailModal from "./detail-modal/table-row-detail-modal";
+import {CassdioUtils} from "../../../../../utils/cassdioUtils";
 
 const TableHome = (props) => {
 
     const {
         doTableTruncate,
         doTableDrop,
-        doGetList,
+        doGetTableList,
         queryLoading,
         queryResult,
         nextCursor,
@@ -34,7 +35,7 @@ const TableHome = (props) => {
         //show component
         setTableName(routeParams.tableName);
 
-        doGetList(null)
+        doGetTableList(null)
 
         return () => {
             //hide component
@@ -110,6 +111,10 @@ const TableHome = (props) => {
                 </div>
             </div>
 
+            {
+                CassdioUtils.columnListSorting(queryResult.columnList.rows)
+            }
+
             {/*TODO : 위치 변경*/}
             <div className="table-responsive small">
                 <table className="table table-sm table-fixed table-lock-height table-hover">
@@ -117,7 +122,7 @@ const TableHome = (props) => {
                     <tr className={"table-dark"}>
                         <th className={"text-center"} scope="col">#</th>
                         {
-                            queryResult.columnHeader.map((info, infoIndex) => {
+                            queryResult.rowHeader.map((info, infoIndex) => {
                                 return (
                                     <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
                                         scope="col">
@@ -139,7 +144,7 @@ const TableHome = (props) => {
                     {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
-                                    <td className={"text-center"} colSpan={queryResult.columnHeader.length + 1}>
+                                    <td className={"text-center"} colSpan={queryResult.rowHeader.length + 1}>
                                         No Data
                                     </td>
                                 </tr>
@@ -165,7 +170,7 @@ const TableHome = (props) => {
                                             </div>
                                         </td>
                                         {
-                                            queryResult.columnHeader.map((info, infoIndex) => {
+                                            queryResult.rowHeader.map((info, infoIndex) => {
                                                 return (
                                                     <td className={"text-center text-break text-truncate"}
                                                         key={`resultItem${infoIndex}`}>
@@ -188,7 +193,7 @@ const TableHome = (props) => {
                 <div className={"row"}>
                     <div className="d-grid gap-2 col-6 mx-auto">
                         <button className="btn btn-outline-secondary" type="button"
-                                onClick={() => doGetList(nextCursor, setMoreQueryLoading)}>
+                                onClick={() => doGetTableList(nextCursor, setMoreQueryLoading)}>
                             More
 
                             {

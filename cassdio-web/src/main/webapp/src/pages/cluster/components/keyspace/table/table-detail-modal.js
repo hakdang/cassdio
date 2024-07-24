@@ -5,6 +5,7 @@ import useCassdio from "commons/hooks/useCassdio";
 import TableDetailModalInfo from "./detail-modal/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail-modal/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail-modal/table-detail-modal-column-list";
+import {CassdioUtils} from "../../../../../utils/cassdioUtils";
 
 const TableDetailModal = (props) => {
 
@@ -19,12 +20,12 @@ const TableDetailModal = (props) => {
     const [tableInfo, setTableInfo] = useState({
         detail: {
             row: {},
-            columns: [],
+            rowHeader: [],
         },
         describe: '',
         columnList: {
             rows: [],
-            columnHeader: [],
+            rowHeader: [],
         },
     })
 
@@ -44,10 +45,15 @@ const TableDetailModal = (props) => {
             }
         }).then((response) => {
             console.log("detail : ", response);
+
+            const sortedColumnList = CassdioUtils.columnListSorting(
+                response.data.result.columnList
+            );
+
             setTableInfo({
                 detail: response.data.result.detail,
                 describe: response.data.result.describe,
-                columnList: response.data.result.columnList,
+                columnList: sortedColumnList,
             })
 
         }).catch((error) => {

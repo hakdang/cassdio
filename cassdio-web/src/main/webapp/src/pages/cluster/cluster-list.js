@@ -1,20 +1,14 @@
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
-
-import axios from "axios";
 
 import Spinner from "components/spinner";
-import useCassdio from "commons/hooks/useCassdio";
 
 import ClusterManageModal from "./cluster-manage-modal";
+import useCluster from "./hooks/useCluster";
 
 const ClusterList = () => {
 
-    const {errorCatch} = useCassdio();
-
-    const [clustersLoading, setClustersLoading] = useState(false);
-    const [clusters, setClusters] = useState([]);
+    const {doGetClusterList, removeClusterId, clusters, clustersLoading} = useCluster();
 
     const [showClusterModal, setShowClusterModal] = useState(false);
     const [detailClusterId, setDetailClusterId] = useState(null);
@@ -24,43 +18,10 @@ const ClusterList = () => {
         setDetailClusterId(null);
     }
 
-    const getClusterList = () => {
-        setClustersLoading(true)
-
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster`,
-            params: {}
-        }).then((response) => {
-            setClusters(response.data.result.clusters)
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-            setClustersLoading(false)
-        });
-    }
-    const removeClusterId = (clusterId) => {
-        if (!window.confirm("Do you want to remove this?")) {
-            return;
-        }
-
-        axios({
-            method: "DELETE",
-            url: `/api/cassandra/cluster/${clusterId}`,
-            params: {}
-        }).then((response) => {
-            toast.info("Complete");
-            getClusterList();
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-        });
-    }
-
     useEffect(() => {
         //show component
 
-        getClusterList();
+        doGetClusterList();
 
         return () => {
             //hide component
@@ -147,7 +108,6 @@ const ClusterList = () => {
                 showClusterModal && <ClusterManageModal
                     show={showClusterModal}
                     clusterId={detailClusterId}
-                    getClusterList={getClusterList}
                     handleClose={() => closeClusterModal()}/>
             }
 

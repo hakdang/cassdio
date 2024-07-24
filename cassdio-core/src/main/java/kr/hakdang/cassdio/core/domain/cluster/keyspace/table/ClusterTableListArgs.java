@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClusterDescTablesArgs {
+public class ClusterTableListArgs {
     private String keyspace;
     private int pageSize;
 
     private String cursor;
 
     @Builder
-    public ClusterDescTablesArgs(String keyspace, int pageSize, String cursor) {
+    public ClusterTableListArgs(String keyspace, int pageSize, String cursor) {
         if (StringUtils.isBlank(keyspace)) {
             throw new IllegalArgumentException("keyspace can't be null or empty");
         }

@@ -48,8 +48,8 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
      * @param session
      * @return
      */
-    public List<KeyspaceNameResult> allKeyspaceNameList(CqlSession session) {
-        List<KeyspaceNameResult> result = new ArrayList<>();
+    public List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceNameList(CqlSession session) {
+        List<KeyspaceDTO.KeyspaceNameResult> result = new ArrayList<>();
 
         SimpleStatement generalSimpleStatement = makeKeyspaceListSelect(false);
 
@@ -60,7 +60,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
         while (0 < resultSet.getAvailableWithoutFetching()) {
             Row tempRow = iter.next();
-            result.add(KeyspaceNameResult.make(tempRow, keyspaceFilter));
+            result.add(KeyspaceDTO.KeyspaceNameResult.make(tempRow, keyspaceFilter));
         }
 
         if (ClusterUtils.cassandraVersion(session).compareTo(Version.V4_0_0) >= 0) {
@@ -71,7 +71,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
             while (0 < resultSet2.getAvailableWithoutFetching()) {
                 Row tempRow = iter2.next();
-                result.add(KeyspaceNameResult.make(tempRow, keyspaceFilter));
+                result.add(KeyspaceDTO.KeyspaceNameResult.make(tempRow, keyspaceFilter));
             }
         }
 
@@ -101,7 +101,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             .setTimeout(Duration.ofSeconds(3));
     }
 
-    public ClusterKeyspaceListResult generalKeyspaceList(CqlSession session) {
+    public KeyspaceDTO.ClusterKeyspaceListResult generalKeyspaceList(CqlSession session) {
         List<KeyspaceResult> keyspaceList = new ArrayList<>();
         for (Map.Entry<CqlIdentifier, KeyspaceMetadata> entry : session.getMetadata().getKeyspaces().entrySet()) {
             String keyspaceName = entry.getKey().asCql(true);
@@ -116,13 +116,13 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             );
         }
 
-        return ClusterKeyspaceListResult.builder()
+        return KeyspaceDTO.ClusterKeyspaceListResult.builder()
             .wasApplied(true)
             .keyspaceList(keyspaceList)
             .build();
     }
 
-    public String describe(CqlSession session, ClusterKeyspaceDescribeArgs args) {
+    public String describe(CqlSession session, KeyspaceDTO.ClusterKeyspaceDescribeArgs args) {
         if (ClusterUtils.isSystemKeyspace(session.getContext(), args.getKeyspace())) { //System 테이블은 제공 안함.
             return "";
         }
@@ -130,13 +130,11 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
         try {
             return session.getMetadata()
                 .getKeyspace(args.getKeyspace())
-                .orElseThrow() //TODO : 에러처리
+                .orElseThrow(() -> new ClusterKeyspaceException.ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", args.getKeyspace())))
                 .describe(true);
 
         } catch (NoSuchElementException e) { //ignore
             return "";
-        } catch (Throwable t) {
-            throw t;
         }
     }
 
@@ -168,7 +166,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
         return CqlSessionSelectResult.builder()
             .row(rowResult)
-            .columns(CassdioColumnDefinition.makes(definitions))
+            .rowHeader(CassdioColumnDefinition.makes(definitions))
             .build();
     }
 

@@ -2,13 +2,11 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceDescribeArgs;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceListResult;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceNameResult;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesArgs;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterDescTablesResult;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.KeyspaceDTO;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +47,7 @@ public class ClusterKeyspaceApi {
     }
 
     @GetMapping("/keyspace")
-    public ApiResponse<ClusterKeyspaceListResult> keyspaceList(
+    public ApiResponse<KeyspaceDTO.ClusterKeyspaceListResult> keyspaceList(
         @PathVariable String clusterId
     ) {
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {
@@ -64,7 +62,7 @@ public class ClusterKeyspaceApi {
     ) {
         Map<String, Object> result = new HashMap<>();
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            List<KeyspaceNameResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceNameList(session);
+            List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceList = clusterKeyspaceCommander.allKeyspaceNameList(session);
             result.put("keyspaceNameList", allKeyspaceList);
         }
 
@@ -81,16 +79,17 @@ public class ClusterKeyspaceApi {
 
         //TODO : keyspace validation
         try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
-            result.put("describe", clusterKeyspaceCommander.describe(session, ClusterKeyspaceDescribeArgs.builder()
+            var describeArgs = KeyspaceDTO.ClusterKeyspaceDescribeArgs.builder()
                 .keyspace(keyspace)
                 .withChildren(false)
                 .pretty(true)
-                .build()));
+                .build();
 
+            result.put("describe", clusterKeyspaceCommander.describe(session, describeArgs));
             result.put("detail", clusterKeyspaceCommander.keyspaceDetail(session, keyspace));
 
             if (withTableList) { //TODO 해당 값 외에 view 등의 기능은 탭을 생성하여 화면 이동하면 호출할 수 있도록 개발 예정
-                ClusterDescTablesArgs args = ClusterDescTablesArgs.builder()
+                ClusterTableListArgs args = ClusterTableListArgs.builder()
                     .keyspace(keyspace)
                     .pageSize(100)
                     .build();
@@ -112,6 +111,10 @@ public class ClusterKeyspaceApi {
 
         //TODO : keyspace validation
         try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
+            if (ClusterUtils.isSystemKeyspace(session.getContext(), keyspace)) {
+                throw new IllegalArgumentException("System Keyspace!");
+            }
+
             clusterKeyspaceCommander.keyspaceDrop(session, keyspace);
         }
 

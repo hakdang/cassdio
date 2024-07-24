@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.StreamSupport;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 
@@ -52,7 +53,7 @@ public class ClusterTableCommander extends BaseClusterCommander {
      * @param args
      * @return
      */
-    public CqlSessionSelectResults allTables(CqlSession session, ClusterDescTablesArgs args) {
+    public CqlSessionSelectResults allTables(CqlSession session, ClusterTableListArgs args) {
         SimpleStatement statement = getTable(session, args.getKeyspace())
             .all()
             .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
@@ -64,36 +65,12 @@ public class ClusterTableCommander extends BaseClusterCommander {
         PreparedStatement preparedStatement = session.prepare(statement);
 
         ResultSet resultSet = session.execute(preparedStatement.bind(args.getKeyspace()));
-        Iterator<Row> page1Iter = resultSet.iterator();
-        ColumnDefinitions definitions = resultSet.getColumnDefinitions();
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
 
-        List<Map<String, Object>> rows = new ArrayList<>();
-        while (0 < resultSet.getAvailableWithoutFetching()) {
-            rows.add(ClusterUtils.convertMap(codecRegistry, definitions, page1Iter.next()));
-        }
-
-        String nextCursor = "";
-        ByteBuffer pagingState = resultSet.getExecutionInfo().getPagingState();
-        if (pagingState != null) {
-            nextCursor = Bytes.toHexString(pagingState);
-        }
-
-        return CqlSessionSelectResults.builder()
-            .columnHeader(CassdioColumnDefinition.makes(definitions))
-            .rows(rows)
-            .nextCursor(nextCursor)
-            .build();
-    }
-
-    private SelectFrom getTable(CqlSession session, String keyspace) {
-        if (ClusterUtils.isVirtualKeyspace(session.getContext(), keyspace)) {
-            return QueryBuilder
-                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
-        }
-
-        return QueryBuilder
-            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
+        return CqlSessionSelectResults.of(
+            convertRows(session, resultSet),
+            CassdioColumnDefinition.makes(resultSet.getColumnDefinitions()),
+            resultSet.getExecutionInfo().getPagingState()
+        );
     }
 
     public CqlSessionSelectResults pureSelect(CqlSession session, ClusterTablePureSelectArgs args) {
@@ -105,27 +82,12 @@ public class ClusterTableCommander extends BaseClusterCommander {
             .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null);
 
         ResultSet resultSet = session.execute(statement);
-        Iterator<Row> page1Iter = resultSet.iterator();
-        ColumnDefinitions definitions = resultSet.getColumnDefinitions();
 
-        List<Map<String, Object>> rows = new ArrayList<>();
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
-
-        while (0 < resultSet.getAvailableWithoutFetching()) {
-            rows.add(ClusterUtils.convertMap(codecRegistry, definitions, page1Iter.next()));
-        }
-
-        String nextCursor = "";
-        ByteBuffer pagingState = resultSet.getExecutionInfo().getPagingState();
-        if (pagingState != null) {
-            nextCursor = Bytes.toHexString(pagingState);
-        }
-
-        return CqlSessionSelectResults.builder()
-            .columnHeader(CassdioColumnDefinition.makes(definitions))
-            .rows(rows)
-            .nextCursor(nextCursor)
-            .build();
+        return CqlSessionSelectResults.of(
+            convertRows(session, resultSet),
+            CassdioColumnDefinition.makes(resultSet.getColumnDefinitions()),
+            resultSet.getExecutionInfo().getPagingState()
+        );
     }
 
     public CqlSessionSelectResult tableDetail(CqlSession session, ClusterTableArgs.ClusterTableGetArgs args) {
@@ -140,7 +102,6 @@ public class ClusterTableCommander extends BaseClusterCommander {
             .setTimeout(Duration.ofSeconds(3));
 
         ResultSet resultSet = session.execute(statement);
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
         Row row = resultSet.one();
         if (row == null) {
@@ -148,8 +109,8 @@ public class ClusterTableCommander extends BaseClusterCommander {
         }
 
         return CqlSessionSelectResult.builder()
-            .row(ClusterUtils.convertMap(codecRegistry, definitions, row))
-            .columns(CassdioColumnDefinition.makes(definitions))
+            .row(convertRow(session.getContext().getCodecRegistry(), definitions, row))
+            .rowHeader(CassdioColumnDefinition.makes(definitions))
             .build();
     }
 
@@ -180,5 +141,15 @@ public class ClusterTableCommander extends BaseClusterCommander {
     public void tableTruncate(CqlSession session, String keyspace, String table) {
         ResultSet resultSet = session.execute(QueryBuilder.truncate(keyspace, table).build());
         log.info("Table Truncate Result - keyspace: {}, table: {}, ok: {}", keyspace, table, resultSet.wasApplied());
+    }
+
+    private SelectFrom getTable(CqlSession session, String keyspace) {
+        if (ClusterUtils.isVirtualKeyspace(session.getContext(), keyspace)) {
+            return QueryBuilder
+                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
+        }
+
+        return QueryBuilder
+            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
     }
 }

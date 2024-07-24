@@ -44,13 +44,13 @@ public class ClusterQueryApi {
     ) {
         Map<String, Object> map = new HashMap<>();
 
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) { //TODO : interface 작업할 때 facade layer 로 변경 예정
+        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
             ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.makeArgs());
 
             map.put("wasApplied", result1.isWasApplied());
             map.put("nextCursor", result1.getNextCursor());
             map.put("rows", result1.getRows());
-            map.put("columnNames", result1.getColumnNames()); //TODO 변경 예정
+            map.put("rowHeader", result1.getRowHeader());
         }
 
         return ApiResponse.ok(map);

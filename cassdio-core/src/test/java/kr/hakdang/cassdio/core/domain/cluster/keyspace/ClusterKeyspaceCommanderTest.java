@@ -23,8 +23,8 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
 
             //system keyspace 체크
             List<String> keyspaceNameList = clusterKeyspaceCommander.allKeyspaceNameList(session).stream()
-                .filter(KeyspaceNameResult::isSystemKeyspace)
-                .map(KeyspaceNameResult::getKeyspaceName).toList();
+                .filter(KeyspaceDTO.KeyspaceNameResult::isSystemKeyspace)
+                .map(KeyspaceDTO.KeyspaceNameResult::getKeyspaceName).toList();
 
             int expectedSize = CassandraSystemKeyspace.onlySystemKeyspaceList().size();
             for (CassandraSystemKeyspace systemKeyspace : CassandraSystemKeyspace.onlySystemKeyspaceList()) {
@@ -50,7 +50,7 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
         try (CqlSession session = makeSession()) {
 
             //system keyspace 체크
-            ClusterKeyspaceListResult keyspaceNameList = clusterKeyspaceCommander.generalKeyspaceList(session);
+            KeyspaceDTO.ClusterKeyspaceListResult keyspaceNameList = clusterKeyspaceCommander.generalKeyspaceList(session);
 
             for (KeyspaceResult keyspaceResult : keyspaceNameList.getKeyspaceList()) {
                 Assertions.assertFalse(

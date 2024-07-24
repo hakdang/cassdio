@@ -15,7 +15,7 @@ const KeyspaceHome = () => {
     const [detailLoading, setDetailLoading] = useState(false);
     const [keyspaceDescribe, setKeyspaceDescribe] = useState('');
     const [keyspaceDetail, setKeyspaceDetail] = useState({
-        columns: [],
+        rowHeader: [],
         row: {}
     });
     const [tableList, setTableList] = useState({});
@@ -31,8 +31,6 @@ const KeyspaceHome = () => {
                 withTableList: true,
             }
         }).then((response) => {
-            console.log("response.data.result.tableList : ", response.data.result.tableList);
-
             setKeyspaceDescribe(response.data.result.describe)
             setKeyspaceDetail(response.data.result.detail);
 
@@ -85,7 +83,7 @@ const KeyspaceHome = () => {
                                 <tbody>
 
                                 {
-                                    keyspaceDetail.columns.map((info, infoIndex) => {
+                                    keyspaceDetail.rowHeader.map((info, infoIndex) => {
                                         return (
                                             <tr key={`resultBody${infoIndex}`}>
                                                 <th className={"text-center text-break"}>

@@ -39,6 +39,7 @@ import java.util.zip.CRC32;
  */
 public abstract class ClusterUtils {
 
+    @Deprecated
     public static Map<String, Object> convertMap(CodecRegistry codecRegistry, ColumnDefinitions definitions, Row row) {
         Map<String, Object> result = new HashMap<>();
 

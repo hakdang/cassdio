@@ -11,7 +11,7 @@ const TableDetailModalInfo = (props) => {
                 <tbody>
 
                 {
-                    detail.columns.map((info, infoIndex) => {
+                    detail.rowHeader.map((info, infoIndex) => {
                         return (
                             <tr key={`resultBody${infoIndex}`}>
                                 <th className={"text-center text-break"}>

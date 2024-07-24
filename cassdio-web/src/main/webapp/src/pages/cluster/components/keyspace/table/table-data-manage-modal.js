@@ -110,7 +110,7 @@ const TableDataManageModal = (props) => {
 
             setColumnList({
                 rows: tempRows,
-                columnHeader: response.data.result.columnList.columnHeader,
+                rowHeader: response.data.result.columnList.rowHeader,
             })
         }).catch((error) => {
             errorCatch(error)
@@ -197,7 +197,6 @@ const TableDataManageModal = (props) => {
                 <Modal.Footer>
                     <button className={"btn btn-sm btn-outline-primary"} onClick={e => {
                         deMakeInsertQuery();
-                        console.log("dataManage ", dataManage)
                     }}>
                         Generate Query
                     </button>

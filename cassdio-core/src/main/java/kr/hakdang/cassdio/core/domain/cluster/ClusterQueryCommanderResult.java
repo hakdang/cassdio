@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,15 +19,15 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClusterQueryCommanderResult {
     private boolean wasApplied;
-    private List<String> columnNames;
+    private List<CassdioColumnDefinition> rowHeader;
     private List<Map<String, Object>> rows;
     private String previousCursor;
     private String nextCursor;
 
     @Builder
-    public ClusterQueryCommanderResult(boolean wasApplied, List<String> columnNames, List<Map<String, Object>> rows, String previousCursor, String nextCursor) {
+    public ClusterQueryCommanderResult(boolean wasApplied, List<CassdioColumnDefinition> rowHeader, List<Map<String, Object>> rows, String previousCursor, String nextCursor) {
         this.wasApplied = wasApplied;
-        this.columnNames = columnNames;
+        this.rowHeader = rowHeader;
         this.rows = rows;
         this.previousCursor = previousCursor;
         this.nextCursor = nextCursor;

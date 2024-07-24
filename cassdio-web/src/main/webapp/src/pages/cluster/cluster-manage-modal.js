@@ -1,121 +1,31 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 
 import {Modal} from "react-bootstrap";
-import {toast} from "react-toastify";
-
-import axios from "axios";
-import useCassdio from "commons/hooks/useCassdio";
 import Spinner from "components/spinner";
+import useCluster from "./hooks/useCluster";
 
 const ClusterManageModal = (props) => {
-    const {errorCatch} = useCassdio();
+    const {
+        doGetClusterList,
+        removeClusterId,
+        doSaveCluster,
+        doGetCluster,
+        clusters,
+        clusterDetailLoading,
+        clusterInfo,
+        setClusterInfo,
+        saveLoading,
+    } = useCluster();
 
     const show = props.show;
     const handleClose = props.handleClose;
-    const getClusterList = props.getClusterList;
     const clusterId = props.clusterId || null;
-    const [clusterDetailLoading, setClusterDetailLoading] = useState(false);
-
-    const [clusterInfo, setClusterInfo] = useState(
-        {
-            clusterId: null,
-            contactPoints: "",
-            port: 9042,
-            localDatacenter: "",
-            clusterAuthCredentials: false,
-            username: "",
-            password: "",
-        }
-        // {
-        //     contactPoints: "",
-        //     port: 0,
-        //     localDatacenter: "",
-        //     clusterAuthCredentials: false,
-        //     username: "",
-        //     password: "",
-        // }
-    );
-
-    const [saveLoading, setSaveLoading] = useState(false);
-    const save = () => {
-        if (!clusterInfo.contactPoints) {
-            toast.warn("Please enter ContactPoints");
-            return;
-        }
-
-        if (!clusterInfo.port || clusterInfo.port === 0) {
-            toast.warn("Please enter Port");
-            return;
-        }
-
-        if (!clusterInfo.localDatacenter) {
-            toast.warn("Please enter local Datacenter");
-            return;
-        }
-
-        if (clusterInfo.clusterAuthCredentials) {
-            if (!clusterInfo.username) {
-                toast.warn("Please enter username.");
-                return;
-            }
-
-            if (!clusterInfo.password) {
-                toast.warn("Please enter your password.");
-                return;
-            }
-        }
-
-        setSaveLoading(true);
-
-        let method = "POST"
-        let url = "/api/cassandra/cluster";
-        if (clusterId) {
-            method = "PUT";
-            url = `/api/cassandra/cluster/${clusterId}`;
-        }
-
-        axios({
-            method: method,
-            url: url,
-            data: {
-                contactPoints: clusterInfo.contactPoints,
-                port: clusterInfo.port,
-                localDatacenter: clusterInfo.localDatacenter,
-                username: clusterInfo.username,
-                password: clusterInfo.password,
-            },
-        }).then((response) => {
-            toast.info("Complete");
-            getClusterList();
-            handleClose();
-        }).catch((error) => {
-            errorCatch(error);
-        }).finally(() => {
-            setSaveLoading(false);
-        })
-    }
-
-    const getCluster = () => {
-        setClusterDetailLoading(true)
-
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}`,
-            params: {}
-        }).then((response) => {
-            setClusterInfo(response.data.result.cluster)
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-            setClusterDetailLoading(false)
-        });
-    }
 
     useEffect(() => {
         //show component
 
         if (clusterId) {
-            getCluster();
+            doGetCluster(clusterId);
         }
 
         return () => {
@@ -219,7 +129,7 @@ const ClusterManageModal = (props) => {
             </Modal.Body>
             <Modal.Footer>
                 <button className={"btn btn-sm btn-outline-primary"} onClick={e => {
-                    save()
+                    doSaveCluster(clusterId, handleClose)
                 }}>
                     Save
                     {

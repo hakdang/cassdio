@@ -1,59 +1,148 @@
 import axios from "axios";
-import {useParams} from "react-router-dom";
-
-import {useClusterDispatch} from "../context/clusterContext";
 
 import useCassdio from "commons/hooks/useCassdio";
+import {toast} from "react-toastify";
+import {useState} from "react";
 
 export default function useCluster() {
-    const routeParams = useParams();
     const {errorCatch} = useCassdio();
-    const clusterDispatcher = useClusterDispatch();
 
-    function doGetKeyspaceNames() {
-        clusterDispatcher({
-            type: "SET_KEYSPACE_NAMES_LOADING",
-            loading: true,
-        })
+    const [clustersLoading, setClustersLoading] = useState(false);
+    const [clusters, setClusters] = useState([]);
+    const [clusterDetailLoading, setClusterDetailLoading] = useState(false);
+
+    const doGetClusterList = () => {
+        setClustersLoading(true)
 
         axios({
             method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
+            url: `/api/cassandra/cluster`,
             params: {}
         }).then((response) => {
-            const userCreatedList = [];
-            const systemCreatedList = [];
-
-            const tempKeyspaceList = response.data.result.keyspaceNameList;
-
-            for (const ele of tempKeyspaceList) {
-                if (ele.systemKeyspace) {
-                    systemCreatedList.push(ele)
-                } else {
-                    userCreatedList.push(ele)
-                }
-            }
-
-            clusterDispatcher({
-                type: "SET_KEYSPACE_GENERAL_NAMES",
-                keyspaceNames: userCreatedList,
-            })
-            clusterDispatcher({
-                type: "SET_KEYSPACE_SYSTEM_NAMES",
-                keyspaceNames: systemCreatedList,
-            })
+            setClusters(response.data.result.clusters)
         }).catch((error) => {
             errorCatch(error)
         }).finally(() => {
-            clusterDispatcher({
-                type: "SET_KEYSPACE_NAMES_LOADING",
-                loading: false,
-            })
+            setClustersLoading(false)
         });
     }
 
+    const removeClusterId = (clusterId) => {
+        if (!window.confirm("Do you want to remove this?")) {
+            return;
+        }
+
+        axios({
+            method: "DELETE",
+            url: `/api/cassandra/cluster/${clusterId}`,
+            params: {}
+        }).then((response) => {
+            toast.info("Complete");
+            doGetClusterList();
+        }).catch((error) => {
+            errorCatch(error)
+        }).finally(() => {
+
+        });
+    }
+
+    const [clusterInfo, setClusterInfo] = useState(
+        {
+            clusterId: null,
+            contactPoints: "",
+            port: 9042,
+            localDatacenter: "",
+            clusterAuthCredentials: false,
+            username: "",
+            password: "",
+        }
+    );
+
+    const [saveLoading, setSaveLoading] = useState(false);
+    const doSaveCluster = (clusterId, handleClose) => {
+        if (!clusterInfo.contactPoints) {
+            toast.warn("Please enter ContactPoints");
+            return;
+        }
+
+        if (!clusterInfo.port || clusterInfo.port === 0) {
+            toast.warn("Please enter Port");
+            return;
+        }
+
+        if (!clusterInfo.localDatacenter) {
+            toast.warn("Please enter local Datacenter");
+            return;
+        }
+
+        if (clusterInfo.clusterAuthCredentials) {
+            if (!clusterInfo.username) {
+                toast.warn("Please enter username.");
+                return;
+            }
+
+            if (!clusterInfo.password) {
+                toast.warn("Please enter your password.");
+                return;
+            }
+        }
+
+        setSaveLoading(true);
+
+        let method = "POST"
+        let url = "/api/cassandra/cluster";
+        if (clusterId) {
+            method = "PUT";
+            url = `/api/cassandra/cluster/${clusterId}`;
+        }
+
+        axios({
+            method: method,
+            url: url,
+            data: {
+                contactPoints: clusterInfo.contactPoints,
+                port: clusterInfo.port,
+                localDatacenter: clusterInfo.localDatacenter,
+                username: clusterInfo.username,
+                password: clusterInfo.password,
+            },
+        }).then((response) => {
+            toast.info("Complete");
+            doGetClusterList();
+            handleClose();
+        }).catch((error) => {
+            errorCatch(error);
+        }).finally(() => {
+            setSaveLoading(false);
+        })
+    }
+
+    const doGetCluster = (clusterId) => {
+        setClusterDetailLoading(true)
+
+        axios({
+            method: "GET",
+            url: `/api/cassandra/cluster/${clusterId}`,
+            params: {}
+        }).then((response) => {
+            setClusterInfo(response.data.result.cluster)
+        }).catch((error) => {
+            errorCatch(error)
+        }).finally(() => {
+            setClusterDetailLoading(false)
+        });
+    }
 
     return {
-        doGetKeyspaceNames,
+        doGetClusterList,
+        removeClusterId,
+        doSaveCluster,
+        doGetCluster,
+        clusters,
+        clusterDetailLoading,
+        clusterInfo,
+        setClusterInfo,
+        saveLoading,
+        clustersLoading,
     }
 }
