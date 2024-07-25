@@ -21,15 +21,16 @@ public class ClusterRegisterRequest {
     private String localDatacenter;
     private String username;
     private String password;
-
+    private String memo;
 
     @Builder
-    public ClusterRegisterRequest(String contactPoints, int port, String localDatacenter, String username, String password) {
+    public ClusterRegisterRequest(String contactPoints, int port, String localDatacenter, String username, String password, String memo) {
         this.contactPoints = contactPoints;
         this.port = port;
         this.localDatacenter = localDatacenter;
         this.username = username;
         this.password = password;
+        this.memo = memo;
     }
 
     public ClusterInfoArgs makeArgs(String clusterName) {

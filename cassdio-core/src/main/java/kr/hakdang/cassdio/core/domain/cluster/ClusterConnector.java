@@ -5,7 +5,6 @@ import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,12 +25,12 @@ import java.util.List;
 @Service
 public class ClusterConnector {
 
-    private final ClusterManager clusterManager;
+    private final ClusterProvider clusterProvider;
 
     public ClusterConnector(
-        ClusterManager clusterManager
+        ClusterProvider clusterProvider
     ) {
-        this.clusterManager = clusterManager;
+        this.clusterProvider = clusterProvider;
     }
 
     public List<InetSocketAddress> makeContactPoint(String contactPoints, int port) {
@@ -73,7 +72,7 @@ public class ClusterConnector {
     }
 
     public CqlSession makeSession(String clusterId) {
-        ClusterInfo info = clusterManager.findById(clusterId);
+        ClusterInfo info = clusterProvider.findById(clusterId);
         if (info == null) {
             throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
         }
@@ -81,7 +80,7 @@ public class ClusterConnector {
     }
 
     public CqlSession makeSession(String clusterId, String keyspace) {
-        ClusterInfo info = clusterManager.findById(clusterId);
+        ClusterInfo info = clusterProvider.findById(clusterId);
         if (info == null) {
             throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
         }

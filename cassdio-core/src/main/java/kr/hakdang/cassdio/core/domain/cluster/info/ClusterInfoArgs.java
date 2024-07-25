@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster.info;
 
 import io.micrometer.common.util.StringUtils;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterConnection;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,11 +22,14 @@ public class ClusterInfoArgs {
     private String localDatacenter;
     private String username;
     private String password;
+    private String memo;
 
     //Append
 
     @Builder
-    public ClusterInfoArgs(String clusterName, String contactPoints, int port, String localDatacenter, String username, String password) {
+    public ClusterInfoArgs(
+        String clusterName, String contactPoints, int port, String localDatacenter, String username, String password, String memo
+    ) {
         if (StringUtils.isBlank(clusterName)) {
             throw new IllegalArgumentException("Cluster name is blank");
         }
@@ -48,6 +52,7 @@ public class ClusterInfoArgs {
         this.localDatacenter = localDatacenter;
         this.username = username;
         this.password = password;
+        this.memo = memo;
     }
 
     public ClusterInfo makeClusterInfo(String clusterId) {
@@ -59,7 +64,7 @@ public class ClusterInfoArgs {
             .localDatacenter(localDatacenter)
             .username(username)
             .password(password)
+            .memo(memo)
             .build();
     }
-
 }
