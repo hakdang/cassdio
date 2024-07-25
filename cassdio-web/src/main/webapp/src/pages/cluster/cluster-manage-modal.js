@@ -40,27 +40,30 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                         <div className="col-12 mb-2">
                             <label htmlFor="contactPoints" className="form-label">Contact Points</label>
                             <div className="input-group">
-                                <input type="text" className="form-control" id="username" placeholder="contactPoints"
+                                <input type="text" className="form-control form-control-sm" id="cluserPoints"
+                                       placeholder="contactPoints"
                                        value={clusterInfo.contactPoints || ''}
                                        onChange={evt => setClusterInfo(t => {
                                            return {...t, contactPoints: evt.target.value}
                                        })}/>
                             </div>
                         </div>
-                        <div className="col-12 mb-2">
+                    </div>
+                    <div className={"row"}>
+                        <div className="col-6 mb-2">
                             <label htmlFor="clusterPort" className="form-label">Cluster Port</label>
                             <div className="input-group">
-                                <input type="number" className="form-control" id="clusterPort" placeholder=""
+                                <input type="number" className="form-control form-control-sm" id="clusterPort" placeholder=""
                                        value={clusterInfo.port || 0}
                                        onChange={evt => setClusterInfo(t => {
                                            return {...t, port: evt.target.value}
                                        })}/>
                             </div>
                         </div>
-                        <div className="col-12 mb-2">
+                        <div className="col-6 mb-2">
                             <label htmlFor="clusterLocalDataCenter" className="form-label">Local Datacenter</label>
                             <div className="input-group">
-                                <input type="text" className="form-control" id="clusterLocalDataCenter"
+                                <input type="text" className="form-control form-control-sm" id="clusterLocalDataCenter"
                                        placeholder="Local Datacenter"
                                        value={clusterInfo.localDatacenter || ''}
                                        onChange={evt => setClusterInfo(t => {
@@ -72,7 +75,7 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                         <hr className="my-4"/>
 
                         <div className={"col-12 mb-2"}>
-                            <div className="form-check mb-3">
+                            <div className="form-check">
                                 <input type="checkbox" className="form-check-input" id="clusterAuthCredentials"
                                        checked={clusterInfo.clusterAuthCredentials}
                                        onChange={evt => setClusterInfo(t => {
@@ -93,7 +96,7 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                                         Username
                                     </label>
                                     <div className="input-group">
-                                        <input type="text" className="form-control" id="clusterUsername"
+                                        <input type="text" className="form-control form-control-sm" id="clusterUsername"
                                                placeholder="UserName"
                                                value={clusterInfo.username || ''}
                                                onChange={evt => setClusterInfo(t => {
@@ -107,7 +110,7 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                                         Password
                                     </label>
                                     <div className="input-group">
-                                        <input type="password" className="form-control" id="clusterPassword"
+                                        <input type="password" className="form-control form-control-sm" id="clusterPassword"
                                                placeholder="Cluster Password"
                                                value={clusterInfo.password || ''}
                                                onChange={evt => setClusterInfo(t => {
@@ -119,6 +122,19 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
 
                             </>
                         }
+
+                        <hr className="my-4"/>
+
+                        <div className="col-12 mb-2">
+                            <label htmlFor="memo" className="form-label">Memo</label>
+                            <div className="input-group">
+                                <input type="text" className="form-control form-control-sm" id="memo" placeholder="memo"
+                                       value={clusterInfo.memo || ''}
+                                       onChange={evt => setClusterInfo(t => {
+                                           return {...t, memo: evt.target.value}
+                                       })}/>
+                            </div>
+                        </div>
                     </div>
                 </Spinner>
 

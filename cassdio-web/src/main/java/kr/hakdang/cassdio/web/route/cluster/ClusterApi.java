@@ -51,6 +51,7 @@ public class ClusterApi {
         @RequestParam(required = false, defaultValue = "false") boolean withPassword
     ) {
         Map<String, Object> responseMap = new HashMap<>();
+
         List<ClusterInfo> clusters = clusterProvider.findAll();
         if (!withPassword) {
             clusters = clusters.stream()
@@ -68,7 +69,7 @@ public class ClusterApi {
         @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
     ) {
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("cluster", clusterProvider.findById(clusterId));
+        responseMap.put("cluster", clusterProvider.findByIdWithoutCache(clusterId));
 
         return ApiResponse.ok(responseMap);
     }

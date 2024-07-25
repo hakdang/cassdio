@@ -55,6 +55,7 @@ export default function useCluster() {
             clusterAuthCredentials: false,
             username: "",
             password: "",
+            memo: "",
         }
     );
 
@@ -105,10 +106,11 @@ export default function useCluster() {
                 localDatacenter: clusterInfo.localDatacenter,
                 username: clusterInfo.username,
                 password: clusterInfo.password,
+                memo : clusterInfo.memo,
             },
         }).then((response) => {
-            toast.info("Complete");
             doGetClusterList();
+            toast.info("Complete");
             handleClose();
         }).catch((error) => {
             errorCatch(error);
@@ -125,7 +127,12 @@ export default function useCluster() {
             url: `/api/cassandra/cluster/${clusterId}`,
             params: {}
         }).then((response) => {
-            setClusterInfo(response.data.result.cluster)
+            const result = response.data.result.cluster;
+            const clusterAuthCredentials = !!(result.username && result.password);
+            setClusterInfo({
+                ...result,
+                clusterAuthCredentials: clusterAuthCredentials
+            })
         }).catch((error) => {
             errorCatch(error)
         }).finally(() => {

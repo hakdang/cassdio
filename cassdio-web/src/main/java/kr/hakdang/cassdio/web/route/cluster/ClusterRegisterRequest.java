@@ -41,6 +41,7 @@ public class ClusterRegisterRequest {
             .localDatacenter(localDatacenter)
             .username(username)
             .password(password)
+            .memo(memo)
             .build();
     }
 

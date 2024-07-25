@@ -36,7 +36,7 @@ const ClusterMainView = (props) => {
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
                                 to={`/cluster/${routeParams.clusterId}`}>
-                                <i className="bi bi-house"></i> Cluster Home
+                                <i className="bi bi-house"></i> Home
                             </Link>
                         </li>
                         <li className="nav-item">
