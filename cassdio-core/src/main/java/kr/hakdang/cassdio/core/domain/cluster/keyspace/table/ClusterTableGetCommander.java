@@ -1,23 +1,18 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.core.metadata.schema.TableMetadata;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceException.ClusterKeyspaceNotFoundException;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.ClusterTableNotFoundException;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Column;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 
@@ -30,10 +25,9 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 @Service
 public class ClusterTableGetCommander extends BaseClusterCommander {
 
-    public ClusterTableGetResult getTable(CqlSession session, ClusterTableGetArgs args) {
+    public CqlSessionSelectResult tableDetail(CqlSession session, TableDTO.ClusterTableGetArgs args) {
         int limit = 1;
-        SimpleStatement statement = QueryBuilder
-            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName())
+        SimpleStatement statement = ClusterUtils.getSchemaTables(session, args.getKeyspace())
             .all()
             .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
             .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
@@ -42,41 +36,17 @@ public class ClusterTableGetCommander extends BaseClusterCommander {
             .setPageSize(limit)
             .setTimeout(Duration.ofSeconds(3));
 
-        Row tableRow = session.execute(statement).one();
-        if (tableRow == null) {
-            throw new ClusterTableNotFoundException(String.format("not found table(%s) in keyspace(%s)", args.getTable(), args.getKeyspace()));
+        ResultSet resultSet = session.execute(statement);
+        ColumnDefinitions definitions = resultSet.getColumnDefinitions();
+        Row row = resultSet.one();
+        if (row == null) {
+            throw new ClusterTableException.ClusterTableNotFoundException(String.format("not found table(%s)", args.getTable()));
         }
 
-        String tableDescribe = "";
-        if (!CassandraSystemKeyspace.isSystemKeyspace(args.getKeyspace())) {
-            TableMetadata tableMetadata = session.getMetadata().getKeyspace(args.getKeyspace())
-                .orElseThrow(() -> new ClusterKeyspaceNotFoundException(String.format("not found keyspace (%s)", args.getKeyspace())))
-                .getTable(args.getTable())
-                .orElseThrow(() -> new ClusterTableNotFoundException(String.format("not found table(%s)", args.getTable())));
-
-            tableDescribe = tableMetadata.describe(true);
-        }
-
-        return ClusterTableGetResult.builder()
-            .table(ClusterTable.from(tableRow))
-            .tableDescribe(tableDescribe)
-            .columns(getColumnsInTable(session, args))
+        return CqlSessionSelectResult.builder()
+            .row(convertRow(session.getContext().getCodecRegistry(), definitions, row))
+            .rowHeader(CassdioColumnDefinition.makes(definitions))
             .build();
-    }
-
-    private List<Column> getColumnsInTable(CqlSession session, ClusterTableGetArgs args) {
-        SimpleStatement statement = QueryBuilder.selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_COLUMNS.getTableName())
-            .all()
-            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-            .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker())
-            .build(args.getKeyspace(), args.getTable());
-
-        List<Row> columnRows = session.execute(statement).all();
-        return columnRows.stream()
-            .map(Column::from)
-            .sorted(Comparator.comparing(o1 -> ((Column) o1).getKind().getOrder())
-                .thenComparing(o1 -> ((Column) o1).getPosition()))
-            .collect(Collectors.toList());
     }
 
 }

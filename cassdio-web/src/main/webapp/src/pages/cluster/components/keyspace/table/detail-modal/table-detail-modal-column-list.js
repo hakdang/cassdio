@@ -4,7 +4,7 @@ const TableDetailModalColumnList = (props) => {
     const columnList = props.columnList;
     return (
         <div className="table-responsive small">
-            <table className="table table-sm table-fixed table-lock-height table-hover">
+            <table className="table table-sm table-hover">
                 <thead>
                 <tr className={"table-dark"}>
                     {

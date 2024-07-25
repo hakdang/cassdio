@@ -13,7 +13,7 @@ public class ClusterException {
 
     public static class ClusterNodeNotFoundException extends BaseException {
 
-        protected ClusterNodeNotFoundException(String message) {
+        public ClusterNodeNotFoundException(String message) {
             super(message, ErrorCode.E404_NOT_FOUND_CLUSTER_NODE);
         }
 

@@ -2,13 +2,8 @@ import {useEffect, useState} from "react";
 import DataRowItem from "../data-row-item";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
-const QueryResult = (props) => {
+const QueryResult = ({queryExecute, result, query, nextCursor, setShowQueryTrace}) => {
     //const queryOptions = props.queryOptions;
-    const queryExecute = props.queryExecute;
-    const result = props.result;
-
-    const query = props.query;
-    const nextCursor = props.nextCursor;
 
     const [moreQueryLoading, setMoreQueryLoading] = useState(false);
 
@@ -25,9 +20,32 @@ const QueryResult = (props) => {
         <>
             {
                 result && result.wasApplied && <>
-                    <h4 className={"h4 mt-3"}>Result</h4>
 
-                    <code className={"mb-3"}>
+                    <div
+                        className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 border-bottom">
+                        <h4 className="h4">
+                            Result
+                        </h4>
+
+                        <div className="btn-toolbar mb-2 mb-md-0">
+                            {
+                                result.queryTrace &&
+                                <div className="btn-group me-2">
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-secondary"
+                                        onClick={e => {
+                                            setShowQueryTrace(true);
+                                        }}
+                                    >
+                                        Trace
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <code className={"mb-5 mt-1"}>
                         {query}
                     </code>
 
@@ -104,6 +122,8 @@ const QueryResult = (props) => {
                             </div>
                         </div>
                     }
+
+                    <div className={"mb-5"}></div>
                 </>
             }
         </>

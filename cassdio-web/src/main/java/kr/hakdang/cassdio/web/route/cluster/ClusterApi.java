@@ -2,10 +2,11 @@ package kr.hakdang.cassdio.web.route.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.validation.Valid;
+import kr.hakdang.cassdio.common.CassdioConstants;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterProvider;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,41 +36,41 @@ import java.util.UUID;
 public class ClusterApi {
 
     private final ClusterConnector clusterConnector;
-    private final ClusterManager clusterManager;
+    private final ClusterProvider clusterProvider;
 
     public ClusterApi(
         ClusterConnector clusterConnector,
-        ClusterManager clusterManager
+        ClusterProvider clusterProvider
     ) {
         this.clusterConnector = clusterConnector;
-        this.clusterManager = clusterManager;
+        this.clusterProvider = clusterProvider;
     }
 
     @GetMapping("")
-    public ApiResponse<Map<String, Object>> getCassandraClusterList(
+    public ApiResponse<Map<String, Object>> clusterList(
         @RequestParam(required = false, defaultValue = "false") boolean withPassword
     ) {
-        Map<String, Object> result = new HashMap<>();
-        List<ClusterInfo> clusters = clusterManager.findAll();
+        Map<String, Object> responseMap = new HashMap<>();
+        List<ClusterInfo> clusters = clusterProvider.findAll();
         if (!withPassword) {
             clusters = clusters.stream()
                 .map(info -> info.toBuilder().password(null).build())
                 .toList();
         }
 
-        result.put("clusters", clusters);
+        responseMap.put("clusters", clusters);
 
-        return ApiResponse.ok(result);
+        return ApiResponse.ok(responseMap);
     }
 
     @GetMapping("/{clusterId}")
-    public ApiResponse<Map<String, Object>> getCassandraClusterDetail(
-        @PathVariable String clusterId
+    public ApiResponse<Map<String, Object>> clusterDetail(
+        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
     ) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("cluster", clusterManager.findById(clusterId));
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("cluster", clusterProvider.findById(clusterId));
 
-        return ApiResponse.ok(result);
+        return ApiResponse.ok(responseMap);
     }
 
     @PostMapping("")
@@ -83,7 +84,7 @@ public class ClusterApi {
             ClusterInfoArgs args = request.makeArgs(clusterName);
             //실행 안되면 exception
 
-            clusterManager.register(args);
+            clusterProvider.register(args);
         }
 
         return ApiResponse.ok();
@@ -91,7 +92,7 @@ public class ClusterApi {
 
     @PutMapping("/{clusterId}")
     public ApiResponse<Void> clusterUpdate(
-        @PathVariable String clusterId,
+        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId,
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
         try (CqlSession session = clusterConnector.makeSession(request.makeClusterConnector())) {
@@ -100,7 +101,7 @@ public class ClusterApi {
 
             ClusterInfoArgs args = request.makeArgs(clusterName);
 
-            clusterManager.update(clusterId, args);
+            clusterProvider.updateById(clusterId, args);
         }
 
         return ApiResponse.ok();
@@ -108,13 +109,10 @@ public class ClusterApi {
 
     @DeleteMapping("/{clusterId}")
     public ApiResponse<Void> clusterDelete(
-        @PathVariable String clusterId
+        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
     ) {
-
-        clusterManager.deleteById(clusterId);
+        clusterProvider.deleteById(clusterId);
 
         return ApiResponse.ok();
     }
-
-
 }

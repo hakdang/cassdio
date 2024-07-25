@@ -3,10 +3,8 @@ package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.IntegrationTest;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableGetArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO.ClusterTableGetArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.ClusterTableNotFoundException;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ColumnClusteringOrder;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ColumnKind;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -46,7 +44,7 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
             .build();
 
         // when
-        CqlSessionSelectResult sut = clusterTableCommander.tableDetail(makeSession(), args);
+        CqlSessionSelectResult sut = clusterTableGetCommander.tableDetail(makeSession(), args);
 
         // then
 //        assertThat(sut.getTableDescribe()).isNotBlank();
@@ -86,13 +84,13 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
     void when_get_not_exists_table_throw_not_exists_exception() {
         try (CqlSession session = makeSession()) {
             // given
-            ClusterTableArgs.ClusterTableGetArgs args = ClusterTableArgs.ClusterTableGetArgs.builder()
+            TableDTO.ClusterTableGetArgs args = TableDTO.ClusterTableGetArgs.builder()
                 .keyspace(keyspaceName)
                 .table("not_exists_table")
                 .build();
 
             // when & then
-            assertThatThrownBy(() -> clusterTableCommander.tableDetail(session, args)).isInstanceOf(ClusterTableNotFoundException.class);
+            assertThatThrownBy(() -> clusterTableGetCommander.tableDetail(session, args)).isInstanceOf(ClusterTableNotFoundException.class);
         }
 
     }

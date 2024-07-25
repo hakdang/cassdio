@@ -4,15 +4,13 @@ import {useParams} from "react-router-dom";
 import {useClusterDispatch} from "../context/clusterContext";
 
 import useCassdio from "commons/hooks/useCassdio";
-import {toast} from "react-toastify";
-import {useState} from "react";
 
 export default function useKeyspace() {
     const routeParams = useParams();
     const {errorCatch} = useCassdio();
     const clusterDispatcher = useClusterDispatch();
 
-    const doGetKeyspaceNames = () => {
+    const doGetKeyspaceNames = (cacheEvict) => {
         clusterDispatcher({
             type: "SET_KEYSPACE_NAMES_LOADING",
             loading: true,
@@ -21,7 +19,9 @@ export default function useKeyspace() {
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace-name`,
-            params: {}
+            params: {
+                cacheEvict: cacheEvict
+            }
         }).then((response) => {
             const userCreatedList = [];
             const systemCreatedList = [];

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.common.utils.Jsons;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterException;
 import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -27,7 +28,6 @@ import java.util.concurrent.ConcurrentMap;
 public class ClusterManager implements InitializingBean, DisposableBean {
 
     private static DB mapDb;
-
 
     public void register(ClusterInfoArgs args) {
         ConcurrentMap<String, String> map = mapDb
@@ -70,7 +70,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
         String value = map.get(clusterId);
 
         if (StringUtils.isBlank(value)) {
-            throw new RuntimeException("not found clusterId");
+            throw new ClusterException.ClusterNodeNotFoundException(String.format("not found clusterId : %s", clusterId));
         }
 
         return Jsons.toObject(value, ClusterInfo.class);
