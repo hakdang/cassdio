@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.net.InetAddress;
 
 /**
- * CassandraClient
+ * ClusterClient
  *
  * @author seungh0
  * @since 2024-07-25
@@ -18,7 +18,7 @@ import java.net.InetAddress;
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CassandraClient {
+public class ClusterClient {
 
     private InetAddress address;
     private String driverVersion;
@@ -26,15 +26,15 @@ public class CassandraClient {
     private String username;
 
     @Builder
-    private CassandraClient(InetAddress address, String driverVersion, long requestCount, String username) {
+    private ClusterClient(InetAddress address, String driverVersion, long requestCount, String username) {
         this.address = address;
         this.driverVersion = driverVersion;
         this.requestCount = requestCount;
         this.username = username;
     }
 
-    public static CassandraClient from(Row row) {
-        return CassandraClient.builder()
+    public static ClusterClient from(Row row) {
+        return ClusterClient.builder()
             .address(row.getInetAddress("address"))
             .driverVersion(row.getString("driver_version"))
             .requestCount(row.getLong("request_count"))

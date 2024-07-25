@@ -25,7 +25,6 @@ public class CursorRequest {
     @Max(value = 100, message = "size is less than 100")
     private int size = 50;
 
-
     @Builder
     private CursorRequest(String cursor, int size) {
         this.cursor = cursor;

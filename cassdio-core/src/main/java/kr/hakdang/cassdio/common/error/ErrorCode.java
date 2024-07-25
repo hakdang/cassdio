@@ -17,6 +17,7 @@ public enum ErrorCode {
     E404_NOT_FOUND_TABLE(404, "not_exists_table"),
     E404_NOT_FOUND_UDT_TYPE(404, "not_exists_udt_type"),
     E500_INTERNAL_SERVER_ERROR(500, "internal_server_error"),
+    E501_NOT_SUPPORTED_CASSANDRA_VERSION(501, "not_supported_cassandra_version"),
     ;
 
     private final int httpStatusCode;

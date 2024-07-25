@@ -2,8 +2,8 @@ package kr.hakdang.cassdio.web.route.cluster.client;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
-import kr.hakdang.cassdio.core.domain.cluster.client.CassandraClientListCommander;
-import kr.hakdang.cassdio.core.domain.cluster.client.CassandraClientListResult;
+import kr.hakdang.cassdio.core.domain.cluster.client.ClusterClientListCommander;
+import kr.hakdang.cassdio.core.domain.cluster.client.ClusterClientListResult;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,29 +11,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * CassandraClientListApi
+ * ClusterClientApi
  *
  * @author seungh0
  * @since 2024-07-25
  */
 @RequestMapping("/api/cassandra/cluster/{clusterId}/client")
 @RestController
-public class CassandraClientListApi {
+public class ClusterClientApi {
 
     private final ClusterConnector clusterConnector;
-    private final CassandraClientListCommander cassandraClientListCommander;
+    private final ClusterClientListCommander clusterClientListCommander;
 
-    public CassandraClientListApi(ClusterConnector clusterConnector, CassandraClientListCommander cassandraClientListCommander) {
+    public ClusterClientApi(ClusterConnector clusterConnector, ClusterClientListCommander clusterClientListCommander) {
         this.clusterConnector = clusterConnector;
-        this.cassandraClientListCommander = cassandraClientListCommander;
+        this.clusterClientListCommander = clusterClientListCommander;
     }
 
     @GetMapping
-    public ApiResponse<CassandraClientListResult> getCassandraClients(
+    public ApiResponse<ClusterClientListResult> getClients(
         @PathVariable String clusterId
     ) {
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            CassandraClientListResult result = cassandraClientListCommander.getClients(session);
+            ClusterClientListResult result = clusterClientListCommander.getClients(session);
             return ApiResponse.ok(result);
         }
     }

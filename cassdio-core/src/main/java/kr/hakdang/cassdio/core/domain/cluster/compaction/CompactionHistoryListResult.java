@@ -9,10 +9,10 @@ import lombok.ToString;
 import java.util.List;
 
 /**
- * ClusterTable
+ * CompactionHistoryListResult
  *
  * @author seungh0
- * @since 2024-07-01
+ * @since 2024-07-25
  */
 @ToString
 @Getter

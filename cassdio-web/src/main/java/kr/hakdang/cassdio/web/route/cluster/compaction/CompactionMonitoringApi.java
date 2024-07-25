@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * CompactionHistoryListApi
+ * CompactionMonitoringApi
  *
  * @author seungh0
  * @since 2024-07-25
  */
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
 @RestController
-public class CompactionHistoryListApi {
+public class CompactionMonitoringApi {
 
     private final ClusterConnector clusterConnector;
     private final CompactionHistoryListCommander compactionHistoryListCommander;
 
-    public CompactionHistoryListApi(ClusterConnector clusterConnector, CompactionHistoryListCommander compactionHistoryListCommander) {
+    public CompactionMonitoringApi(ClusterConnector clusterConnector, CompactionHistoryListCommander compactionHistoryListCommander) {
         this.clusterConnector = clusterConnector;
         this.compactionHistoryListCommander = compactionHistoryListCommander;
     }
@@ -35,7 +35,7 @@ public class CompactionHistoryListApi {
         @RequestParam(required = false) String keyspace
     ) {
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            CompactionHistoryListResult result = compactionHistoryListCommander.listCompactionHistory(session, keyspace);
+            CompactionHistoryListResult result = compactionHistoryListCommander.getCompactionHistories(session, keyspace);
             return ApiResponse.ok(result);
         }
     }

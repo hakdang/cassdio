@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- * CassandraClientListResult
+ * ClusterClientListResult
  *
  * @author seungh0
  * @since 2024-07-25
@@ -19,13 +19,13 @@ import java.util.List;
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CassandraClientListResult {
+public class ClusterClientListResult {
 
-    private List<CassandraClient> clients;
+    private List<ClusterClient> clients;
     private String nextPageState;
 
     @Builder
-    private CassandraClientListResult(List<CassandraClient> clients, ByteBuffer nextPageState) {
+    private ClusterClientListResult(List<ClusterClient> clients, ByteBuffer nextPageState) {
         this.clients = clients;
         this.nextPageState = nextPageState == null ? null : Bytes.toHexString(nextPageState);
     }

@@ -1,9 +1,10 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Spinner from "components/spinner";
 import useCassdio from "commons/hooks/useCassdio";
 import {ByteFormatUtils} from "../../../utils/byteFormat";
+import ClusterBreadcrumb from "./cluster-breadcrumb";
 
 const CompactionHome = () => {
 
@@ -36,6 +37,11 @@ const CompactionHome = () => {
 
     return (
         <>
+            <ClusterBreadcrumb
+                clusterId={routeParams.clusterId}
+                keyspaceName={routeParams.keyspaceName}
+            />
+
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2 className="h2">
@@ -62,10 +68,16 @@ const CompactionHome = () => {
                                 return (
                                     <tr key={infoIndex}>
                                         <td className={"text-center"}>
-                                            {compaction.keyspaceName}
+                                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}`}
+                                                  className={"link-body-emphasis text-decoration-underline"}>
+                                                {compaction.keyspaceName}
+                                            </Link>
                                         </td>
                                         <td className={"text-center"}>
-                                            {compaction.columnFamilyName}
+                                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}/table/${compaction.columnFamilyName}`}
+                                                  className={"link-body-emphasis text-decoration-underline"}>
+                                                {compaction.columnFamilyName}
+                                            </Link>
                                         </td>
                                         <td className={"text-center"}>
                                             {compaction.compactedAt}
