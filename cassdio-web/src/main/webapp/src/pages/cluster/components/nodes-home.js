@@ -97,7 +97,7 @@ const NodesHome = () => {
                                                 className={node.nodeState === 'UP' || node.nodeState === 'UNKNOWN' ? '' : 'table-danger'}>
                                                 <td className="text-center">{node.nodeId}</td>
                                                 <td className="text-center">{node.nodeState}</td>
-                                                <td className="text-center">{node.hostIp.replace('/', '')}</td>
+                                                <td className="text-center">{node.hostIp.replace('/', '').split(':')[0]}</td>
                                                 <td className="text-center">{node.cassandraVersion}</td>
                                                 <td className="text-center">{DateUtils.yyyyMMDDHHmmss(node.upSinceMillis)}</td>
                                             </tr>
