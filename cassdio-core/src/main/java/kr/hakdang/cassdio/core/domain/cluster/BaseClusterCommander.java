@@ -1,17 +1,22 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.Version;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.type.DataType;
 import com.datastax.oss.driver.api.core.type.MapType;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.internal.core.type.codec.MapCodec;
 import com.datastax.oss.driver.internal.core.util.Strings;
 import kr.hakdang.cassdio.common.utils.Jsons;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -27,6 +32,16 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 public abstract class BaseClusterCommander {
+
+    public Version getCassandraVersion(CqlSession session) {
+        SimpleStatement statement = QueryBuilder
+            .selectFrom(CassandraSystemKeyspace.SYSTEM.getKeyspaceName(), CassandraSystemTable.SYSTEM_LOCAL.getTableName())
+            .all()
+            .build();
+
+        ResultSet rs = session.execute(statement);
+        return Version.parse(rs.one().getString("release_version"));
+    }
 
     protected List<Map<String, Object>> convertRows(CqlSession session, ResultSet resultSet) {
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();

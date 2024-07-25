@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import static kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace.SYSTEM;
 import static kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace.SYSTEM_SCHEMA;
+import static kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace.SYSTEM_VIEWS;
 
 /**
  * CassandraSystemTable
@@ -20,6 +21,8 @@ public enum CassandraSystemTable {
     SYSTEM_SCHEMA_COLUMNS(SYSTEM_SCHEMA, "columns"),
     SYSTEM_SCHEMA_TYPES(SYSTEM_SCHEMA, "types"),
     SYSTEM_COMPACTION_HISTORY(SYSTEM, "compaction_history"),
+    SYSTEM_LOCAL(SYSTEM, "local"),
+    SYSTEM_VIEW_CLIENTS(SYSTEM_VIEWS, "clients"),
     ;
 
     private final CassandraSystemKeyspace keyspace;
