@@ -37,12 +37,10 @@ public class ClusterProvider {
 
     @Cacheable(cacheNames = CacheType.CacheTypeNames.CLUSTER_DETAIL, key = "#clusterId")
     public ClusterInfo findById(String clusterId) {
-        log.info("test : {}", clusterId);
         return clusterManager.findById(clusterId);
     }
 
     public ClusterInfo findByIdWithoutCache(String clusterId) {
-        log.info("test without cache : {}", clusterId);
         return clusterManager.findById(clusterId);
     }
 
