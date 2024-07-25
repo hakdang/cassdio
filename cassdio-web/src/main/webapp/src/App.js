@@ -19,6 +19,7 @@ import {useCassdioState} from "./commons/context/cassdioContext";
 import NodesHome from "./pages/cluster/components/nodes-home";
 import CassdioToast from "./components/cassdio-toast";
 import CompactionHome from "./pages/cluster/components/compaction-home";
+import ClientHome from "./pages/cluster/components/client-home";
 
 function App() {
     const {doBootstrap} = useCassdio();
@@ -50,6 +51,9 @@ function App() {
                     }></Route>
                     <Route path="/cluster/:clusterId/nodes" element={
                         <ClusterMainView><NodesHome/></ClusterMainView>
+                    }></Route>
+                    <Route path="/cluster/:clusterId/client" element={
+                        <ClusterMainView><ClientHome/></ClusterMainView>
                     }></Route>
                     <Route path="/cluster/:clusterId/keyspace/:keyspaceName/compaction" element={
                         <ClusterMainView><CompactionHome/></ClusterMainView>
