@@ -121,6 +121,27 @@ const KeyspaceHome = () => {
 
                 <div className={"row mt-3"}>
                     <div className={"col-md-6 col-sm-12"}>
+                        <h2 className="h3">Monitoring</h2>
+                        <div className="table-responsive small">
+                            <table className="table table-sm table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>Compaction History</th>
+                                    <td>
+                                        <Link
+                                            to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/compaction`}>
+                                            <th>Link</th>
+                                        </Link>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={"row mt-3"}>
+                    <div className={"col-md-6 col-sm-12"}>
                         <h2 className="h3">Tables</h2>
                         {
                             tableList &&

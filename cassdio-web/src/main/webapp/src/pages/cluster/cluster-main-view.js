@@ -48,6 +48,13 @@ const ClusterMainView = (props) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
+                                to={`/cluster/${routeParams.clusterId}/client`}>
+                                <i className="bi bi-easel3"></i> Clients (v4+ only)
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
                                 to={`/cluster/${routeParams.clusterId}/query`}>
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
@@ -67,7 +74,7 @@ const ClusterMainView = (props) => {
                         {/*</a>*/}
                     </h6>
                     <ul className="nav flex-column">
-                        {
+                    {
                             keyspaceNamesLoading ?
                                 <li className="nav-item text-center">
                                     <div className="spinner-border text-danger" role="status">
