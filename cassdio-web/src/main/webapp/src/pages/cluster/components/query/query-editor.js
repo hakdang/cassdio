@@ -11,7 +11,7 @@ import {toast} from "react-toastify";
 const QueryEditor = (props) => {
 
     const [queryLoading, setQueryLoading] = useState(false)
-    const [query, setQuery] = useState("")
+    const [query, setQuery] = useState("select * from test.stat;")
 
     const queryOptions = props.queryOptions;
     const setQueryOptions = props.setQueryOptions;
@@ -191,22 +191,22 @@ const QueryEditor = (props) => {
 
                     <div className="row g-3 mt-1">
                         <div className="col">
-                            {/*<div className="form-check form-switch">*/}
-                            {/*    <input className="form-check-input" type="checkbox" role="switch"*/}
-                            {/*           id="tracingOnSwitch"*/}
-                            {/*           checked={queryOptions.trace}*/}
-                            {/*           onChange={*/}
-                            {/*               e => {*/}
-                            {/*                   setQueryOptions(t => {*/}
-                            {/*                       return {...t, trace: !queryOptions.trace}*/}
-                            {/*                   })*/}
-                            {/*               }*/}
-                            {/*           }*/}
-                            {/*    />*/}
-                            {/*    <label className="form-check-label" htmlFor="tracingOnSwitch">*/}
-                            {/*        Tracing On*/}
-                            {/*    </label>*/}
-                            {/*</div>*/}
+                            <div className="form-check form-switch">
+                                <input className="form-check-input" type="checkbox" role="switch"
+                                       id="tracingOnSwitch"
+                                       checked={queryOptions.trace}
+                                       onChange={
+                                           e => {
+                                               setQueryOptions(t => {
+                                                   return {...t, trace: !queryOptions.trace}
+                                               })
+                                           }
+                                       }
+                                />
+                                <label className="form-check-label" htmlFor="tracingOnSwitch">
+                                    Tracing On
+                                </label>
+                            </div>
                         </div>
                         <div className="col">
 
@@ -215,17 +215,6 @@ const QueryEditor = (props) => {
 
                 </div>
             </div>
-
-            {/*<div className="form-floating">*/}
-            {/*    /!*현재는 단일 쿼리만 실행 가능하도록*!/*/}
-            {/*    <textarea className="form-control" placeholder="Query" id="queryEditor"*/}
-            {/*              style={{"height": "300px"}}*/}
-            {/*              value={query || ''}*/}
-            {/*              rows={10}*/}
-            {/*              onChange={evt => setQuery(evt.target.value)}*/}
-            {/*    ></textarea>*/}
-            {/*    <label htmlFor="queryEditor">Query</label>*/}
-            {/*</div>*/}
 
             <AceEditor
                 ref={editorRef}

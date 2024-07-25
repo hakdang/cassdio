@@ -50,7 +50,7 @@ public class ClusterApi {
     public ApiResponse<Map<String, Object>> clusterList(
         @RequestParam(required = false, defaultValue = "false") boolean withPassword
     ) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> responseMap = new HashMap<>();
         List<ClusterInfo> clusters = clusterProvider.findAll();
         if (!withPassword) {
             clusters = clusters.stream()
@@ -58,19 +58,19 @@ public class ClusterApi {
                 .toList();
         }
 
-        result.put("clusters", clusters);
+        responseMap.put("clusters", clusters);
 
-        return ApiResponse.ok(result);
+        return ApiResponse.ok(responseMap);
     }
 
     @GetMapping("/{clusterId}")
     public ApiResponse<Map<String, Object>> clusterDetail(
         @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
     ) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("cluster", clusterProvider.findById(clusterId));
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("cluster", clusterProvider.findById(clusterId));
 
-        return ApiResponse.ok(result);
+        return ApiResponse.ok(responseMap);
     }
 
     @PostMapping("")

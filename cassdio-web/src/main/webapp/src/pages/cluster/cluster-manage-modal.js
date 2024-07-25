@@ -4,7 +4,7 @@ import {Modal} from "react-bootstrap";
 import Spinner from "components/spinner";
 import useCluster from "./hooks/useCluster";
 
-const ClusterManageModal = (props) => {
+const ClusterManageModal = ({show, handleClose, clusterId}) => {
     const {
         doGetClusterList,
         removeClusterId,
@@ -16,10 +16,6 @@ const ClusterManageModal = (props) => {
         setClusterInfo,
         saveLoading,
     } = useCluster();
-
-    const show = props.show;
-    const handleClose = props.handleClose;
-    const clusterId = props.clusterId || null;
 
     useEffect(() => {
         //show component

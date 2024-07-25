@@ -13,7 +13,31 @@ import lombok.ToString;
  * @author seungh0
  * @since 2024-07-02
  */
-public class ClusterTableArgs {
+public class TableDTO {
+
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ClusterTableListArgs {
+        private String keyspace;
+        private int pageSize;
+
+        private String cursor;
+
+        @Builder
+        public ClusterTableListArgs(String keyspace, int pageSize, String cursor) {
+            if (StringUtils.isBlank(keyspace)) {
+                throw new IllegalArgumentException("keyspace can't be null or empty");
+            }
+
+            if (pageSize > 100) {
+                throw new IllegalArgumentException("pageSize can't be greater than 100");
+            }
+
+            this.keyspace = keyspace;
+            this.pageSize = pageSize;
+            this.cursor = cursor;
+        }
+    }
 
     @ToString
     @Getter
@@ -42,33 +66,7 @@ public class ClusterTableArgs {
     @ToString
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class ClusterTableListArgs {
-
-        private String keyspace;
-        private int pageSize = 50;
-        private String nextPageState;
-
-        @Builder
-        private ClusterTableListArgs(String keyspace, int pageSize, String nextPageState) {
-            if (StringUtils.isBlank(keyspace)) {
-                throw new IllegalArgumentException("keyspace can't be null or empty");
-            }
-
-            if (pageSize > 100) {
-                throw new IllegalArgumentException("pageSize can't be greater than 100");
-            }
-
-            this.keyspace = keyspace;
-            this.pageSize = pageSize;
-            this.nextPageState = nextPageState;
-        }
-
-    }
-
-    @ToString
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class ClusterTablePureSelectArgs {
+    public static class ClusterTableRowArgs {
 
         private String keyspace;
         private String table;
@@ -79,7 +77,7 @@ public class ClusterTableArgs {
         private String cursor;
 
         @Builder
-        public ClusterTablePureSelectArgs(String keyspace, String table, int pageSize, int timeoutSeconds, String cursor) {
+        public ClusterTableRowArgs(String keyspace, String table, int pageSize, int timeoutSeconds, String cursor) {
             if (StringUtils.isBlank(keyspace)) {
                 throw new IllegalArgumentException("keyspace can't be null or empty");
             }

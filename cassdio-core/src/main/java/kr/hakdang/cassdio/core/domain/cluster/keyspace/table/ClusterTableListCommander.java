@@ -1,25 +1,22 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.protocol.internal.util.Bytes;
-import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTableListArgs;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.time.Duration;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
-import static kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace.SYSTEM_SCHEMA;
-import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable.SYSTEM_SCHEMA_TABLES;
-import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME;
 
 /**
  * ClusterTableListCommander
@@ -31,28 +28,32 @@ import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Cassa
 @Service
 public class ClusterTableListCommander extends BaseClusterCommander {
 
-    public ClusterTableListResult listTables(CqlSession session, ClusterTableListArgs args) {
-        //TODO 버전 분기해서 virtual keyspace 의 테이블인 경우 virtual schema table 에서 조회 해야함
-        // ClusterUtils.isVirtualKeyspace()
-        // if (ClusterUtils.cassandraVersion(session).compareTo(Version.V4_0_0) >= 0) {
-        //ClusterTableCommander.allTables 합쳐야함.
-
-        SimpleStatement statement = QueryBuilder
-            .selectFrom(SYSTEM_SCHEMA.getKeyspaceName(), SYSTEM_SCHEMA_TABLES.getTableName())
+    /**
+     * Simple Table List
+     * - system 테이블에 대해서도 테이블명에 대해 조회 가능
+     *
+     * @param session
+     * @param args
+     * @return
+     */
+    public CqlSessionSelectResults tableList(CqlSession session, TableDTO.ClusterTableListArgs args) {
+        SimpleStatement statement = ClusterUtils.getSchemaTables(session, args.getKeyspace())
             .all()
-            .whereColumn(TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
-            .build(args.getKeyspace())
+            .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
+            .build()
             .setPageSize(args.getPageSize())
-            .setPagingState(StringUtils.isBlank(args.getNextPageState()) ? null : Bytes.fromHexString(args.getNextPageState()));
+            .setTimeout(Duration.ofSeconds(3))
+            .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null);
 
-        ResultSet rs = session.execute(statement);
+        PreparedStatement preparedStatement = session.prepare(statement);
 
-        List<ClusterTable> tables = StreamSupport.stream(rs.spliterator(), false)
-            .limit(rs.getAvailableWithoutFetching())
-            .map(ClusterTable::from)
-            .collect(Collectors.toList());
+        ResultSet resultSet = session.execute(preparedStatement.bind(args.getKeyspace()));
 
-        return ClusterTableListResult.of(tables, rs.getExecutionInfo().getPagingState());
+        return CqlSessionSelectResults.of(
+            convertRows(session, resultSet),
+            CassdioColumnDefinition.makes(resultSet.getColumnDefinitions()),
+            resultSet.getExecutionInfo().getPagingState()
+        );
     }
 
 }

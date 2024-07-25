@@ -9,7 +9,6 @@ import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.metadata.schema.KeyspaceMetadata;
-import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +152,6 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
         PreparedStatement preparedStatement = session.prepare(statement);
 
         ResultSet resultSet = session.execute(preparedStatement.bind(keyspace));
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
 
         Row row = resultSet.one();
@@ -162,10 +159,8 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             throw new IllegalArgumentException(String.format("not found keyspace(%s)", keyspace));
         }
 
-        Map<String, Object> rowResult = new HashMap<>(ClusterUtils.convertMap(codecRegistry, definitions, row));
-
         return CqlSessionSelectResult.builder()
-            .row(rowResult)
+            .row(convertRow(session.getContext().getCodecRegistry(), definitions, row))
             .rowHeader(CassdioColumnDefinition.makes(definitions))
             .build();
     }

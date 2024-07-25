@@ -3,6 +3,7 @@ import {Link, useParams} from "react-router-dom";
 import {useClusterState} from "./context/clusterContext";
 import CassdioSidebar from "components/layout/cassdio-sidebar";
 import useKeyspace from "./hooks/useKeyspace";
+import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 const ClusterMainView = (props) => {
     const routeParams = useParams();
@@ -17,7 +18,7 @@ const ClusterMainView = (props) => {
     useEffect(() => {
         //show component
 
-        doGetKeyspaceNames();
+        doGetKeyspaceNames(false);
 
         return () => {
             //hide component
@@ -63,8 +64,20 @@ const ClusterMainView = (props) => {
 
                     <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">
                         <span>Keyspace</span>
-                        {/*<a className="link-secondary" href="#" aria-label="Add a new report">*/}
-                        {/*</a>*/}
+                        <a className="link-danger"
+                           role={"button"}
+                           onClick={e => doGetKeyspaceNames(true)}>
+
+                            <OverlayTrigger placement="top" overlay={
+                                <Tooltip id="tooltip">
+                                   Keyspace reload with cache evict
+                                </Tooltip>
+                            }>
+                                <i className="bi bi-arrow-clockwise fs-5"></i>
+                            </OverlayTrigger>
+
+
+                        </a>
                     </h6>
                     <ul className="nav flex-column">
                         {
@@ -88,6 +101,8 @@ const ClusterMainView = (props) => {
                         }
 
                     </ul>
+
+                    <hr className="mt-3 mb-1"/>
 
                     <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 text-body-secondary ">
                         <span>System Keyspace</span>

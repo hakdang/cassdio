@@ -4,32 +4,16 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.Version;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.context.DriverContext;
-import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
-import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.metadata.Node;
-import com.datastax.oss.driver.api.core.type.DataType;
-import com.datastax.oss.driver.api.core.type.MapType;
-import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
-import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
+import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.internal.core.channel.DriverChannel;
 import com.datastax.oss.driver.internal.core.context.InternalDriverContext;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
-import com.datastax.oss.driver.internal.core.type.codec.ListCodec;
-import com.datastax.oss.driver.internal.core.type.codec.MapCodec;
-import com.datastax.oss.driver.internal.core.type.codec.SetCodec;
-import com.datastax.oss.driver.internal.core.util.Strings;
-import kr.hakdang.cassdio.common.utils.Jsons;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.zip.CRC32;
 
 /**
  * ClusterUtils
@@ -38,54 +22,6 @@ import java.util.zip.CRC32;
  * @since 2024-07-05
  */
 public abstract class ClusterUtils {
-
-    @Deprecated
-    public static Map<String, Object> convertMap(CodecRegistry codecRegistry, ColumnDefinitions definitions, Row row) {
-        Map<String, Object> result = new HashMap<>();
-
-        for (int i = 0; i < definitions.size(); i++) {
-            ColumnDefinition definition = definitions.get(i);
-            String name = definition.getName().asCql(true);
-            TypeCodec<Object> codec = codecRegistry.codecFor(definition.getType());
-            Object value = codec.decode(row.getBytesUnsafe(i), row.protocolVersion());
-
-            String formatedValue;
-            if (codec instanceof MapCodec) {
-                DataType cqlType = codec.getCqlType();
-                DataType keyType = ((MapType) cqlType).getKeyType();
-                DataType valueType = ((MapType) cqlType).getValueType();
-                TypeCodec<Object> keyCodec = codecRegistry.codecFor(keyType);
-                TypeCodec<Object> valueCodec = codecRegistry.codecFor(valueType);
-                Map<Object, Object> valueMap = (Map<Object, Object>) value;
-                Map<String, String> convertedMap = new HashMap<>();
-                for (Map.Entry<Object, Object> entry : valueMap.entrySet()) {
-                    String key = keyCodec.format(entry.getKey());
-                    if (Strings.isQuoted(key)) {
-                        key = Strings.unquote(key);
-                    }
-
-                    String entryValue = valueCodec.format(entry.getValue());
-                    if (Strings.isQuoted(entryValue)) {
-                        entryValue = Strings.unquote(entryValue);
-                    }
-
-                    convertedMap.put(key, entryValue);
-                }
-
-                formatedValue = Jsons.toJson(convertedMap);
-            } else {
-                formatedValue = codec.format(value);
-                if (Strings.isQuoted(formatedValue)) {
-                    formatedValue = Strings.unquote(formatedValue);
-                }
-            }
-
-            result.put(name, formatedValue);
-        }
-
-        return result;
-    }
-
 
     public static Version cassandraVersion(CqlSession session) {
         DriverChannel channel = ((InternalDriverContext) session.getContext()).getControlConnection().channel();
@@ -107,5 +43,15 @@ public abstract class ClusterUtils {
 
     public static boolean isSystemKeyspace(DriverContext context, String keyspace) {
         return !makeKeyspaceFilter(context).includes(keyspace);
+    }
+
+    public static SelectFrom getSchemaTables(CqlSession session, String keyspace) {
+        if (ClusterUtils.isVirtualKeyspace(session.getContext(), keyspace)) {
+            return QueryBuilder
+                .selectFrom(CassandraSystemKeyspace.SYSTEM_VIRTUAL_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
+        }
+
+        return QueryBuilder
+            .selectFrom(CassandraSystemKeyspace.SYSTEM_SCHEMA.getKeyspaceName(), CassandraSystemTable.SYSTEM_SCHEMA_TABLES.getTableName());
     }
 }

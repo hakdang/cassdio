@@ -1,6 +1,6 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
-import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableArgs.ClusterTablePureSelectArgs;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO.ClusterTableRowArgs;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,8 +31,8 @@ public class ClusterTablePureSelectRequest {
 
     }
 
-    public ClusterTablePureSelectArgs makeArgs(String keyspace, String table) {
-        return ClusterTablePureSelectArgs.builder()
+    public ClusterTableRowArgs makeArgs(String keyspace, String table) {
+        return ClusterTableRowArgs.builder()
             .keyspace(keyspace)
             .table(table)
             .cursor(cursor)

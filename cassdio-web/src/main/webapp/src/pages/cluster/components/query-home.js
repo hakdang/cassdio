@@ -7,11 +7,13 @@ import QueryEditor from "./query/query-editor";
 import QueryResult from "./query/query-result";
 import useCassdio from "commons/hooks/useCassdio";
 import {toast} from "react-toastify";
+import QueryTraceViewModal from "./query/query-trace-view-modal";
 
 const QueryHome = () => {
     const routeParams = useParams();
 
     const {errorCatch} = useCassdio();
+    const [showQueryTrace, setShowQueryTrace] = useState(false);
 
     const [queryParam, setQueryParam] = useState(
         {
@@ -22,13 +24,14 @@ const QueryHome = () => {
 
     const [queryOptions, setQueryOptions] = useState({
         limit: 10,
-        trace: false,
+        trace: true,
     });
 
     const initQueryResult = {
         wasApplied: null,
         rows: [],
         rowHeader: [],
+        queryTrace: {},
     };
 
     const [queryResult, setQueryResult] = useState(initQueryResult)
@@ -65,6 +68,7 @@ const QueryHome = () => {
                 wasApplied: response.data.result.wasApplied,
                 rows: [...queryResult.rows, ...response.data.result.rows],
                 rowHeader: response.data.result.rowHeader,
+                queryTrace: response.data.result.queryTrace,
             })
         }).catch((error) => {
             errorCatch(error);
@@ -113,7 +117,16 @@ const QueryHome = () => {
                     result={queryResult}
                     query={queryParam.query}
                     queryOptions={queryOptions}
+                    setShowQueryTrace={setShowQueryTrace}
                     nextCursor={queryParam.nextCursor}
+                />
+            }
+            {
+                queryResult && queryResult.queryTrace && showQueryTrace &&
+                <QueryTraceViewModal
+                    show={showQueryTrace}
+                    handleClose={() => setShowQueryTrace(false)}
+                    queryTrace={queryResult.queryTrace}
                 />
             }
 

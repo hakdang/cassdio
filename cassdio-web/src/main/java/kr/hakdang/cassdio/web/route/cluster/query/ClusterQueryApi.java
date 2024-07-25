@@ -1,9 +1,9 @@
 package kr.hakdang.cassdio.web.route.cluster.query;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterQueryCommander;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterQueryCommanderResult;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.query.ClusterQueryCommander;
+import kr.hakdang.cassdio.core.domain.cluster.query.QueryDTO;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,17 +42,20 @@ public class ClusterQueryApi {
         @PathVariable String clusterId,
         @RequestBody ClusterQueryRequest request
     ) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> responseMap = new HashMap<>();
 
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            ClusterQueryCommanderResult result1 = clusterQueryCommander.execute(session, request.makeArgs());
+            QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(session, request.makeArgs());
 
-            map.put("wasApplied", result1.isWasApplied());
-            map.put("nextCursor", result1.getNextCursor());
-            map.put("rows", result1.getRows());
-            map.put("rowHeader", result1.getRowHeader());
+            responseMap.put("wasApplied", result.isWasApplied());
+            responseMap.put("nextCursor", result.getNextCursor());
+            responseMap.put("rows", result.getRows());
+            responseMap.put("rowHeader", result.getRowHeader());
+            if (request.isTrace()) {
+                responseMap.put("queryTrace", result.getQueryTrace());
+            }
         }
 
-        return ApiResponse.ok(map);
+        return ApiResponse.ok(responseMap);
     }
 }

@@ -1,7 +1,6 @@
-package kr.hakdang.cassdio.core.domain.cluster;
+package kr.hakdang.cassdio.core.domain.cluster.query;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.ColumnDefinition;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
@@ -11,6 +10,8 @@ import com.datastax.oss.driver.api.core.cql.TraceEvent;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
+import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,9 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class ClusterQueryCommander {
+public class ClusterQueryCommander extends BaseClusterCommander {
 
-    public ClusterQueryCommanderResult execute(CqlSession session, ClusterQueryCommanderArgs args) {
+    public QueryDTO.ClusterQueryCommanderResult execute(CqlSession session, QueryDTO.ClusterQueryCommanderArgs args) {
         SimpleStatement statement = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
@@ -42,32 +43,44 @@ public class ClusterQueryCommander {
         //.setConsistencyLevel(ConsistencyLevel.ONE);
 
         ResultSet resultSet = session.execute(statement);
-        CodecRegistry codecRegistry = session.getContext().getCodecRegistry();
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
-
-        Iterator<Row> page1Iter = resultSet.iterator();
-
-        List<Map<String, Object>> rows = new ArrayList<>();
-        while (0 < resultSet.getAvailableWithoutFetching()) {
-            rows.add(ClusterUtils.convertMap(codecRegistry, definitions, page1Iter.next()));
-        }
 
         ByteBuffer pagingStateAsBytes = resultSet.getExecutionInfo().getPagingState();
 
+        QueryDTO.ClusterQueryCommanderResult.ClusterQueryCommanderResultBuilder builder =
+            QueryDTO.ClusterQueryCommanderResult.builder()
+                .wasApplied(resultSet.wasApplied())
+                .rowHeader(CassdioColumnDefinition.makes(definitions))
+                .rows(convertRows(session, resultSet))
+                .nextCursor(pagingStateAsBytes != null ? Bytes.toHexString(pagingStateAsBytes) : null);
+
         if (args.isTrace()) {
             QueryTrace queryTrace = resultSet.getExecutionInfo().getQueryTrace();
-            log.info("query Trace : {}", queryTrace.getTracingId());
+
+            List<QueryDTO.CassdioQueryTraceEvent> events = new ArrayList<>();
             for (TraceEvent event : queryTrace.getEvents()) {
-                log.info("event : {}", event);
-                //TODO : 추적값 담기
+                events.add(QueryDTO.CassdioQueryTraceEvent.builder()
+                    .activity(event.getActivity())
+                    .timestamp(event.getTimestamp())
+                    .sourceAddress(event.getSourceAddress())
+                    .sourceElapsedMicros(event.getSourceElapsedMicros())
+                    .threadName(event.getThreadName())
+                    .build());
             }
+
+            QueryDTO.CassdioQueryTrace cassdioQueryTrace = QueryDTO.CassdioQueryTrace.builder()
+                .tracingId(queryTrace.getTracingId().toString())
+                .requestType(queryTrace.getRequestType())
+                .coordinatorAddress(queryTrace.getCoordinatorAddress())
+                .parameters(queryTrace.getParameters())
+                .startedAt(queryTrace.getStartedAt())
+                .events(events)
+                .build();
+
+            builder.queryTrace(cassdioQueryTrace);
         }
 
-        return ClusterQueryCommanderResult.builder()
-            .wasApplied(resultSet.wasApplied())
-            .rowHeader(CassdioColumnDefinition.makes(definitions))
-            .rows(rows)
-            .nextCursor(pagingStateAsBytes != null ? Bytes.toHexString(pagingStateAsBytes) : null)
-            .build();
+        return
+            builder.build();
     }
 }

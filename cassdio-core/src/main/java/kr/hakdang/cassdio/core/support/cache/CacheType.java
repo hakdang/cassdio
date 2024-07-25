@@ -16,6 +16,7 @@ import java.time.Duration;
 public enum CacheType {
 
     CLUSTER_DETAIL(CacheTypeNames.CLUSTER_DETAIL, Duration.ofMinutes(1)),
+    CLUSTER_KEYSPACE_NAME_LIST(CacheTypeNames.CLUSTER_KEYSPACE_NAME_LIST, Duration.ofMinutes(10)),
     ;
 
     private final String key;
@@ -30,6 +31,7 @@ public enum CacheType {
     public static class CacheTypeNames {
 
         public static final String CLUSTER_DETAIL = "clusterDetail";
+        public static final String CLUSTER_KEYSPACE_NAME_LIST = "clusterKeyspaceNameList";
 
     }
 

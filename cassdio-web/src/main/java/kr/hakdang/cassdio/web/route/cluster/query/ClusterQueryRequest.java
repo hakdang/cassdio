@@ -1,7 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.query;
 
 import jakarta.validation.constraints.NotBlank;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterQueryCommanderArgs;
+import kr.hakdang.cassdio.core.domain.cluster.query.QueryDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,8 +32,8 @@ public class ClusterQueryRequest {
         this.trace = trace;
     }
 
-    public ClusterQueryCommanderArgs makeArgs() {
-        return ClusterQueryCommanderArgs.builder()
+    public QueryDTO.ClusterQueryCommanderArgs makeArgs() {
+        return QueryDTO.ClusterQueryCommanderArgs.builder()
             .query(query)
             .cursor(cursor)
             .pageSize(pageSize)
