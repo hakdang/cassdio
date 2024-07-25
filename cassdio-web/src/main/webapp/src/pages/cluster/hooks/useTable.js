@@ -3,7 +3,7 @@ import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
 import useCassdio from "commons/hooks/useCassdio";
-import {CassdioUtils} from "../../../utils/cassdioUtils";
+import {CassdioUtils} from "utils/cassdioUtils";
 
 export default function useTable() {
     const navigate = useNavigate();
@@ -54,6 +54,7 @@ export default function useTable() {
         rows: [],
         rowHeader: [],
         columnList: [],
+        convertedRowHeader: [],
     };
 
 
@@ -81,18 +82,11 @@ export default function useTable() {
         }).then((response) => {
             setNextCursor(response.data.result.nextCursor)
 
-            const tempRowHeader = response.data.result.rowHeader;
-
-            CassdioUtils.rowHeaderSorting(response.data.result.columnList, tempRowHeader)
-
-            const sortedColumnList = CassdioUtils.columnListSorting(
-                response.data.result.columnList
-            );
-
             setQueryResult({
                 rows: [...queryResult.rows, ...response.data.result.rows],
                 rowHeader: response.data.result.rowHeader,
-                columnList: sortedColumnList,
+                columnList: response.data.result.columnList,
+                convertedRowHeader: CassdioUtils.convertRowHeader(response.data.result.columnList, response.data.result.rowHeader),
             })
         }).catch((error) => {
             errorCatch(error);

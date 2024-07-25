@@ -9,7 +9,6 @@ import DataRowItem from "../../data-row-item";
 import ClusterBreadcrumb from "pages/cluster/components/cluster-breadcrumb";
 import useTable from "pages/cluster/hooks/useTable";
 import TableRowDetailModal from "./detail-modal/table-row-detail-modal";
-import {CassdioUtils} from "../../../../../utils/cassdioUtils";
 
 const TableHome = (props) => {
 
@@ -30,6 +29,7 @@ const TableHome = (props) => {
     const [showRowDetail, setShowRowDetail] = useState(false);
     const [tableName, setTableName] = useState('');
     const [moreQueryLoading, setMoreQueryLoading] = useState(false)
+    const [rowDetailView, setRowDetailView] = useState(null);
 
     useEffect(() => {
         //show component
@@ -111,10 +111,6 @@ const TableHome = (props) => {
                 </div>
             </div>
 
-            {
-                CassdioUtils.columnListSorting(queryResult.columnList.rows)
-            }
-
             {/*TODO : 위치 변경*/}
             <div className="table-responsive small">
                 <table className="table table-sm table-fixed table-lock-height table-hover">
@@ -122,17 +118,26 @@ const TableHome = (props) => {
                     <tr className={"table-dark"}>
                         <th className={"text-center"} scope="col">#</th>
                         {
-                            queryResult.rowHeader.map((info, infoIndex) => {
+                            queryResult.convertedRowHeader.map((info, infoIndex) => {
                                 return (
                                     <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
                                         scope="col">
                                         <OverlayTrigger placement="bottom" overlay={
                                             <Tooltip id="tooltip">
-                                                {info.columnName} <br/>
-                                                (type : {info.type})
+                                                {info.column_name} ({info.type})
                                             </Tooltip>
                                         }>
-                                            <span style={{cursor: "pointer"}}>{info.columnName}</span>
+                                                <span style={{cursor: "pointer"}}>
+                                                     {
+                                                         info.kind === 'partition_key' &&
+                                                         <i className="bi bi-p-square me-1"></i>
+                                                     }
+                                                    {
+                                                        info.kind === 'clustering' &&
+                                                        <i className="bi bi-c-square me-1"></i>
+                                                    }
+                                                    {info.column_name}
+                                                </span>
                                         </OverlayTrigger>
                                     </th>
                                 )
@@ -144,7 +149,7 @@ const TableHome = (props) => {
                     {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
-                                    <td className={"text-center"} colSpan={queryResult.rowHeader.length + 1}>
+                                    <td className={"text-center"} colSpan={queryResult.convertedRowHeader.length + 1}>
                                         No Data
                                     </td>
                                 </tr>
@@ -155,7 +160,10 @@ const TableHome = (props) => {
                                         <td className={"text-center"}>
                                             <div className="btn-group btn-group-sm">
                                                 <button type="button" className={"btn btn-sm btn-outline-primary"}
-                                                        onClick={() => setShowRowDetail(true)}>
+                                                        onClick={() => {
+                                                            setRowDetailView(row);
+                                                            setShowRowDetail(true);
+                                                        }}>
                                                     <i className="bi bi-book"></i>
                                                 </button>
                                                 {/*UI 구성 등 오래걸릴 듯*/}
@@ -170,11 +178,11 @@ const TableHome = (props) => {
                                             </div>
                                         </td>
                                         {
-                                            queryResult.rowHeader.map((info, infoIndex) => {
+                                            queryResult.convertedRowHeader.map((info, infoIndex) => {
                                                 return (
                                                     <td className={"text-center text-break text-truncate"}
                                                         key={`resultItem${infoIndex}`}>
-                                                        <DataRowItem data={row[info.columnName]}/>
+                                                        <DataRowItem data={row[info.column_name]}/>
                                                     </td>
                                                 )
                                             })
@@ -241,8 +249,10 @@ const TableHome = (props) => {
                 />
             }
             {
-                showRowDetail && <TableRowDetailModal
+                showRowDetail && rowDetailView && <TableRowDetailModal
                     show={showRowDetail}
+                    rowDetailView={rowDetailView}
+                    convertedRowHeader={queryResult.convertedRowHeader}
                     handleClose={() => setShowRowDetail(false)}
                 />
             }
