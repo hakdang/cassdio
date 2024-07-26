@@ -14,6 +14,7 @@ import NotFound from "../pages/not-found";
 import AdminLayout from "../components/admin/admin-layout";
 import AdminHomePage from "../pages/admin/admin-home-page";
 import ClusterTablePage from "../pages/cluster/cluster-table-page";
+import ClusterMonitoringDashboardPage from "../pages/cluster/cluster-monitoring-dashboard-page";
 
 const Router = createBrowserRouter([
         {
@@ -49,22 +50,6 @@ const Router = createBrowserRouter([
                                 return {}
                             },
                         }, {
-                            path: `nodes`,
-                            element: <ClusterNodesPage/>,
-                            loader: () => {
-                                //const checkData = await checkDataApi();
-                                console.log("cluster Nodes")
-                                return {}
-                            },
-                        }, {
-                            path: `client`,
-                            element: <ClusterClientPage/>,
-                            loader: () => {
-                                //const checkData = await checkDataApi();
-                                console.log("cluster client")
-                                return {}
-                            },
-                        }, {
                             path: `query`,
                             element: <ClusterQueryPage/>,
                             loader: () => {
@@ -72,14 +57,7 @@ const Router = createBrowserRouter([
                                 console.log("query client")
                                 return {}
                             },
-                        }, {
-                            path: `metrics`,
-                            element: <ClusterMetricsPage/>,
-                            loader: () => {
-                                //const checkData = await checkDataApi();
-                                console.log("metrics client")
-                                return {}
-                            },
+
                         }, {
                             path: `keyspace/:keyspaceName`,
                             element: <ClusterKeyspacePage/>,
@@ -104,7 +82,39 @@ const Router = createBrowserRouter([
                                 console.log("keyspace client")
                                 return {}
                             },
-                        },
+                        }, {
+                            path: `monitoring`,
+                            element: <ClusterMonitoringDashboardPage/>,
+                            loader: () => {
+                                //const checkData = await checkDataApi();
+                                return {
+                                }
+                            },
+                        }, {
+                            path: `monitoring/nodes`,
+                            element: <ClusterNodesPage/>,
+                            loader: () => {
+                                //const checkData = await checkDataApi();
+                                return {
+                                }
+                            },
+                        }, {
+                            path: `monitoring/client`,
+                            element: <ClusterClientPage/>,
+                            loader: () => {
+                                //const checkData = await checkDataApi();
+                                return {
+                                }
+                            }
+                        }, {
+                            path: `monitoring/metrics`,
+                            element: <ClusterMetricsPage/>,
+                            loader: () => {
+                                //const checkData = await checkDataApi();
+                                return {
+                                }
+                            },
+                        }
                     ]
                 }, {
                     path: `admin`,

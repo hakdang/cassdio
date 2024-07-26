@@ -1,7 +1,7 @@
 import useTable from "../../hooks/useTable";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import ClusterBreadcrumb from "../../components/cluster/cluster-breadcrumb";
+import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import DataRowItem from "../../components/cluster/data-row-item";
 import TableDetailModal from "../../components/cluster/modal/table-detail-modal";
@@ -46,7 +46,7 @@ const ClusterTablePage = () => {
 
     return (
         <>
-            <ClusterBreadcrumb
+            <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
                 tableName={routeParams.tableName}

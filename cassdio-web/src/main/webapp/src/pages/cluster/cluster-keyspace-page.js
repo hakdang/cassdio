@@ -2,7 +2,7 @@ import {Link, useParams} from "react-router-dom";
 import useCassdio from "../../hooks/useCassdio";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import ClusterBreadcrumb from "../../components/cluster/cluster-breadcrumb";
+import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
 import {CassdioUtils} from "../../utils/cassdioUtils";
 import KeyspaceTableList from "../../components/cluster/keyspace-table-list";
@@ -52,7 +52,7 @@ const ClusterKeyspacePage = () => {
 
     return (
         <>
-            <ClusterBreadcrumb
+            <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
                 active={"KEYSPACE"}
@@ -74,71 +74,65 @@ const ClusterKeyspacePage = () => {
                 {/*    </button>*/}
                 {/*</div>*/}
             </div>
-
             <Spinner loading={detailLoading}>
+                <div className={"row"}>
+                    <div className={"col-sm-8"}>
 
-                {
-                    keyspaceDetail && <>
-                        <div className="table-responsive small">
-                            <table
-                                className="table table-sm table-hover">
-                                <tbody>
 
-                                {
-                                    keyspaceDetail.rowHeader.map((info, infoIndex) => {
-                                        return (
-                                            <tr key={`resultBody${infoIndex}`}>
-                                                <th className={"text-center text-break"}>
-                                                    {info.columnName}
-                                                </th>
-                                                <td className={"text-center text-break"}
-                                                    key={`resultItem${infoIndex}`}>
-                                                    {
-                                                        CassdioUtils.renderData(keyspaceDetail.row[info.columnName])
-                                                    }
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                                </tbody>
-                            </table>
-                        </div>
+                        {
+                            keyspaceDetail && <>
+                                <div className="table-responsive small">
+                                    <table
+                                        className="table table-sm table-hover">
+                                        <tbody>
 
-                    </>
-                }
+                                        {
+                                            keyspaceDetail.rowHeader.map((info, infoIndex) => {
+                                                return (
+                                                    <tr key={`resultBody${infoIndex}`}>
+                                                        <th className={"text-center text-break"}>
+                                                            {info.columnName}
+                                                        </th>
+                                                        <td className={"text-center text-break"}
+                                                            key={`resultItem${infoIndex}`}>
+                                                            {
+                                                                CassdioUtils.renderData(keyspaceDetail.row[info.columnName])
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                {
-                    keyspaceDescribe && <>
-                        <div className={"row mb-3"}>
-                            <h3 className={"h3"}>Describe</h3>
-                            <div className={"col"}>
-                                <code className={"text-break"}>
-                                    {keyspaceDescribe}
-                                </code>
-                            </div>
-                        </div>
-                    </>
-                }
+                            </>
+                        }
 
-                <div className={"row mt-3"}>
-                    <div className={"col-md-6 col-sm-12"}>
-                        <h2 className="h3">Monitoring</h2>
-                        <div className="table-responsive small">
-                            <table className="table table-sm table-hover">
-                                <tbody>
-                                <tr>
-                                    <th>Compaction History</th>
-                                    <td>
-                                        <Link
-                                            to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/compaction`}>
-                                            Link
-                                        </Link>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        {
+                            keyspaceDescribe && <>
+                                <div className={"row mb-3"}>
+                                    <h4 className={"h4"}>Describe</h4>
+                                    <div className={"col"}>
+                                        <code className={"text-break"}>
+                                            {keyspaceDescribe}
+                                        </code>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                    </div>
+                    <div className={"col-sm-4"}>
+                        <ul className={"list-group list-group-flush"}>
+                            <li className="list-group-item d-flex justify-content-between align-items-start">
+                                <Link
+                                    to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/compaction`}
+                                >
+                                    Compaction History
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 

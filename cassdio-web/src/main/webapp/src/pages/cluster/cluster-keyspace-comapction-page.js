@@ -2,7 +2,7 @@ import {Link, useParams} from "react-router-dom";
 import useCassdio from "../../hooks/useCassdio";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import ClusterBreadcrumb from "../../components/cluster/cluster-breadcrumb";
+import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
 import {ByteFormatUtils} from "../../utils/byteFormat";
 
@@ -37,7 +37,7 @@ const ClusterKeyspaceCompactionPage = () => {
 
     return (
         <>
-            <ClusterBreadcrumb
+            <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
             />

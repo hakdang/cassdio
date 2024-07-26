@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Link, Outlet, useParams} from "react-router-dom";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import CassdioSidebar from "../layout/cassdio-sidebar";
-import useKeyspace from "../../hooks/useKeyspace";
+import CassdioSidebar from "components/layout/cassdio-sidebar";
+import useKeyspace from "hooks/useKeyspace";
 
 const ClusterLayout = ({}) => {
     const routeParams = useParams();
@@ -43,20 +43,6 @@ const ClusterLayout = ({}) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/nodes`}>
-                                <i className="bi bi-server"></i> Node List
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/client`}>
-                                <i className="bi bi-easel3"></i> Clients (v4+ only)
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
                                 to={`/cluster/${clusterId}/query`}>
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
@@ -64,10 +50,25 @@ const ClusterLayout = ({}) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/metrics`}>
-                                <i className="bi bi-laptop"></i> Metrics
+                                to={`/cluster/${clusterId}/monitoring`}>
+                                <i className="bi bi-eye"></i> Monitoring
                             </Link>
                         </li>
+                        {/*<li className="nav-item">*/}
+                        {/*    <Link*/}
+                        {/*        className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}*/}
+                        {/*        to={`/cluster/${clusterId}/client`}>*/}
+                        {/*        <i className="bi bi-easel3"></i> Clients (v4+ only)*/}
+                        {/*    </Link>*/}
+                        {/*</li>*/}
+
+                        {/*<li className="nav-item">*/}
+                        {/*    <Link*/}
+                        {/*        className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}*/}
+                        {/*        to={`/cluster/${clusterId}/metrics`}>*/}
+                        {/*        <i className="bi bi-laptop"></i> Metrics*/}
+                        {/*    </Link>*/}
+                        {/*</li>*/}
                     </ul>
 
                     <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">

@@ -1,6 +1,6 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import ClusterBreadcrumb from "../../components/cluster/cluster-breadcrumb";
+import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
 import axios from "axios";
 import useCassdio from "../../hooks/useCassdio";
@@ -41,7 +41,7 @@ const ClusterDashboardPage = ({}) => {
 
     return (
         <>
-            <ClusterBreadcrumb
+            <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 active={"CLUSTER"}
             />

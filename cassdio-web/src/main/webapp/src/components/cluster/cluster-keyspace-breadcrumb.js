@@ -1,11 +1,6 @@
 import {Link} from "react-router-dom";
 
-const ClusterBreadcrumb = (props) => {
-    const clusterId = props.clusterId;
-    const keyspaceName = props.keyspaceName || null;
-    const tableName = props.tableName || null;
-    const active = props.active;
-
+const ClusterKeyspaceBreadcrumb = ({active, clusterId, keyspaceName = null, tableName = null,}) => {
     return (
         <div className={"row pt-3"}>
             <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
@@ -20,7 +15,6 @@ const ClusterBreadcrumb = (props) => {
                                         Cluster
                                     </Link>
                             }
-
                         </li>
                     }
                     {
@@ -57,4 +51,4 @@ const ClusterBreadcrumb = (props) => {
     )
 }
 
-export default ClusterBreadcrumb;
+export default ClusterKeyspaceBreadcrumb;

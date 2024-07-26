@@ -48,19 +48,20 @@
 .breadcrumb-arrow {
     --bs-breadcrumb-divider: ">"
 }
-
-.table-fixed thead > tr, .table-fixed tbody > tr {
-    display: flex;
-    justify-content: space-around;
-    flex: 0 0 auto;
+.nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.75rem;
+    overflow-y: hidden;
 }
 
-.table-fixed thead > tr th, .table-fixed tbody > tr th, .table-fixed thead > tr td, .table-fixed tbody > tr td {
-    flex: 1;
-}
-
-.table-fixed tbody {
-    overflow: scroll;
+.nav-scroller .nav {
     display: flex;
-    flex-direction: column;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }

@@ -1,6 +1,10 @@
+import ClusterMonitoringNavLink from "../../components/cluster/cluster-monitoring-nav-link";
+
 const ClusterMetricsPage = () => {
     return (
         <>
+            <ClusterMonitoringNavLink active={"METRICS"}/>
+
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2 className="h2">Cluster Metrics</h2>
@@ -15,8 +19,9 @@ const ClusterMetricsPage = () => {
                     </button>
                 </div>
             </div>
-
         </>
+
+
     )
 }
 

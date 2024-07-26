@@ -3,6 +3,7 @@ import useCassdio from "../../hooks/useCassdio";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Spinner from "../../components/common/spinner";
+import ClusterMonitoringNavLink from "../../components/cluster/cluster-monitoring-nav-link";
 
 const ClusterClientPage = () => {
 
@@ -14,7 +15,6 @@ const ClusterClientPage = () => {
     const [groupedClients, setGroupedClients] = useState([])
 
     useEffect(() => {
-        console.log(routeParams.keyspaceName)
         setLoading(true)
         axios({
             method: "GET",
@@ -52,6 +52,8 @@ const ClusterClientPage = () => {
 
     return (
         <>
+            <ClusterMonitoringNavLink active={"CLIENT"}/>
+
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2 className="h2">
