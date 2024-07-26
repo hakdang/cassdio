@@ -132,7 +132,7 @@ const ClusterKeyspacePage = () => {
                                     <td>
                                         <Link
                                             to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/compaction`}>
-                                            <th>Link</th>
+                                            Link
                                         </Link>
                                     </td>
                                 </tr>

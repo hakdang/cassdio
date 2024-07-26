@@ -13,6 +13,7 @@ import ClusterKeyspaceCompactionPage from "../pages/cluster/cluster-keyspace-com
 import NotFound from "../pages/not-found";
 import AdminLayout from "../components/admin/admin-layout";
 import AdminHomePage from "../pages/admin/admin-home-page";
+import ClusterTablePage from "../pages/cluster/cluster-table-page";
 
 const Router = createBrowserRouter([
         {
@@ -89,7 +90,7 @@ const Router = createBrowserRouter([
                             },
                         }, {
                             path: `keyspace/:keyspaceName/table/:tableName`,
-                            element: <ClusterKeyspacePage/>,
+                            element: <ClusterTablePage/>,
                             loader: () => {
                                 //const checkData = await checkDataApi();
                                 console.log("keyspace client")

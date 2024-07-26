@@ -1,21 +1,13 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {Modal} from "react-bootstrap";
-import useCassdio from "hooks/useCassdio";
 import TableDetailModalInfo from "./detail/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail/table-detail-modal-column-list";
-import {CassdioUtils} from "../../../utils/cassdioUtils";
+import {CassdioUtils} from "utils/cassdioUtils";
+import ClusterTableApi from "remotes/clusterTableApi";
 
-const TableDetailModal = (props) => {
+const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
 
-    const show = props.show;
-    const handleClose = props.handleClose;
-
-    const clusterId = props.clusterId;
-    const keyspaceName = props.keyspaceName;
-    const tableName = props.tableName;
-    const {errorCatch} = useCassdio();
     const [tableLoading, setTableLoading] = useState(false);
     const [tableInfo, setTableInfo] = useState({
         detail: {
@@ -37,30 +29,25 @@ const TableDetailModal = (props) => {
         }
         setTableLoading(true);
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`,
-            params: {
-                withTableDescribe: true,
-            }
-        }).then((response) => {
-            console.log("detail : ", response);
+        ClusterTableApi.clusterTableDetailApi(clusterId, keyspaceName, tableName)
+            .then((response) => {
+                const sortedColumnList = CassdioUtils.columnListSorting(
+                    response.data.result.columnList
+                );
 
-            const sortedColumnList = CassdioUtils.columnListSorting(
-                response.data.result.columnList
-            );
+                setTableInfo({
+                    detail: response.data.result.detail,
+                    describe: response.data.result.describe,
+                    columnList: sortedColumnList,
+                })
 
-            setTableInfo({
-                detail: response.data.result.detail,
-                describe: response.data.result.describe,
-                columnList: sortedColumnList,
             })
-
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-            setTableLoading(false)
-        });
+            .catch((error) => {
+                console.error("error : ", error);
+            })
+            .finally(() => {
+                setTableLoading(false)
+            });
         return () => {
             //hide component
 
@@ -126,7 +113,7 @@ const TableDetailModal = (props) => {
                                      aria-labelledby="nav-columns-tab">
 
                                     {
-                                        tableInfo.columnList && tableInfo.columnList.rows.length > 0 &&
+                                        tableInfo.columnList.rows && tableInfo.columnList.rows.length > 0 &&
                                         <TableDetailModalColumnList columnList={tableInfo.columnList}/>
                                     }
                                 </div>

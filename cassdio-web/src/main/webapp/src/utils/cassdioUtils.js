@@ -76,7 +76,7 @@ export const CassdioUtils = {
         for (const row of rows) {
             temp.push({
                 ...row,
-                'sortValue': `${kindSort[row.kind]}-${row.position}`
+                sortValue: `${kindSort[row.kind]}-${row.position}`
             })
         }
 
@@ -90,6 +90,9 @@ export const CassdioUtils = {
             return 0;
         })
 
-        return temp;
+        return {
+            ...columnList,
+            rows: temp
+        };
     }
 };

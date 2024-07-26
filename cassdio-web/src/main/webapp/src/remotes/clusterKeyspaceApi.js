@@ -1,8 +1,8 @@
-import axios from "axios";
+import axiosInstance from "../utils/axiosUtils";
 
-export default async function clusterKeyspaceNameApi(clusterId, cacheEvict) {
+const clusterKeyspaceNameApi = async (clusterId, cacheEvict) => {
     try {
-        const response = await axios({
+        const response = await axiosInstance({
             method: "GET",
             url: `/api/cassandra/cluster/${clusterId}/keyspace-name`,
             params: {
@@ -10,10 +10,14 @@ export default async function clusterKeyspaceNameApi(clusterId, cacheEvict) {
             }
         })
 
-        console.log("response : ", response);
-
-        return await response.data.result;
+        return await response;
     } catch (error) {
         //TODO : error
     }
+}
+
+
+export default {
+    clusterKeyspaceNameApi,
+
 }

@@ -12,7 +12,7 @@ export default function useKeyspace() {
 
     const doGetKeyspaceNames = (clusterId, cacheEvict) => {
         setKeyspaceNamesLoading(true);
-
+        console.log("load : ", new Date());
         axios({
             method: "GET",
             url: `/api/cassandra/cluster/${clusterId}/keyspace-name`,
@@ -20,6 +20,7 @@ export default function useKeyspace() {
                 cacheEvict: cacheEvict
             }
         }).then((response) => {
+            console.log("start : ", new Date());
             const userCreatedList = [];
             const systemCreatedList = [];
 
@@ -32,14 +33,15 @@ export default function useKeyspace() {
                     userCreatedList.push(ele)
                 }
             }
-
+            console.log("set : ", new Date());
             setKeyspaceGeneralNames(userCreatedList);
             setKeyspaceSystemNames(systemCreatedList);
-
+            console.log("set end : ", new Date());
         }).catch((error) => {
             errorCatch(error)
         }).finally(() => {
             setKeyspaceNamesLoading(false);
+            console.log("end : ", new Date());
         });
     }
 
