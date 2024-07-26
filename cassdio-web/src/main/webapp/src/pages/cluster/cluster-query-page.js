@@ -22,7 +22,7 @@ const ClusterQueryPage = () => {
 
     const [queryOptions, setQueryOptions] = useState({
         limit: 10,
-        trace: true,
+        trace: false,
     });
 
     const initQueryResult = {

@@ -9,7 +9,6 @@ type Action =
     | { type: "SET_BOOTSTRAP_LOADING"; bootstrapLoading: boolean; }
     | { type: "SET_SYSTEM_AVAILABLE"; systemAvailable: boolean; }
 
-
 type CassdioDispatch = Dispatch<Action>;
 
 const CassdioStateContext = createContext<CassdioState | null>(null);
