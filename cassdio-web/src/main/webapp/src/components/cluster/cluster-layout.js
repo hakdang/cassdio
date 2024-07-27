@@ -50,7 +50,7 @@ const ClusterLayout = ({}) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/monitoring`}>
+                                to={`/cluster/${clusterId}/monitoring/nodes`}>
                                 <i className="bi bi-eye"></i> Monitoring
                             </Link>
                         </li>
