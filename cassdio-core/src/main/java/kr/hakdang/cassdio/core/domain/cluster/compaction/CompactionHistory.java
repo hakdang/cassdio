@@ -44,11 +44,12 @@ public class CompactionHistory {
     }
 
     public static CompactionHistory from(Row row) {
+        Instant compactedAt = row.get("compacted_at", Instant.class);
         return CompactionHistory.builder()
             .id(row.getUuid("id"))
             .bytesIn(row.getLong("bytes_in"))
             .bytesOut(row.getLong("bytes_out"))
-            .compactedAt(LocalDateTime.ofInstant(row.get("compacted_at", Instant.class), TimeZone.getDefault().toZoneId()))
+            .compactedAt(compactedAt == null ? null : LocalDateTime.ofInstant(compactedAt, TimeZone.getDefault().toZoneId()))
             .columnFamilyName(row.getString("columnfamily_name"))
             .keyspaceName(row.getString("keyspace_name"))
             .rowMerged(row.getMap("rows_merged", Integer.class, Long.class))

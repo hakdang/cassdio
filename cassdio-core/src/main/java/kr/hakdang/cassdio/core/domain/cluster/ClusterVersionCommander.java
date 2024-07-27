@@ -3,6 +3,7 @@ package kr.hakdang.cassdio.core.domain.cluster;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.Version;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
@@ -25,7 +26,12 @@ public class ClusterVersionCommander extends BaseClusterCommander {
             .build();
 
         ResultSet rs = session.execute(statement);
-        return Version.parse(rs.one().getString("release_version"));
+        Row row = rs.one();
+        if (row == null) {
+            throw new RuntimeException("Can't read release version in system_local");
+        }
+
+        return Version.parse(row.getString("release_version"));
     }
 
 }

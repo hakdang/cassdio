@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 2024-07-02
  */
 @Slf4j
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class ClusterTableGetCommanderTest extends IntegrationTest {
 
     private final ClusterTableCommander clusterTableCommander;

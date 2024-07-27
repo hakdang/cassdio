@@ -2,6 +2,7 @@ package kr.hakdang.cassdio;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  * @since 2024-07-01
  */
 @ActiveProfiles("test")
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension.class)
 public abstract class BaseTest {
 }
