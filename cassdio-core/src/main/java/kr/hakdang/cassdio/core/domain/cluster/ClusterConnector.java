@@ -7,6 +7,7 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -16,7 +17,6 @@ import java.util.List;
 
 /**
  * ClusterConnector
- * - 임시 목적으로 사용할 connector
  *
  * @author akageun
  * @since 2024-07-03
@@ -67,7 +67,6 @@ public class ClusterConnector {
         if (StringUtils.isNotBlank(keyspace)) {
             builder.withKeyspace(keyspace);
         }
-
         return builder.build();
     }
 

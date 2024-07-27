@@ -67,6 +67,14 @@ const Router = createBrowserRouter([
                                 return {}
                             },
                         }, {
+                            path: `keyspace/:keyspaceName/query`,
+                            element: <ClusterQueryPage/>,
+                            loader: () => {
+                                //const checkData = await checkDataApi();
+                                console.log("keyspace query client")
+                                return {}
+                            },
+                        }, {
                             path: `keyspace/:keyspaceName/table/:tableName`,
                             element: <ClusterTablePage/>,
                             loader: () => {

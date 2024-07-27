@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClusterTablePureSelectRequest {
+public class ClusterTableRowRequest {
     private String cursor;
     private int pageSize;
     private int timeoutSeconds;
 
     @Builder
-    public ClusterTablePureSelectRequest(String cursor, int pageSize, int timeoutSeconds) {
+    public ClusterTableRowRequest(String cursor, int pageSize, int timeoutSeconds) {
         this.cursor = cursor;
         this.pageSize = pageSize;
         if (timeoutSeconds <= 0 || timeoutSeconds > 30) {

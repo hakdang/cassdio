@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -120,11 +121,11 @@ public class ClusterTableApi {
     }
 
     @GetMapping("/table/{table}/row")
-    public ApiResponse<Map<String, Object>> tablePureTableSelect(
+    public ApiResponse<Map<String, Object>> tableRow(
         @PathVariable String clusterId,
         @PathVariable String keyspace,
         @PathVariable String table,
-        @ModelAttribute ClusterTablePureSelectRequest request
+        @ModelAttribute ClusterTableRowRequest request
     ) {
         Map<String, Object> responseMap = new HashMap<>();
         try (CqlSession session = clusterConnector.makeSession(clusterId)) {

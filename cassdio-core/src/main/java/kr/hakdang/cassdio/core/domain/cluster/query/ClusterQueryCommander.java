@@ -6,6 +6,7 @@ import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 import com.datastax.oss.driver.api.core.cql.TraceEvent;
 import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.util.Bytes;
@@ -34,13 +35,19 @@ import java.util.Map;
 public class ClusterQueryCommander extends BaseClusterCommander {
 
     public QueryDTO.ClusterQueryCommanderResult execute(CqlSession session, QueryDTO.ClusterQueryCommanderArgs args) {
-        SimpleStatement statement = SimpleStatement.builder(args.getQuery())
+        SimpleStatementBuilder simpleBuilder = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
             .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null)
-            .setTracing(args.isTrace())
-            .build();
+            .setTracing(args.isTrace());
+
+        if (StringUtils.isNotBlank(args.getKeyspace())) {
+            simpleBuilder.setKeyspace(args.getKeyspace());
+        }
+
+        SimpleStatement statement = simpleBuilder.build();
         //.setConsistencyLevel(ConsistencyLevel.ONE);
+
 
         ResultSet resultSet = session.execute(statement);
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();

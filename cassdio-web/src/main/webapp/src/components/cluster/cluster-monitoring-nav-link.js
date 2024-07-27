@@ -14,10 +14,10 @@ const ClusterMonitoringNavLink = ({active}) => {
                       to={`/cluster/${routeParams.clusterId}/monitoring/client`}>
                     Client
                 </Link>
-                <Link className={`nav-item nav-link link-body-emphasis ${active === 'METRICS' ? 'active' : ''}`}
-                      to={`/cluster/${routeParams.clusterId}/monitoring/metrics`}>
-                    Metrics
-                </Link>
+                {/*<Link className={`nav-item nav-link link-body-emphasis ${active === 'METRICS' ? 'active' : ''}`}*/}
+                {/*      to={`/cluster/${routeParams.clusterId}/monitoring/metrics`}>*/}
+                {/*    Metrics*/}
+                {/*</Link>*/}
 
             </nav>
         </div>

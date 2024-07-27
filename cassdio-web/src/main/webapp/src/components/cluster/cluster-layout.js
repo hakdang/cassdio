@@ -75,7 +75,7 @@ const ClusterLayout = ({}) => {
                         <span>Keyspace</span>
                         <a className="link-danger"
                            role={"button"}
-                           onClick={e => doGetKeyspaceNames(true)}>
+                           onClick={e => doGetKeyspaceNames(routeParams.clusterId, true)}>
 
                             <OverlayTrigger placement="top" overlay={
                                 <Tooltip id="tooltip">

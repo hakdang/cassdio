@@ -22,14 +22,16 @@ public class QueryDTO {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ClusterQueryCommanderArgs {
+        private String keyspace;
         private String query;
         private String cursor;
         private int pageSize;
         private int timeoutSeconds;
         private boolean trace = false;
 
+
         @Builder
-        public ClusterQueryCommanderArgs(String query, String cursor, Integer pageSize, Integer timeoutSeconds, boolean trace) {
+        public ClusterQueryCommanderArgs(String keyspace, String query, String cursor, Integer pageSize, Integer timeoutSeconds, boolean trace) {
             if (pageSize == null || pageSize <= 0) {
                 pageSize = 50;
             }
@@ -46,6 +48,7 @@ public class QueryDTO {
                 throw new RuntimeException("timeout 60 over");
             }
 
+            this.keyspace = keyspace;
             this.query = query;
             this.cursor = cursor;
             this.pageSize = pageSize;
