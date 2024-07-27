@@ -8,7 +8,7 @@ This management system helps simplify system operations and enhance stability. I
 [![latest-tag](https://badgen.net/github/release/hakdang/cassdio)](https://github.com/hakdang/cassdio/releases)
 
 ## Demo
-- TBD : GIF 로 동작 스샷 몇개 모아서 생성
+![intro_screenshot](./docs/screenshot/intro_s1.gif)
 
 ## Features
 - `Multi Cassandra Cluster(With AuthCredentials)`
@@ -40,7 +40,7 @@ Version | Supported | Cassandra Docs
 ```
 wget https://github.com/hakdang/cassdio/releases/download/v0.0.1/cassdio-web-0.0.1.jar
 
-java -jar ...
+java -jar ./cassdio-web-0.0.1.jar
 ```
 
 [//]: # (## Environment)
