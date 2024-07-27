@@ -4,9 +4,9 @@ const TableDetailModalDescribe = (props) => {
     return (
         <div className={"row"}>
             <div className={"col"}>
-                <code className={"w-100 text-break"} style={{whiteSpace: "pre"}}>
-                    {describe}
-                </code>
+                <pre className={"w-100 text-break"} >
+                        {describe}
+                </pre>
             </div>
         </div>
     )

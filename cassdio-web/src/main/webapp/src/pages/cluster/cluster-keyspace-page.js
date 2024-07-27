@@ -118,7 +118,7 @@ const ClusterKeyspacePage = () => {
                                 <div className={"row mb-3"}>
                                     <h4 className={"h4"}>Describe</h4>
                                     <div className={"col"}>
-                                        <code className={"text-break"}>
+                                        <code className={"w-100 text-break"}>
                                             {keyspaceDescribe}
                                         </code>
                                     </div>

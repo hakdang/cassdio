@@ -11,6 +11,8 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,6 +28,9 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 @Service
 public class ClusterManager implements InitializingBean, DisposableBean {
+
+    @Value("${cassdio.system.database.path}")
+    private String dbPath;
 
     private static DB mapDb;
 
@@ -61,7 +66,6 @@ public class ClusterManager implements InitializingBean, DisposableBean {
             })).toList();
     }
 
-    //TODO : Cache
     public ClusterInfo findById(String clusterId) {
         ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
@@ -95,14 +99,14 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        File file = new File(System.getProperty("user.home") + "/.cassdio");
+        File file = new File(dbPath);
         if (!file.exists()) {
-            file.mkdir();
+            boolean result = file.mkdirs();
+            log.info("create db path : {}", result);
         }
 
         DBMaker.Maker maker = DBMaker
-            //TODO : 추후 프로퍼티 받아서 주입할 수 있도록 변경 예정
-            .fileDB(System.getProperty("user.home") + "/.cassdio/cassdio_v1.db")
+            .fileDB(dbPath + "/cassdio_v1.db")
             .fileMmapEnable()            // Always enable mmap
             .fileMmapEnableIfSupported() // Only enable mmap on supported platforms
             .fileMmapPreclearDisable()   // Make mmap file faster
