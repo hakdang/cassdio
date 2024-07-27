@@ -5,6 +5,8 @@ Cassdio provide powerful tools to efficiently manage and monitor Apache Cassandr
 
 This management system helps simplify system operations and enhance stability. It's an essential tool for managing Apache Cassandra databases, offering excellent functionality and user convenience.
 
+[![latest-tag](https://badgen.net/github/release/hakdang/cassdio)](https://github.com/hakdang/cassdio/releases)
+
 ## Demo
 - TBD : GIF 로 동작 스샷 몇개 모아서 생성
 
@@ -36,7 +38,7 @@ Version | Supported | Cassandra Docs
 ### Installation
 
 ```
-wget download
+wget https://github.com/hakdang/cassdio/releases/download/v0.0.1/cassdio-web-0.0.1.jar
 
 java -jar ...
 ```
