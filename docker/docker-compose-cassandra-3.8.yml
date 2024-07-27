@@ -1,0 +1,32 @@
+services:
+  cassandra:
+    image: cassandra:3.8
+    container_name: cassdio-cassandra
+    ports:
+      - "29042:9042"
+    environment:
+      - "MAX_HEAP_SIZE=512M"
+      - "HEAP_NEWSIZE=128M"
+      - "CASSANDRA_CLUSTER_NAME=cassdio"
+      - "CASSANDRA_DC=dc1"
+      - "CASSANDRA_RACK=rack1"
+      - "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch"
+    restart: unless-stopped
+    networks:
+      - cassdio-network
+    volumes:
+      - cassdio_cassandra_data_1:/var/lib/cassandra
+    healthcheck:
+      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  cassdio_cassandra_data_1:
+    driver: local
+
+networks:
+  cassdio-network:
+    driver: bridge
