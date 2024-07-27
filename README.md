@@ -41,10 +41,14 @@ wget download
 java -jar ...
 ```
 
-## Environment
+[//]: # (## Environment)
 
-env name | description | env value | default value
--- | -- | -- | --
-CASSDIO_DATABASE_PATH | database file path | -dDB_PATH:test | ${userHome}/.cassdio
+[//]: # ()
+[//]: # (env name | description | env value | default value)
 
+[//]: # (-- | -- | -- | --)
+
+[//]: # (CASSDIO_DATABASE_PATH | database file path | -dDB_PATH:test | ${userHome}/.cassdio)
+
+[//]: # ()
 

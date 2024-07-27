@@ -24,7 +24,7 @@ const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHead
                         {
                             convertedRowHeader && convertedRowHeader.map((info, infoIndex) => {
                                 return (
-                                    <tr>
+                                    <tr key={`row${infoIndex}`}>
                                         <th className={"text-center"} key={`resultHeader${infoIndex}`}
                                             scope="col">
                                             <OverlayTrigger placement="bottom" overlay={

@@ -1,11 +1,12 @@
 import {useParams} from "react-router-dom";
-import useCassdio from "../../hooks/useCassdio";
-import {useEffect, useState} from "react";
+import useCassdio from "hooks/useCassdio";
+import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import axios from "axios";
-import QueryEditor from "../../components/cluster/query-editor";
-import QueryResult from "../../components/cluster/query-result";
-import QueryTraceViewModal from "../../components/cluster/modal/query-trace-view-modal";
+import QueryEditor from "components/cluster/query-editor";
+import QueryResult from "components/cluster/query-result";
+import QueryTraceViewModal from "components/cluster/modal/query-trace-view-modal";
+import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
 
 const ClusterQueryPage = () => {
     const routeParams = useParams();
@@ -46,9 +47,14 @@ const ClusterQueryPage = () => {
 
         setLoading(true);
 
+        let url = `/api/cassandra/cluster/${routeParams.clusterId}/query`;
+        if(routeParams.keyspaceName){
+            url= `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`;
+        }
+
         axios({
             method: "POST",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/query`,
+            url: url,
             data: {
                 query: query,
                 pageSize: queryOptions.limit,
@@ -89,6 +95,12 @@ const ClusterQueryPage = () => {
 
     return (
         <>
+            <ClusterKeyspaceBreadcrumb
+                clusterId={routeParams.clusterId}
+                keyspaceName={routeParams.keyspaceName}
+                active={routeParams.keyspaceName ? "KEYSPACE" : "CLUSTER"}
+            />
+
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2 className="h2">Query Editor</h2>

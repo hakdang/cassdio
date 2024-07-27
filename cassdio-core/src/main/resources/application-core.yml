@@ -1,0 +1,4 @@
+cassdio:
+  system:
+    database:
+      path: ${user.home}/.cassdio

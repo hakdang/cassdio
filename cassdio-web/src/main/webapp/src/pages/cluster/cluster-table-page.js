@@ -72,21 +72,21 @@ const ClusterTablePage = () => {
                         Detail
                     </button>
 
-                    <div className="btn-group me-2">
-                        <button type="button" className="btn btn-sm btn-outline-secondary"
-                                onClick={() => {
+                    {/*<div className="btn-group me-2">*/}
+                    {/*    <button type="button" className="btn btn-sm btn-outline-secondary"*/}
+                    {/*            onClick={() => {*/}
 
-                                    setShowExport(true);
-                                }}
-                        >Export
-                        </button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary"
-                                onClick={() => {
-                                    setShowImport(true);
-                                }}
-                        >Import
-                        </button>
-                    </div>
+                    {/*                setShowExport(true);*/}
+                    {/*            }}*/}
+                    {/*    >Export*/}
+                    {/*    </button>*/}
+                    {/*    <button type="button" className="btn btn-sm btn-outline-secondary"*/}
+                    {/*            onClick={() => {*/}
+                    {/*                setShowImport(true);*/}
+                    {/*            }}*/}
+                    {/*    >Import*/}
+                    {/*    </button>*/}
+                    {/*</div>*/}
 
                     {/* MAP, Set 등 다 구현하려면 어려움 추후 대응 필요해보임*/}
                     {/*<button type="button"*/}

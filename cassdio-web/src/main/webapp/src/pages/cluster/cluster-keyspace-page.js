@@ -1,6 +1,6 @@
 import {Link, useParams} from "react-router-dom";
 import useCassdio from "../../hooks/useCassdio";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
@@ -63,16 +63,19 @@ const ClusterKeyspacePage = () => {
                 <h2 className="h2">
                     Keyspace
                 </h2>
-                {/*<div className="btn-toolbar mb-2 mb-md-0">*/}
-                {/*    <div className="btn-group me-2">*/}
-                {/*        <button type="button" className="btn btn-sm btn-outline-secondary">Share</button>*/}
-                {/*        <button type="button" className="btn btn-sm btn-outline-secondary">Export</button>*/}
-                {/*    </div>*/}
-                {/*    <button type="button"*/}
-                {/*            className="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">*/}
-                {/*        This week*/}
-                {/*    </button>*/}
-                {/*</div>*/}
+                <div className="btn-toolbar mb-2 mb-md-0">
+                    <div className="btn-group me-2">
+                        <Link role="button" className="btn btn-sm btn-outline-secondary"
+                         to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`}>
+                            <i className="bi bi-journal-code"></i> Query
+                        </Link>
+                        {/*<button type="button" className="btn btn-sm btn-outline-secondary">Export</button>*/}
+                    </div>
+                    {/*<button type="button"*/}
+                    {/*        className="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1">*/}
+                    {/*    This week*/}
+                    {/*</button>*/}
+                </div>
             </div>
             <Spinner loading={detailLoading}>
                 <div className={"row"}>
@@ -115,7 +118,7 @@ const ClusterKeyspacePage = () => {
                                 <div className={"row mb-3"}>
                                     <h4 className={"h4"}>Describe</h4>
                                     <div className={"col"}>
-                                        <code className={"text-break"}>
+                                        <code className={"w-100 text-break"}>
                                             {keyspaceDescribe}
                                         </code>
                                     </div>

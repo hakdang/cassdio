@@ -37,14 +37,17 @@ public class ClusterQueryApi {
         this.clusterQueryCommander = clusterQueryCommander;
     }
 
-    @PostMapping("/{clusterId}/query")
+    @PostMapping(value = {"/{clusterId}/query", "/{clusterId}/keyspace/{keyspace}/query"})
     public ApiResponse<Map<String, Object>> clusterQueryCommand(
         @PathVariable String clusterId,
+        @PathVariable(required = false) String keyspace,
         @RequestBody ClusterQueryRequest request
     ) {
+        log.info("clusterId : {}, keyspace : {}", clusterId, keyspace);
+
         Map<String, Object> responseMap = new HashMap<>();
 
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
             QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(session, request.makeArgs());
 
             responseMap.put("wasApplied", result.isWasApplied());
