@@ -44,8 +44,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         return requestedResource;
                     }
 
-                    return new PathResource("/error");
-                    //return new ClassPathResource("/static/index.html");
+                    //return new PathResource("/error");
+                    return new ClassPathResource("/static/index.html");
                 }
             })
             ;

@@ -17,10 +17,12 @@ dependencies {
 bootJar {
     enabled = true
     archiveVersion.set(cassdioVersion)
+    archiveBaseName.set("cassdio")
 }
 jar {
     enabled = true
     archiveVersion.set(cassdioVersion)
+    archiveBaseName.set("cassdio")
 }
 
 apply from: "${project.rootDir}/cassdio-web/frontend.build.gradle"

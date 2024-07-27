@@ -1,4 +1,5 @@
 def frontend = project.findProperty('frontend') ?: false
+println("frontend " + frontend);
 if (frontend.toBoolean()) {
 
     apply plugin: "com.github.node-gradle.node"
