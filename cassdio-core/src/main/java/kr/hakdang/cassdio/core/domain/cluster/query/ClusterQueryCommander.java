@@ -34,11 +34,15 @@ import java.util.Map;
 @Service
 public class ClusterQueryCommander extends BaseClusterCommander {
 
-    public QueryDTO.ClusterQueryCommanderResult execute(CqlSession session, QueryDTO.ClusterQueryCommanderArgs args) {
+    public QueryDTO.ClusterQueryCommanderResult execute(
+        CqlSession session,
+        QueryDTO.ClusterQueryCommanderArgs args
+    ) {
         SimpleStatementBuilder simpleBuilder = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
             .setPagingState(StringUtils.isNotBlank(args.getCursor()) ? Bytes.fromHexString(args.getCursor()) : null)
+            .setConsistencyLevel(args.getConsistencyLevel())
             .setTracing(args.isTrace());
 
         if (StringUtils.isNotBlank(args.getKeyspace())) {
@@ -46,8 +50,6 @@ public class ClusterQueryCommander extends BaseClusterCommander {
         }
 
         SimpleStatement statement = simpleBuilder.build();
-        //.setConsistencyLevel(ConsistencyLevel.ONE);
-
 
         ResultSet resultSet = session.execute(statement);
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();

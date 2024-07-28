@@ -21,6 +21,7 @@ public class ClusterQueryRequest {
     private String cursor;
     private int pageSize;
     private int timeoutSeconds;
+    private int consistencyLevelProtocolCode;
     private boolean trace = false;
 
     @Builder
@@ -38,6 +39,7 @@ public class ClusterQueryRequest {
             .cursor(cursor)
             .pageSize(pageSize)
             .timeoutSeconds(timeoutSeconds)
+            .consistencyLevelProtocolCode(consistencyLevelProtocolCode)
             .trace(trace)
             .build();
     }

@@ -7,7 +7,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        console.log("pre")
         //요청 보내기 전에 수행 로직
         return config;
     },

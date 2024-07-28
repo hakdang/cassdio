@@ -1,6 +1,8 @@
-import axiosInstance from "../utils/axiosUtils";
+import axiosInstance from "utils/axiosUtils";
 
-const clusterTableDetailApi = async (clusterId, keyspaceName, tableName) => {
+export default async function clusterTableDetailApi(
+    {clusterId, keyspaceName, tableName}
+) {
     const response = await axiosInstance({
         method: "GET",
         url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`,
@@ -9,11 +11,6 @@ const clusterTableDetailApi = async (clusterId, keyspaceName, tableName) => {
         }
     })
 
-    return await response;
+    return response;
 }
 
-
-export default {
-    clusterTableDetailApi,
-
-}

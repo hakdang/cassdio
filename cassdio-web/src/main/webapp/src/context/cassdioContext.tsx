@@ -3,11 +3,14 @@ import React, {createContext, Dispatch, useContext, useReducer} from "react";
 type CassdioState = {
     bootstrapLoading: boolean,
     systemAvailable: boolean,
+    consistencyLevels: [],
+    defaultConsistencyLevel: {},
 };
 
 type Action =
     | { type: "SET_BOOTSTRAP_LOADING"; bootstrapLoading: boolean; }
     | { type: "SET_SYSTEM_AVAILABLE"; systemAvailable: boolean; }
+    | { type: "SET_BOOTSTRAP"; consistencyLevels: []; defaultConsistencyLevel: object; }
 
 type CassdioDispatch = Dispatch<Action>;
 
@@ -18,6 +21,8 @@ export function CassdioProvider({children}: { children: React.ReactNode }) {
     const [state, dispatch] = useReducer(reducer, {
         bootstrapLoading: false,
         systemAvailable: false,
+        consistencyLevels: [],
+        defaultConsistencyLevel: {},
     });
 
     return (
@@ -40,6 +45,12 @@ function reducer(state: CassdioState, action: Action): CassdioState {
             return {
                 ...state,
                 systemAvailable: action.systemAvailable
+            };
+        case "SET_BOOTSTRAP":
+            return {
+                ...state,
+                consistencyLevels: action.consistencyLevels,
+                defaultConsistencyLevel: action.defaultConsistencyLevel,
             };
 
         default:

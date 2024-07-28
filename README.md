@@ -43,6 +43,10 @@ wget https://github.com/hakdang/cassdio/releases/download/v0.0.1/cassdio-web-0.0
 java -jar ./cassdio-web-0.0.1.jar
 ```
 
+### Browser
+
+> http://locahost:20000
+
 [//]: # (## Environment)
 
 [//]: # ()

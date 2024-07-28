@@ -2,17 +2,22 @@ import {useParams} from "react-router-dom";
 import useCassdio from "hooks/useCassdio";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
-import axios from "axios";
 import QueryEditor from "components/cluster/query-editor";
 import QueryResult from "components/cluster/query-result";
 import QueryTraceViewModal from "components/cluster/modal/query-trace-view-modal";
 import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
+import {useCassdioState} from "../../context/cassdioContext";
+import clusterQueryApi from "remotes/clusterQueryApi";
 
 const ClusterQueryPage = () => {
     const routeParams = useParams();
 
     const {errorCatch} = useCassdio();
     const [showQueryTrace, setShowQueryTrace] = useState(false);
+
+    const {
+        defaultConsistencyLevel,
+    } = useCassdioState();
 
     const [queryParam, setQueryParam] = useState(
         {
@@ -23,6 +28,8 @@ const ClusterQueryPage = () => {
 
     const [queryOptions, setQueryOptions] = useState({
         limit: 10,
+        timeoutSeconds: 3,
+        consistencyLevelProtocolCode: defaultConsistencyLevel.protocolCode || 10, //LOCAL_ONE
         trace: false,
     });
 
@@ -41,36 +48,34 @@ const ClusterQueryPage = () => {
             return;
         }
 
-        if (cursor === null) {
+        if (!cursor) {
             setQueryResult(initQueryResult)
         }
 
         setLoading(true);
 
-        let url = `/api/cassandra/cluster/${routeParams.clusterId}/query`;
-        if(routeParams.keyspaceName){
-            url= `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`;
-        }
-
-        axios({
-            method: "POST",
-            url: url,
-            data: {
-                query: query,
-                pageSize: queryOptions.limit,
-                trace: queryOptions.trace,
-                timeoutSeconds: 3,
-                cursor: cursor,
-            },
+        clusterQueryApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+            query: query,
+            cursor: cursor,
+            queryOptions: queryOptions,
         }).then((response) => {
             setQueryParam({
                 query: query,
                 nextCursor: response.data.result.nextCursor
             })
 
+            let rows = [];
+            if (!cursor) {
+                rows = response.data.result.rows;
+            } else {
+                rows = [...queryResult.rows, ...response.data.result.rows];
+            }
+
             setQueryResult({
                 wasApplied: response.data.result.wasApplied,
-                rows: [...queryResult.rows, ...response.data.result.rows],
+                rows: rows,
                 rowHeader: response.data.result.rowHeader,
                 queryTrace: response.data.result.queryTrace,
             })

@@ -8,23 +8,27 @@ import "ace-builds/src-noconflict/theme-sqlserver"
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {toast} from "react-toastify";
 
-const QueryEditor = (props) => {
+import {useCassdioState} from "context/cassdioContext";
+
+const QueryEditor = ({queryOptions, setQueryOptions, queryExecute}) => {
 
     const [queryLoading, setQueryLoading] = useState(false)
     const [query, setQuery] = useState("")
 
-    const queryOptions = props.queryOptions;
-    const setQueryOptions = props.setQueryOptions;
-
     const [selectedQuery, setSelectedQuery] = useState('');
+
+    const {
+        consistencyLevels,
+        defaultConsistencyLevel,
+    } = useCassdioState();
 
     const editorRef = useRef();
 
-    const queryExecute = (cursor) => {
+    const editorQueryExecute = (cursor) => {
         if (selectedQuery) {
-            props.queryExecute(selectedQuery, cursor, setQueryLoading);
+            queryExecute(selectedQuery, cursor, setQueryLoading);
         } else {
-            props.queryExecute(query, cursor, setQueryLoading);
+            queryExecute(query, cursor, setQueryLoading);
         }
     }
 
@@ -41,9 +45,9 @@ const QueryEditor = (props) => {
         exec: (editor) => {
             const tempQuery = editor.getSelectedText();
             if (tempQuery) {
-                props.queryExecute(tempQuery, null, setQueryLoading);
+                queryExecute(tempQuery, null, setQueryLoading);
             } else {
-                props.queryExecute(editor.getValue(), null, setQueryLoading);
+                queryExecute(editor.getValue(), null, setQueryLoading);
             }
         }
     }];
@@ -66,7 +70,7 @@ const QueryEditor = (props) => {
         <>
             <div className="btn-toolbar pb-1" role="toolbar" aria-label="Toolbar with button groups">
                 <div className="btn-group btn-group-sm me-1 " role="group" aria-label="Third group">
-                    <button type="button" className="btn btm-sm btn-danger" onClick={() => queryExecute(null)}>
+                    <button type="button" className="btn btm-sm btn-danger" onClick={() => editorQueryExecute(null)}>
                         {
                             queryLoading ?
                                 <div className="spinner-border spinner-border-sm" role="status">
@@ -171,21 +175,42 @@ const QueryEditor = (props) => {
                             </div>
                         </div>
                         <div className="col">
-                            {/*<div className="form-floating">*/}
-                            {/*    <select className="form-select form-select-sm" id="floatingSelect">*/}
-                            {/*        <option value="1">One</option>*/}
-                            {/*        <option value="2">Two</option>*/}
-                            {/*        <option value="3">Three</option>*/}
-                            {/*    </select>*/}
-                            {/*    <label htmlFor="floatingSelect">ConsistencyLevel</label>*/}
-                            {/*</div>*/}
+                            <div className="form-floating">
+                                <select className="form-select form-select-sm"
+                                        id="consistencyLevelSelect"
+                                        value={queryOptions.consistencyLevelProtocolCode || defaultConsistencyLevel.protocolCode || 10} //LOCAL_ONE
+                                        onChange={e => {
+                                            setQueryOptions(t => {
+                                                return {...t, consistencyLevelProtocolCode: parseInt(e.target.value)}
+                                            })
+                                        }}
+                                >
+                                    {
+                                        consistencyLevels.map((info, infoIndex) => {
+                                            return (
+                                                <option key={`consistencyLevel${infoIndex}`} value={info.protocolCode}>{info.name}</option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                                <label htmlFor="consistencyLevelSelect">ConsistencyLevel</label>
+                            </div>
                         </div>
                         <div className="col">
-                            {/*<div className="form-floating mb-3">*/}
-                            {/*    <input type="number" className="form-control form-control-sm" id="floatingInput"*/}
-                            {/*           placeholder="name@example.com"/>*/}
-                            {/*    <label htmlFor="floatingInput">Query Timeout</label>*/}
-                            {/*</div>*/}
+                            <div className="form-floating mb-3">
+                                <input type="number" className="form-control form-control-sm" id="queryTimeoutSec"
+                                       placeholder="Query Timeout Sec"
+                                       value={queryOptions.timeoutSeconds || 3}
+                                       onChange={
+                                           e => {
+                                               setQueryOptions(t => {
+                                                   return {...t, timeoutSeconds: e.target.value}
+                                               })
+                                           }
+                                       }
+                                />
+                                <label htmlFor="queryTimeoutSec">Query Timeout</label>
+                            </div>
                         </div>
                     </div>
 

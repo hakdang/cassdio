@@ -4,7 +4,7 @@ import TableDetailModalInfo from "./detail/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail/table-detail-modal-column-list";
 import {CassdioUtils} from "utils/cassdioUtils";
-import ClusterTableApi from "remotes/clusterTableApi";
+import clusterTableDetailApi from "remotes/clusterTableApi";
 
 const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
 
@@ -29,7 +29,9 @@ const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName
         }
         setTableLoading(true);
 
-        ClusterTableApi.clusterTableDetailApi(clusterId, keyspaceName, tableName)
+        clusterTableDetailApi({
+            clusterId, keyspaceName, tableName
+        })
             .then((response) => {
                 const sortedColumnList = CassdioUtils.columnListSorting(
                     response.data.result.columnList
