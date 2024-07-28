@@ -38,14 +38,18 @@ Version | Supported | Cassandra Docs
 ### Installation
 
 ```
-wget https://github.com/hakdang/cassdio/releases/download/v0.0.1/cassdio-web-0.0.1.jar
+wget https://github.com/hakdang/cassdio/releases/download/v0.0.2/cassdio-0.0.2.jar
 
-java -jar ./cassdio-web-0.0.1.jar
+java -jar ./cassdio-0.0.2.jar
 ```
 
 ### Browser
 
 > http://locahost:20000
+
+### Jar Build Command
+
+> ./gradlew :clean :cassdio-web:build -Pfrontend=true
 
 [//]: # (## Environment)
 

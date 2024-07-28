@@ -16,12 +16,10 @@ dependencies {
 
 bootJar {
     enabled = true
-    archiveVersion.set(cassdioVersion)
     archiveBaseName.set("cassdio")
 }
 jar {
     enabled = true
-    archiveVersion.set(cassdioVersion)
     archiveBaseName.set("cassdio")
 }
 

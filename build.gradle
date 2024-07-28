@@ -1,6 +1,5 @@
 buildscript {
     ext {
-        cassdioVersion = "0.0.1"
         datastaxJavaDriverVersion = "4.17.0"
     }
 }
@@ -15,7 +14,7 @@ plugins {
 
 allprojects {
     group = 'kr.hakdang.cassdio'
-    version = '0.0.1'
+    version = '0.0.2'
     repositories {
         mavenCentral()
     }

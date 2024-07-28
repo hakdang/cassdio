@@ -21,7 +21,7 @@ const Router = createBrowserRouter([
             path: `/`,
             element: <CassdioDefaultLayout/>,
             loader: async () => {
-                const bootstrap = await bootstrapApi();
+                const bootstrap = await bootstrapApi({});
                 return {
                     bootstrap,
                 }
