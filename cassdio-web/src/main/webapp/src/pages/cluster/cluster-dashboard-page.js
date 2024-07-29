@@ -1,9 +1,9 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
-import Spinner from "../../components/common/spinner";
+import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
+import Spinner from "components/common/spinner";
 import axios from "axios";
-import useCassdio from "../../hooks/useCassdio";
+import useCassdio from "hooks/useCassdio";
 
 const ClusterDashboardPage = ({}) => {
 
