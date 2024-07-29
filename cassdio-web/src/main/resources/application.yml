@@ -1,4 +1,4 @@
-spring.profiles.default: local # TODO: local/alpha/beta/release 이렇게 나눠두고 나중에 기본으로 release로 변경?
+spring.profiles.default: release
 spring.config:
   import:
     - classpath:/application-core.yml
