@@ -3,6 +3,7 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.validation.Valid;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableRowCommander;
@@ -13,6 +14,7 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableListCom
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.web.common.dto.request.CursorRequest;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +35,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}/keyspace/{keyspace}")
 public class ClusterTableApi {
-
+    @Autowired
+    private CqlSessionFactory cqlSessionFactory;
     private final ClusterTableProvider clusterTableProvider;
     private final ClusterConnector clusterConnector;
     private final ClusterTableCommander clusterTableCommander;
@@ -64,17 +67,16 @@ public class ClusterTableApi {
         @Valid CursorRequest cursorRequest
     ) {
         Map<String, Object> responseMap = new HashMap<>();
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            TableDTO.ClusterTableListArgs args = TableDTO.ClusterTableListArgs.builder()
-                .keyspace(keyspace)
-                .pageSize(cursorRequest.getSize())
-                .cursor(cursorRequest.getCursor())
-                .build();
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        TableDTO.ClusterTableListArgs args = TableDTO.ClusterTableListArgs.builder()
+            .keyspace(keyspace)
+            .pageSize(cursorRequest.getSize())
+            .cursor(cursorRequest.getCursor())
+            .build();
 
-            CqlSessionSelectResults tableListResult = clusterTableListCommander.tableList(session, args);
+        CqlSessionSelectResults tableListResult = clusterTableListCommander.tableList(session, args);
 
-            responseMap.put("tableList", tableListResult);
-        }
+        responseMap.put("tableList", tableListResult);
 
         return ApiResponse.ok(responseMap);
     }
@@ -87,20 +89,19 @@ public class ClusterTableApi {
     ) {
         Map<String, Object> responseMap = new HashMap<>();
 
-        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
+        CqlSession session = cqlSessionFactory.get(clusterId, keyspace);
 
-            TableDTO.ClusterTableGetArgs tableGetArgs = TableDTO.ClusterTableGetArgs.builder()
-                .keyspace(keyspace)
-                .table(table)
-                .build();
+        TableDTO.ClusterTableGetArgs tableGetArgs = TableDTO.ClusterTableGetArgs.builder()
+            .keyspace(keyspace)
+            .table(table)
+            .build();
 
-            CqlSessionSelectResult result = clusterTableGetCommander.tableDetail(session, tableGetArgs);
+        CqlSessionSelectResult result = clusterTableGetCommander.tableDetail(session, tableGetArgs);
 
-            responseMap.put("detail", result);
+        responseMap.put("detail", result);
 
-            responseMap.put("describe", clusterTableCommander.tableDescribe(session, keyspace, table));
-            responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
-        }
+        responseMap.put("describe", clusterTableCommander.tableDescribe(session, keyspace, table));
+        responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
 
         return ApiResponse.ok(responseMap);
     }
@@ -113,9 +114,8 @@ public class ClusterTableApi {
     ) {
         Map<String, Object> responseMap = new HashMap<>();
 
-        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
-            responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
-        }
+        CqlSession session = cqlSessionFactory.get(clusterId, keyspace);
+        responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
 
         return ApiResponse.ok(responseMap);
     }
@@ -128,15 +128,14 @@ public class ClusterTableApi {
         @ModelAttribute ClusterTableRowRequest request
     ) {
         Map<String, Object> responseMap = new HashMap<>();
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            CqlSessionSelectResults result1 = clusterTableRowCommander.rowSelect(session, request.makeArgs(keyspace, table));
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        CqlSessionSelectResults result1 = clusterTableRowCommander.rowSelect(session, request.makeArgs(keyspace, table));
 
-            responseMap.put("nextCursor", result1.getNextCursor());
-            responseMap.put("rows", result1.getRows());
-            responseMap.put("rowHeader", result1.getRowHeader());
+        responseMap.put("nextCursor", result1.getNextCursor());
+        responseMap.put("rows", result1.getRows());
+        responseMap.put("rowHeader", result1.getRowHeader());
 
-            responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
-        }
+        responseMap.put("columnList", clusterTableColumnCommander.columnList(session, keyspace, table));
 
         return ApiResponse.ok(responseMap);
     }
@@ -148,12 +147,11 @@ public class ClusterTableApi {
         @PathVariable String keyspace,
         @PathVariable String table
     ) {
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
 
-            clusterTableCommander.tableDrop(session, keyspace, table);
+        clusterTableCommander.tableDrop(session, keyspace, table);
 
-            return ApiResponse.ok();
-        }
+        return ApiResponse.ok();
     }
 
     //권한 추가해서 ADMIN 만 동작할 수 있도록 해야함.
@@ -163,12 +161,11 @@ public class ClusterTableApi {
         @PathVariable String keyspace,
         @PathVariable String table
     ) {
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
 
-            clusterTableCommander.tableTruncate(session, keyspace, table);
+        clusterTableCommander.tableTruncate(session, keyspace, table);
 
-            return ApiResponse.ok();
-        }
+        return ApiResponse.ok();
     }
 
 //    @PostMapping("/table/{table}/row/insert/query")

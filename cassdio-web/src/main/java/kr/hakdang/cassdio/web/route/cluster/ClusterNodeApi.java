@@ -5,8 +5,10 @@ import kr.hakdang.cassdio.core.domain.cluster.ClusterNode;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterNodeGetCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterNodeListCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import kr.hakdang.cassdio.web.common.dto.response.ItemListWithCursorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}")
 public class ClusterNodeApi {
+    @Autowired
+    private CqlSessionFactory cqlSessionFactory;
 
     private final ClusterConnector clusterConnector;
     private final ClusterNodeListCommander clusterNodeListCommander;
@@ -43,10 +47,9 @@ public class ClusterNodeApi {
     public ApiResponse<ItemListWithCursorResponse<ClusterNode, String>> nodeList(
         @PathVariable String clusterId
     ) {
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            List<ClusterNode> nodes = clusterNodeListCommander.listNodes(session);
-            return ApiResponse.ok(ItemListWithCursorResponse.noMore(nodes));
-        }
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        List<ClusterNode> nodes = clusterNodeListCommander.listNodes(session);
+        return ApiResponse.ok(ItemListWithCursorResponse.noMore(nodes));
     }
 
     @GetMapping("/node/{nodeId}")
@@ -54,10 +57,9 @@ public class ClusterNodeApi {
         @PathVariable String clusterId,
         @PathVariable UUID nodeId
     ) {
-        try (CqlSession session = clusterConnector.makeSession(clusterId)) {
-            ClusterNode result = clusterNodeGetCommander.getNode(session, nodeId);
-            return ApiResponse.ok(result);
-        }
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        ClusterNode result = clusterNodeGetCommander.getNode(session, nodeId);
+        return ApiResponse.ok(result);
     }
 
 }
