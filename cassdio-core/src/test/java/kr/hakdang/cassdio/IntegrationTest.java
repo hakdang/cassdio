@@ -27,4 +27,11 @@ public abstract class IntegrationTest extends BaseTest {
             .withLocalDatacenter("dc1")
             .build();
     }
+    protected CqlSession makeSession(String keyspaceName) {
+        return CqlSession.builder()
+            .addContactPoint(new InetSocketAddress("127.0.0.1", 29042))
+            .withLocalDatacenter("dc1")
+            .withKeyspace(keyspaceName)
+            .build();
+    }
 }

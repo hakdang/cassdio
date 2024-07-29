@@ -89,7 +89,6 @@ public class ClusterQueryCommander extends BaseClusterCommander {
             builder.queryTrace(cassdioQueryTrace);
         }
 
-        return
-            builder.build();
+        return builder.build();
     }
 }

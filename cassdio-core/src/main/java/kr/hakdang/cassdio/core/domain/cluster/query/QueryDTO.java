@@ -38,7 +38,7 @@ public class QueryDTO {
             String cursor,
             Integer pageSize,
             Integer timeoutSeconds,
-            int consistencyLevelProtocolCode,
+            Integer consistencyLevelProtocolCode,
             boolean trace
         ) {
             if (pageSize == null || pageSize <= 0) {
@@ -57,15 +57,17 @@ public class QueryDTO {
                 throw new RuntimeException("timeout 60 over");
             }
 
-            DefaultConsistencyLevel level = DefaultConsistencyLevel.fromCode(consistencyLevelProtocolCode);
-
             this.keyspace = keyspace;
             this.query = query;
             this.cursor = cursor;
             this.pageSize = pageSize;
             this.timeoutSeconds = timeoutSeconds;
-            this.consistencyLevel = level;
+
             this.trace = trace;
+
+            if (consistencyLevelProtocolCode != null) {
+                this.consistencyLevel = DefaultConsistencyLevel.fromCode(consistencyLevelProtocolCode);
+            }
         }
     }
 
