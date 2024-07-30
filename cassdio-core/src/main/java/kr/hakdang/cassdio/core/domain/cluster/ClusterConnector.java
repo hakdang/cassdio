@@ -4,7 +4,6 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -23,14 +22,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class ClusterConnector {
-
-    private final ClusterProvider clusterProvider;
-
-    public ClusterConnector(
-        ClusterProvider clusterProvider
-    ) {
-        this.clusterProvider = clusterProvider;
-    }
 
     public List<InetSocketAddress> makeContactPoint(String contactPoints, int port) {
         String[] contactPointArr = StringUtils.split(contactPoints, ",");
@@ -62,13 +53,5 @@ public class ClusterConnector {
         );
 
         return builder.build();
-    }
-
-    public CqlSession makeSession(String clusterId) {
-        ClusterInfo info = clusterProvider.findById(clusterId);
-        if (info == null) {
-            throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
-        }
-        return makeSession(info.makeClusterConnector());
     }
 }
