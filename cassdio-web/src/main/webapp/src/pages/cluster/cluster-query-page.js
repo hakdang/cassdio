@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import QueryEditor from "components/cluster/query-editor";
@@ -103,8 +103,12 @@ const ClusterQueryPage = () => {
             <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
-                active={routeParams.keyspaceName ? "KEYSPACE" : "CLUSTER"}
-            />
+                active={"QUERY_EDITOR"}
+            >
+                <li className={`breadcrumb-item active}`}>
+                    <i className="bi bi-journal-code"></i> Query Editor
+                </li>
+            </ClusterKeyspaceBreadcrumb>
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

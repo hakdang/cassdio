@@ -42,11 +42,12 @@ public class ClusterConnector {
         if (clusterConnection.isAuthCredentials()) {
             builder.withAuthCredentials(clusterConnection.getUsername(), clusterConnection.getPassword());
         }
+
         builder.withConfigLoader(
             DriverConfigLoader.programmaticBuilder()
 //                .withDuration(DefaultDriverOption.HEARTBEAT_INTERVAL, Duration.ofSeconds(30))
 //                .withDuration(DefaultDriverOption.HEARTBEAT_TIMEOUT, Duration.ofSeconds(60))
-                //.withInt(DefaultDriverOption.SESSION_LEAK_THRESHOLD, 0) //For Test
+                .withInt(DefaultDriverOption.SESSION_LEAK_THRESHOLD, 0)
                 .withDuration(DefaultDriverOption.CONNECTION_INIT_QUERY_TIMEOUT, Duration.ofSeconds(5))
                 .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5))
                 .build()

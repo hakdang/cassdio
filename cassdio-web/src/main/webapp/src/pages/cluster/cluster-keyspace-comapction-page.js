@@ -1,5 +1,5 @@
 import {Link, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
 import {ByteFormatUtils} from "../../utils/byteFormat";
@@ -40,7 +40,12 @@ const ClusterKeyspaceCompactionPage = () => {
             <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
-            />
+                active={"KEYSPACE_MONITORING"}
+            >
+                <li className={`breadcrumb-item active}`}>
+                    Monitoring
+                </li>
+            </ClusterKeyspaceBreadcrumb>
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

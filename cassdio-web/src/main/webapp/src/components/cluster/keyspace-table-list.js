@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 import TableDetailModal from "./modal/table-detail-modal";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import clusterTableListApi from "remotes/clusterTableListApi";
 
 const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
@@ -59,7 +59,7 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                                             <Link
                                                 className={"link-body-emphasis text-decoration-none"}
                                                 to={`/cluster/${clusterId}/keyspace/${keyspaceName}/table/${info.table_name}`}>
-                                                {info.table_name}
+                                                <i className="bi bi-table"></i> {info.table_name}
                                             </Link>
                                         </div>
                                         {info.comment}

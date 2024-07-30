@@ -1,17 +1,16 @@
 package kr.hakdang.cassdio.core.domain.cluster.query;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.IntegrationTest;
+import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.util.Assert;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -63,11 +62,18 @@ class ClusterQueryCommanderTest extends IntegrationTest {
             .build();
 
         //WHEN
-        QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(CLUSTER_ID, args);
+        if (clusterQueryCommander.useKeyspaceQueryCommandNotSupport(CLUSTER_ID)) {
+            assertThatThrownBy(() -> {
+                    clusterQueryCommander.execute(CLUSTER_ID, args);
+                }
+            ).isInstanceOf(NotSupportedCassandraVersionException.class);
 
-        //THEN
-        assertThat(result).isNotNull();
-        assertThat(result.getRows()).isNotNull();
+        } else {
+            QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(CLUSTER_ID, args);
 
+            //THEN
+            assertThat(result).isNotNull();
+            assertThat(result.getRows()).isNotNull();
+        }
     }
 }

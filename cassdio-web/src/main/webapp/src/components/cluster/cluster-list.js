@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
 import Spinner from "components/common/spinner";
@@ -37,7 +37,7 @@ const ClusterList = () => {
                     <div className="btn-group me-2">
                         <button type="button" className="btn btn-sm btn-outline-secondary"
                                 onClick={e => setShowClusterModal(true)}>
-                            New Cluster
+                            <i className="bi bi-database-fill"></i> New Cluster
                         </button>
                     </div>
                 </div>

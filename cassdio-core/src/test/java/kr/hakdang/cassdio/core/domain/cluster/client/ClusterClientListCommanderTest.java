@@ -1,6 +1,5 @@
 package kr.hakdang.cassdio.core.domain.cluster.client;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.Version;
 import kr.hakdang.cassdio.BaseTest;
 import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
@@ -12,7 +11,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
@@ -39,7 +38,7 @@ class ClusterClientListCommanderTest extends BaseTest {
     @Test
     void not_supported_under_v4_0_0() {
         // given
-        when(clusterVersionCommander.getCassandraVersion(any())).thenReturn(Version.V3_0_0);
+        when(clusterVersionCommander.getCassandraVersion(anyString())).thenReturn(Version.V3_0_0);
 
         assertThatThrownBy(() -> clusterClientListCommander.getClients(CLUSTER_ID))
             .isInstanceOf(NotSupportedCassandraVersionException.class);

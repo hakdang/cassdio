@@ -34,6 +34,10 @@ public class ClusterVersionCommander extends BaseClusterCommander {
     public Version getCassandraVersion(String clusterId) {
         CqlSession session = cqlSessionFactory.get(clusterId);
 
+        return getCassandraVersionWithSession(session);
+    }
+
+    public Version getCassandraVersionWithSession(CqlSession session) {
         DriverChannel channel = ((InternalDriverContext) session.getContext()).getControlConnection().channel();
         Node node = session.getMetadata().findNode(channel.getEndPoint())
             .orElseThrow();//TODO : node not found exception 처리

@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom";
+import React from "react";
 
-const ClusterKeyspaceBreadcrumb = ({active, clusterId, keyspaceName = null, tableName = null,}) => {
+const ClusterKeyspaceBreadcrumb = ({children, active, clusterId, keyspaceName = null, tableName = null,}) => {
     return (
         <div className={"row pt-3"}>
             <nav className={"breadcrumb-arrow"} aria-label="breadcrumb">
@@ -9,10 +10,10 @@ const ClusterKeyspaceBreadcrumb = ({active, clusterId, keyspaceName = null, tabl
                         clusterId &&
                         <li className={`breadcrumb-item ${active === 'CLUSTER' ? 'active' : ''}`}>
                             {
-                                active === 'CLUSTER' ? <>Cluster</>
+                                active === 'CLUSTER' ? <><i className="bi bi-database-fill"></i> Cluster</>
                                     : <Link to={`/cluster/${clusterId}`}
                                             className={"link-body-emphasis text-decoration-none"}>
-                                        Cluster
+                                        <i className="bi bi-database-fill"></i> Cluster
                                     </Link>
                             }
                         </li>
@@ -21,29 +22,29 @@ const ClusterKeyspaceBreadcrumb = ({active, clusterId, keyspaceName = null, tabl
                         clusterId && keyspaceName &&
                         <li className={`breadcrumb-item ${active === 'KEYSPACE' ? 'active' : ''}`}>
                             {
-                                active === 'KEYSPACE' ? <>{keyspaceName}</>
+                                active === 'KEYSPACE' ? <><i className="bi bi-database"></i> {keyspaceName}</>
                                     : <Link to={`/cluster/${clusterId}/keyspace/${keyspaceName}`}
                                             className={"link-body-emphasis text-decoration-none"}>
-                                        {keyspaceName}
+                                        <i className="bi bi-database"></i> {keyspaceName}
                                     </Link>
 
                             }
-
                         </li>
                     }
                     {
                         clusterId && keyspaceName && tableName &&
                         <li className={`breadcrumb-item ${active === 'TABLE' ? 'active' : ''}`}>
                             {
-                                active === 'TABLE' ? <> {tableName}</>
+                                active === 'TABLE' ? <><i className="bi bi-table"></i> {tableName}</>
                                     : <Link to={`/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}`}
                                             className={"link-body-emphasis text-decoration-none"}>
-                                        {tableName}
+                                        <i className="bi bi-table"></i> {tableName}
                                     </Link>
                             }
-
-
                         </li>
+                    }
+                    {
+                        children
                     }
                 </ol>
             </nav>

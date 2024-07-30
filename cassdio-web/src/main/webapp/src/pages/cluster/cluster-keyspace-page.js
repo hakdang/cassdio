@@ -11,6 +11,7 @@ const ClusterKeyspacePage = () => {
 
     const routeParams = useParams();
 
+    const [queryEditorSupport, setQueryEditorSupport] = useState(false);
     const [detailLoading, setDetailLoading] = useState(false);
     const [keyspaceDescribe, setKeyspaceDescribe] = useState('');
     const [keyspaceDetail, setKeyspaceDetail] = useState({
@@ -32,7 +33,7 @@ const ClusterKeyspacePage = () => {
 
             setKeyspaceDescribe(data.result.describe)
             setKeyspaceDetail(data.result.detail);
-
+            setQueryEditorSupport(data.result.queryEditorSupport);
             setTableList(data.result.tableList)
 
         }).finally(() => {
@@ -67,10 +68,14 @@ const ClusterKeyspacePage = () => {
                 </h2>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group me-2">
-                        <Link role="button" className="btn btn-sm btn-outline-secondary"
-                              to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`}>
-                            <i className="bi bi-journal-code"></i> Query
-                        </Link>
+                        {
+                            queryEditorSupport &&
+                            <Link role="button" className="btn btn-sm btn-outline-secondary"
+                                  to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`}>
+                                <i className="bi bi-journal-code"></i> Query
+                            </Link>
+                        }
+
                         {/*<button type="button" className="btn btn-sm btn-outline-secondary">Export</button>*/}
                     </div>
                     {/*<button type="button"*/}
