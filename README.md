@@ -45,7 +45,7 @@ java -jar ./cassdio-0.0.2.jar
 
 ### Browser
 
-> http://locahost:20000
+> http://localhost:20000
 
 ### Jar Build Command
 
