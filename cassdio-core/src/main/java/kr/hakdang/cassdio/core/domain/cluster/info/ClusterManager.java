@@ -34,24 +34,22 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     private static DB mapDb;
 
-    public void register(ClusterInfoArgs args) {
+    public void register(ClusterInfo info) {
         ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
-        String clusterId = IdGenerator.makeId();
-
-        map.put(clusterId, Jsons.toJson(args.makeClusterInfo(clusterId)));
+        map.put(info.getClusterId(), Jsons.toJson(info));
 
         mapDb.commit();
     }
 
-    public void update(String clusterId, ClusterInfoArgs args) {
+    public void update(String clusterId, ClusterInfo info) {
         ConcurrentMap<String, String> map = mapDb
             .hashMap("cluster", Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
-        map.put(clusterId, Jsons.toJson(args.makeClusterInfo(clusterId)));
+        map.put(clusterId, Jsons.toJson(info));
 
         mapDb.commit();
     }

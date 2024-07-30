@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClusterInfoArgs {
-    private String clusterName;
     private String contactPoints;
     private int port;
     private String localDatacenter;
@@ -28,11 +27,11 @@ public class ClusterInfoArgs {
 
     @Builder
     public ClusterInfoArgs(
-        String clusterName, String contactPoints, int port, String localDatacenter, String username, String password, String memo
+        String contactPoints, int port, String localDatacenter, String username, String password, String memo
     ) {
-        if (StringUtils.isBlank(clusterName)) {
-            throw new IllegalArgumentException("Cluster name is blank");
-        }
+//        if (StringUtils.isBlank(clusterName)) {
+//            throw new IllegalArgumentException("Cluster name is blank");
+//        }
 
         if (StringUtils.isBlank(contactPoints)) {
             throw new IllegalArgumentException("Contact points is blank");
@@ -46,7 +45,6 @@ public class ClusterInfoArgs {
             throw new IllegalArgumentException("Local datacenter is blank");
         }
 
-        this.clusterName = clusterName;
         this.contactPoints = contactPoints;
         this.port = port;
         this.localDatacenter = localDatacenter;
@@ -55,7 +53,7 @@ public class ClusterInfoArgs {
         this.memo = memo;
     }
 
-    public ClusterInfo makeClusterInfo(String clusterId) {
+    public ClusterInfo makeClusterInfo(String clusterId, String clusterName) {
         return ClusterInfo.builder()
             .clusterId(clusterId)
             .clusterName(clusterName)
@@ -65,6 +63,16 @@ public class ClusterInfoArgs {
             .username(username)
             .password(password)
             .memo(memo)
+            .build();
+    }
+
+    public ClusterConnection makeClusterConnector() {
+        return ClusterConnection.builder()
+            .contactPoints(contactPoints)
+            .port(port)
+            .localDatacenter(localDatacenter)
+            .username(username)
+            .password(password)
             .build();
     }
 }

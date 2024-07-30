@@ -33,25 +33,14 @@ public class ClusterRegisterRequest {
         this.memo = memo;
     }
 
-    public ClusterInfoArgs makeArgs(String clusterName) {
+    public ClusterInfoArgs makeArgs() {
         return ClusterInfoArgs.builder()
-            .clusterName(clusterName)
             .contactPoints(contactPoints)
             .port(port)
             .localDatacenter(localDatacenter)
             .username(username)
             .password(password)
             .memo(memo)
-            .build();
-    }
-
-    public ClusterConnection makeClusterConnector() {
-        return ClusterConnection.builder()
-            .contactPoints(contactPoints)
-            .port(port)
-            .localDatacenter(localDatacenter)
-            .username(username)
-            .password(password)
             .build();
     }
 }

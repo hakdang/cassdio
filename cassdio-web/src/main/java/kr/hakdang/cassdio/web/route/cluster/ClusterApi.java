@@ -1,12 +1,10 @@
 package kr.hakdang.cassdio.web.route.cluster;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import jakarta.validation.Valid;
 import kr.hakdang.cassdio.common.CassdioConstants;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterProvider;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * ClusterApi
@@ -78,15 +75,7 @@ public class ClusterApi {
     public ApiResponse<Void> clusterRegister(
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
-        try (CqlSession session = clusterConnector.makeSession(request.makeClusterConnector())) {
-            String clusterName = session.getMetadata().getClusterName()
-                .orElse(UUID.randomUUID().toString());
-
-            ClusterInfoArgs args = request.makeArgs(clusterName);
-            //실행 안되면 exception
-
-            clusterProvider.register(args);
-        }
+        clusterProvider.register(request.makeArgs());
 
         return ApiResponse.ok();
     }
@@ -96,14 +85,8 @@ public class ClusterApi {
         @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId,
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
-        try (CqlSession session = clusterConnector.makeSession(request.makeClusterConnector())) {
-            String clusterName = session.getMetadata().getClusterName()
-                .orElse(UUID.randomUUID().toString());
 
-            ClusterInfoArgs args = request.makeArgs(clusterName);
-
-            clusterProvider.updateById(clusterId, args);
-        }
+        clusterProvider.updateById(clusterId, request.makeArgs());
 
         return ApiResponse.ok();
     }

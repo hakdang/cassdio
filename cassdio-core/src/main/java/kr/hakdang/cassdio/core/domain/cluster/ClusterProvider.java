@@ -1,5 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
@@ -10,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * ClusterProvider
@@ -22,9 +25,11 @@ import java.util.List;
 public class ClusterProvider {
 
     private final ClusterManager clusterManager;
+    private final ClusterConnector clusterConnector;
 
-    public ClusterProvider(ClusterManager clusterManager) {
+    public ClusterProvider(ClusterManager clusterManager, ClusterConnector clusterConnector) {
         this.clusterManager = clusterManager;
+        this.clusterConnector = clusterConnector;
     }
 
     public List<ClusterInfo> findAll() {
@@ -45,12 +50,24 @@ public class ClusterProvider {
     }
 
     public void register(ClusterInfoArgs args) {
-        clusterManager.register(args);
+        try (CqlSession session = clusterConnector.makeSession(args.makeClusterConnector())) {
+            String clusterName = session.getMetadata().getClusterName()
+                .orElse(UUID.randomUUID().toString());
+
+            String clusterId = IdGenerator.makeId();
+
+            clusterManager.register(args.makeClusterInfo(clusterId, clusterName));
+        }
     }
 
     @CacheEvict(cacheNames = CacheType.CacheTypeNames.CLUSTER_DETAIL, key = "#clusterId")
     public void updateById(String clusterId, ClusterInfoArgs args) {
-        clusterManager.update(clusterId, args);
+        try (CqlSession session = clusterConnector.makeSession(args.makeClusterConnector())) {
+            String clusterName = session.getMetadata().getClusterName()
+                .orElse(UUID.randomUUID().toString());
+
+            clusterManager.update(clusterId, args.makeClusterInfo(clusterId, clusterName));
+        }
     }
 
     @CacheEvict(cacheNames = CacheType.CacheTypeNames.CLUSTER_DETAIL, key = "#clusterId")
