@@ -15,6 +15,7 @@ import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
@@ -35,9 +36,11 @@ import java.util.Map;
 public class ClusterQueryCommander extends BaseClusterCommander {
 
     public QueryDTO.ClusterQueryCommanderResult execute(
-        CqlSession session,
+        String clusterId,
         QueryDTO.ClusterQueryCommanderArgs args
     ) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatementBuilder simpleBuilder = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout

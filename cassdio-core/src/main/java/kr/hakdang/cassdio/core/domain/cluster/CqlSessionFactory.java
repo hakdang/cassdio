@@ -17,27 +17,23 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class CqlSessionFactory {
 
-    @Autowired
-    private ClusterConnector clusterConnector;
+    private final ClusterConnector clusterConnector;
 
     public static ConcurrentHashMap<String, CqlSession> SESSION = new ConcurrentHashMap<>();
 
-    public CqlSession get(String clusterId, String keyspace) {
-        String key = sessionKey(clusterId, keyspace);
+    public CqlSessionFactory(ClusterConnector clusterConnector) {
+        this.clusterConnector = clusterConnector;
+    }
+
+
+    public CqlSession get(String clusterId) {
+        String key = String.format("%s", clusterId);
         CqlSession session = SESSION.get(key);
         if (session == null) {
-            session = clusterConnector.makeSession(clusterId, keyspace);
+            session = clusterConnector.makeSession(clusterId);
             SESSION.put(key, session);
         }
 
         return session;
-    }
-
-    public CqlSession get(String clusterId) {
-        return get(clusterId, null);
-    }
-
-    private String sessionKey(String clusterId, String keyspace) {
-        return String.format("%s", clusterId);
     }
 }

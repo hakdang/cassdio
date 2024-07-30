@@ -23,14 +23,6 @@ import java.util.Collections;
  */
 public abstract class ClusterUtils {
 
-    public static Version cassandraVersion(CqlSession session) {
-        DriverChannel channel = ((InternalDriverContext) session.getContext()).getControlConnection().channel();
-        Node node = session.getMetadata().findNode(channel.getEndPoint())
-            .orElseThrow();//TODO : node not found exception 처리
-
-        return node.getCassandraVersion();
-    }
-
     public static KeyspaceFilter makeKeyspaceFilter(DriverContext context) {
         return KeyspaceFilter.newInstance(context.getSessionName(), context.getConfig()
             .getDefaultProfile()

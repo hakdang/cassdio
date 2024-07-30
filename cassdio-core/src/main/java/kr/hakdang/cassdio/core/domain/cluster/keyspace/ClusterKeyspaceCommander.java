@@ -15,9 +15,11 @@ import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -39,14 +41,24 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 @Service
 public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
+    private final ClusterVersionCommander clusterVersionCommander;
+
+    public ClusterKeyspaceCommander(
+        ClusterVersionCommander clusterVersionCommander
+    ) {
+        this.clusterVersionCommander = clusterVersionCommander;
+    }
+
     /**
      * All Keyspace name
      * - system
      *
-     * @param session
+     * @param clusterId
      * @return
      */
-    public List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceNameList(CqlSession session) {
+    public List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceNameList(String clusterId) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         List<KeyspaceDTO.KeyspaceNameResult> result = new ArrayList<>();
 
         SimpleStatement generalSimpleStatement = makeKeyspaceListSelect(false);
@@ -61,7 +73,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             result.add(KeyspaceDTO.KeyspaceNameResult.make(tempRow, keyspaceFilter));
         }
 
-        if (ClusterUtils.cassandraVersion(session).compareTo(Version.V4_0_0) >= 0) {
+        if (clusterVersionCommander.getCassandraVersion(clusterId).compareTo(Version.V4_0_0) >= 0) {
             SimpleStatement virtualSimpleStatement = makeKeyspaceListSelect(true);
 
             ResultSet resultSet2 = session.execute(virtualSimpleStatement);
@@ -99,7 +111,9 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             .setTimeout(Duration.ofSeconds(3));
     }
 
-    public KeyspaceDTO.ClusterKeyspaceListResult generalKeyspaceList(CqlSession session) {
+    public KeyspaceDTO.ClusterKeyspaceListResult generalKeyspaceList(String clusterId) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         List<KeyspaceResult> keyspaceList = new ArrayList<>();
         for (Map.Entry<CqlIdentifier, KeyspaceMetadata> entry : session.getMetadata().getKeyspaces().entrySet()) {
             String keyspaceName = entry.getKey().asCql(true);
@@ -120,7 +134,9 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             .build();
     }
 
-    public String describe(CqlSession session, KeyspaceDTO.ClusterKeyspaceDescribeArgs args) {
+    public String describe(String clusterId, KeyspaceDTO.ClusterKeyspaceDescribeArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         if (ClusterUtils.isSystemKeyspace(session.getContext(), args.getKeyspace())) { //System 테이블은 제공 안함.
             return "";
         }
@@ -136,7 +152,9 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
         }
     }
 
-    public CqlSessionSelectResult keyspaceDetail(CqlSession session, String keyspace) {
+    public CqlSessionSelectResult keyspaceDetail(String clusterId, String keyspace) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         if (ClusterUtils.isVirtualKeyspace(session.getContext(), keyspace)) { //system table 에 keyspace 만 존재함
             return CqlSessionSelectResult.empty();
         }
@@ -165,8 +183,19 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             .build();
     }
 
-    public void keyspaceDrop(CqlSession session, String keyspace) {
-        ResultSet resultSet = session.execute(SchemaBuilder.dropKeyspace(keyspace).build());
+    public void keyspaceDrop(String clusterId, String keyspace) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        //TODO : keyspace validation
+        if (ClusterUtils.isSystemKeyspace(session.getContext(), keyspace)) {
+            throw new IllegalArgumentException("System Keyspace!");
+        }
+
+        ResultSet resultSet = session.execute(
+            SchemaBuilder
+                .dropKeyspace(keyspace)
+                .build()
+                .setKeyspace(keyspace)
+        );
         log.info("Keyspace Drop Result - keyspace: {}, ok: {}", keyspace, resultSet.wasApplied());
     }
 }

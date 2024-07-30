@@ -57,8 +57,7 @@ public class ClusterKeyspaceApi {
     public ApiResponse<KeyspaceDTO.ClusterKeyspaceListResult> keyspaceList(
         @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
     ) {
-        CqlSession session = cqlSessionFactory.get(clusterId);
-        return ApiResponse.ok(clusterKeyspaceCommander.generalKeyspaceList(session));
+        return ApiResponse.ok(clusterKeyspaceCommander.generalKeyspaceList(clusterId));
 
     }
 
@@ -68,12 +67,11 @@ public class ClusterKeyspaceApi {
         @RequestParam(required = false, defaultValue = "false") boolean cacheEvict
     ) {
         Map<String, Object> responseMap = new HashMap<>();
-        CqlSession session = cqlSessionFactory.get(clusterId);
         if (cacheEvict) {
             clusterKeyspaceProvider.keyspaceNameListCacheEvict(clusterId);
         }
 
-        List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceList = clusterKeyspaceProvider.keyspaceNameResultList(session, clusterId);
+        List<KeyspaceDTO.KeyspaceNameResult> allKeyspaceList = clusterKeyspaceProvider.keyspaceNameResultList(clusterId);
         responseMap.put("keyspaceNameList", allKeyspaceList);
 
         return ApiResponse.ok(responseMap);
@@ -88,15 +86,14 @@ public class ClusterKeyspaceApi {
         Map<String, Object> responseMap = new HashMap<>();
 
         //TODO : keyspace validation
-        CqlSession session = cqlSessionFactory.get(clusterId, keyspace);
         var describeArgs = KeyspaceDTO.ClusterKeyspaceDescribeArgs.builder()
             .keyspace(keyspace)
             .withChildren(false)
             .pretty(true)
             .build();
 
-        responseMap.put("describe", clusterKeyspaceCommander.describe(session, describeArgs));
-        responseMap.put("detail", clusterKeyspaceCommander.keyspaceDetail(session, keyspace));
+        responseMap.put("describe", clusterKeyspaceCommander.describe(clusterId, describeArgs));
+        responseMap.put("detail", clusterKeyspaceCommander.keyspaceDetail(clusterId, keyspace));
 
         if (withTableList) { //TODO 해당 값 외에 view 등의 기능은 탭을 생성하여 화면 이동하면 호출할 수 있도록 개발 예정
             TableDTO.ClusterTableListArgs args = TableDTO.ClusterTableListArgs.builder()
@@ -104,7 +101,7 @@ public class ClusterKeyspaceApi {
                 .pageSize(100)
                 .build();
 
-            CqlSessionSelectResults tableListResult = clusterTableListCommander.tableList(session, args);
+            CqlSessionSelectResults tableListResult = clusterTableListCommander.tableList(clusterId, args);
 
             responseMap.put("tableList", tableListResult);
         }
@@ -117,14 +114,7 @@ public class ClusterKeyspaceApi {
         @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId,
         @PathVariable String keyspace
     ) {
-
-        //TODO : keyspace validation
-        CqlSession session = cqlSessionFactory.get(clusterId, keyspace);
-        if (ClusterUtils.isSystemKeyspace(session.getContext(), keyspace)) {
-            throw new IllegalArgumentException("System Keyspace!");
-        }
-
-        clusterKeyspaceCommander.keyspaceDrop(session, keyspace);
+        clusterKeyspaceCommander.keyspaceDrop(clusterId, keyspace);
 
         return ApiResponse.ok();
     }

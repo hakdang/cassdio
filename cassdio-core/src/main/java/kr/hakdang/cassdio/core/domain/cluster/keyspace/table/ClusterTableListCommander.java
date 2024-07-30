@@ -32,11 +32,13 @@ public class ClusterTableListCommander extends BaseClusterCommander {
      * Simple Table List
      * - system 테이블에 대해서도 테이블명에 대해 조회 가능
      *
-     * @param session
+     * @param clusterId
      * @param args
      * @return
      */
-    public CqlSessionSelectResults tableList(CqlSession session, TableDTO.ClusterTableListArgs args) {
+    public CqlSessionSelectResults tableList(String clusterId, TableDTO.ClusterTableListArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = ClusterUtils.getSchemaTables(session, args.getKeyspace())
             .all()
             .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())

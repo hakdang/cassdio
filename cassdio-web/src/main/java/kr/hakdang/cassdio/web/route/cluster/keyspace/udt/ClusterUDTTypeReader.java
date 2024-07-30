@@ -1,8 +1,5 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.udt;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
-import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTType;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeGetArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeListArgs;
@@ -12,7 +9,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeListRes
 import kr.hakdang.cassdio.web.common.dto.request.CursorRequest;
 import kr.hakdang.cassdio.web.common.dto.response.CursorResponse;
 import kr.hakdang.cassdio.web.common.dto.response.ItemListWithCursorResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,25 +19,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ClusterUDTTypeReader {
-    @Autowired
-    private CqlSessionFactory cqlSessionFactory;
-    private final ClusterConnector clusterConnector;
     private final ClusterUDTTypeListCommander clusterUDTTypeListCommander;
     private final ClusterUDTTypeGetCommander clusterUDTTypeGetCommander;
 
     public ClusterUDTTypeReader(
-        ClusterConnector clusterConnector,
         ClusterUDTTypeListCommander clusterUDTTypeListCommander,
         ClusterUDTTypeGetCommander clusterUDTTypeGetCommander
     ) {
-        this.clusterConnector = clusterConnector;
         this.clusterUDTTypeListCommander = clusterUDTTypeListCommander;
         this.clusterUDTTypeGetCommander = clusterUDTTypeGetCommander;
     }
 
     public ItemListWithCursorResponse<ClusterUDTType, String> listTypes(String clusterId, String keyspace, CursorRequest cursorRequest) {
-        CqlSession session = cqlSessionFactory.get(clusterId);
-        ClusterUDTTypeListResult result = clusterUDTTypeListCommander.listTypes(session, ClusterUDTTypeListArgs.builder()
+        ClusterUDTTypeListResult result = clusterUDTTypeListCommander.listTypes(clusterId, ClusterUDTTypeListArgs.builder()
             .keyspace(keyspace)
             .pageSize(cursorRequest.getSize())
             .nextPageState(cursorRequest.getCursor())
@@ -51,8 +41,7 @@ public class ClusterUDTTypeReader {
     }
 
     public ClusterUDTType getType(String clusterId, String keyspace, String type) {
-        CqlSession session = cqlSessionFactory.get(clusterId);
-        return clusterUDTTypeGetCommander.getType(session, ClusterUDTTypeGetArgs.builder()
+        return clusterUDTTypeGetCommander.getType(clusterId, ClusterUDTTypeGetArgs.builder()
             .keyspace(keyspace)
             .type(type)
             .build());
