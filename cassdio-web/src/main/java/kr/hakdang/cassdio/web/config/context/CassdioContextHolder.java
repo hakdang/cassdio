@@ -1,9 +1,5 @@
 package kr.hakdang.cassdio.web.config.context;
 
-import kr.hakdang.cassdio.web.common.dto.response.CassdioConsistencyLevel;
-
-import java.util.Objects;
-
 /**
  * CassdioContextHolder
  *

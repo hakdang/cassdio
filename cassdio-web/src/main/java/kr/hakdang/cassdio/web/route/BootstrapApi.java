@@ -1,8 +1,8 @@
 package kr.hakdang.cassdio.web.route;
 
-import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
+
+import kr.hakdang.cassdio.core.domain.BootstrapProvider;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
-import kr.hakdang.cassdio.web.common.dto.response.CassdioConsistencyLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +22,12 @@ import java.util.Map;
 @RequestMapping("/api")
 public class BootstrapApi {
 
+    private final BootstrapProvider bootstrapProvider;
+
+    public BootstrapApi(BootstrapProvider bootstrapProvider) {
+        this.bootstrapProvider = bootstrapProvider;
+    }
+
     @GetMapping("/bootstrap")
     public ApiResponse<Map<String, Object>> bootstrap() {
         Map<String, Object> result = new HashMap<>();
@@ -29,8 +35,7 @@ public class BootstrapApi {
         result.put("systemAvailable", true);
         result.put("login", false);
 
-        result.put("consistencyLevels", CassdioConsistencyLevel.makeList(DefaultConsistencyLevel.values()));
-        result.put("defaultConsistencyLevel", CassdioConsistencyLevel.make(DefaultConsistencyLevel.LOCAL_ONE)); //TODO : System Config
+        result.putAll(bootstrapProvider.consistencyLevels());
 
         return ApiResponse.ok(result);
     }
