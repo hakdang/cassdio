@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="log.path" value="./log"/>
+    <property name="log.filename.prefix" value="cassdio"/>
+
+    <springProfile name="local | dev">
+        <appender name="CONSOLE"
+                  class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>
+                    ${CONSOLE_LOG_PATTERN}
+                </Pattern>
+            </layout>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="release">
+        <appender name="FILE-ROLLING"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${log.path}/${log.filename.prefix}.log</file>
+
+            <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>
+                    ${log.path}/archive/year_%d{yyyy, aux}/month_%d{MM,aux}/${log.filename.prefix}.%d{yyyy-MM-dd}.%i.log.gz
+                </fileNamePattern>
+                <maxFileSize>10MB</maxFileSize>
+                <maxHistory>3</maxHistory> <!--            3days-->
+            </rollingPolicy>
+
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="WARN">
+            <appender-ref ref="FILE-ROLLING"/>
+        </root>
+    </springProfile>
+
+</configuration>
