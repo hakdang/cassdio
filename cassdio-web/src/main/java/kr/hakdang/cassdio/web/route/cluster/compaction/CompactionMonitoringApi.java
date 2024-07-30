@@ -1,12 +1,8 @@
 package kr.hakdang.cassdio.web.route.cluster.compaction;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
-import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.compaction.CompactionHistoryListCommander;
 import kr.hakdang.cassdio.core.domain.cluster.compaction.CompactionHistoryListResult;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

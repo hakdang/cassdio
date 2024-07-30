@@ -1,9 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.common.CassdioConstants;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.ClusterKeyspaceCommander;
