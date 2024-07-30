@@ -1,7 +1,7 @@
 import axiosInstance from "utils/axiosUtils";
 
 export default async function bootstrapApi(
-    {}
+
 ) {
     try {
         const response = await axiosInstance({

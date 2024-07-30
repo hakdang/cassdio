@@ -1,11 +1,7 @@
-import {Link} from "react-router-dom";
+import {useEffect} from "react";
 
 import CassdioSidebar from "../components/layout/cassdio-sidebar";
-
 import ClusterList from "../components/cluster/cluster-list";
-import {useEffect} from "react";
-import {useCassdioDispatch, useCassdioState} from "../context/cassdioContext";
-import CassdioHelper from "../utils/cassdioHelper";
 import HomeSidebarLink from "../components/home-sidebar-link";
 
 const CassdioHomePage = () => {
