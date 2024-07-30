@@ -24,11 +24,14 @@ import java.util.stream.StreamSupport;
 @Service
 public class CompactionHistoryListCommander extends BaseClusterCommander {
 
-    public CompactionHistoryListResult getCompactionHistories(CqlSession session, String keyspace) {
+    public CompactionHistoryListResult getCompactionHistories(String clusterId, String keyspace) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = QueryBuilder
             .selectFrom(CassandraSystemKeyspace.SYSTEM.getKeyspaceName(), CassandraSystemTable.SYSTEM_COMPACTION_HISTORY.getTableName())
             .all()
-            .build();
+            .build()
+            .setKeyspace(keyspace);
 
         ResultSet rs = session.execute(statement);
 

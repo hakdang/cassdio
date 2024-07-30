@@ -26,7 +26,9 @@ import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Cassa
 @Service
 public class ClusterUDTTypeGetCommander extends BaseClusterCommander {
 
-    public ClusterUDTType getType(CqlSession session, ClusterUDTTypeGetArgs args) {
+    public ClusterUDTType getType(String clusterId, ClusterUDTTypeGetArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = QueryBuilder
             .selectFrom(SYSTEM_SCHEMA.getKeyspaceName(), SYSTEM_SCHEMA_TYPES.getTableName())
             .all()

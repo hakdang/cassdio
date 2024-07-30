@@ -24,7 +24,9 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 @Service
 public class ClusterTableCommander extends BaseClusterCommander {
 
-    public String tableDescribe(CqlSession session, String keyspace, String table) {
+    public String tableDescribe(String clusterId, String keyspace, String table) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         if (ClusterUtils.isSystemKeyspace(session.getContext(), keyspace)) {
             return "";
         }
@@ -43,12 +45,16 @@ public class ClusterTableCommander extends BaseClusterCommander {
         }
     }
 
-    public void tableDrop(CqlSession session, String keyspace, String table) {
+    public void tableDrop(String clusterId, String keyspace, String table) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         ResultSet resultSet = session.execute(SchemaBuilder.dropTable(keyspace, table).build());
         log.info("Table Drop Result - keyspace: {}, table: {}, ok: {}", keyspace, table, resultSet.wasApplied());
     }
 
-    public void tableTruncate(CqlSession session, String keyspace, String table) {
+    public void tableTruncate(String clusterId, String keyspace, String table) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         ResultSet resultSet = session.execute(QueryBuilder.truncate(keyspace, table).build());
         log.info("Table Truncate Result - keyspace: {}, table: {}, ok: {}", keyspace, table, resultSet.wasApplied());
     }

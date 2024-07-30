@@ -27,8 +27,8 @@ public class ClusterKeyspaceProvider {
     }
 
     @Cacheable(cacheNames = CacheType.CacheTypeNames.CLUSTER_KEYSPACE_NAME_LIST, key = "#clusterId")
-    public List<KeyspaceDTO.KeyspaceNameResult> keyspaceNameResultList(CqlSession session, String clusterId) {
-        return clusterKeyspaceCommander.allKeyspaceNameList(session);
+    public List<KeyspaceDTO.KeyspaceNameResult> keyspaceNameResultList(String clusterId) {
+        return clusterKeyspaceCommander.allKeyspaceNameList(clusterId);
     }
 
     @CacheEvict(cacheNames = CacheType.CacheTypeNames.CLUSTER_KEYSPACE_NAME_LIST, key = "#clusterId")

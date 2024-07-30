@@ -1,11 +1,15 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.udt;
 
 import kr.hakdang.cassdio.IntegrationTest;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeListArgs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
 /**
  * ClusterUDTTypeListCommanderTest
@@ -17,17 +21,21 @@ class ClusterUDTTypeListCommanderTest extends IntegrationTest {
 
     @Autowired
     private ClusterUDTTypeListCommander clusterUDTTypeListCommander;
+    @MockBean
+    private CqlSessionFactory cqlSessionFactory;
 
     @Test
     void list_udt_types_in_keyspace() {
         // given
+        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
+
         ClusterUDTTypeListArgs args = ClusterUDTTypeListArgs.builder()
             .keyspace(keyspaceName)
             .nextPageState(null)
             .build();
 
         // when
-        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(makeSession(), args);
+        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(CLUSTER_ID, args);
 
         // then
         assertThat(sut.getTypes()).hasSize(1);
@@ -42,13 +50,15 @@ class ClusterUDTTypeListCommanderTest extends IntegrationTest {
     @Test
     void when_empty_type_exist_in_keyspace_return_empty_list() {
         // given
+        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
+
         ClusterUDTTypeListArgs args = ClusterUDTTypeListArgs.builder()
             .keyspace("empty_keyspace")
             .nextPageState(null)
             .build();
 
         // when
-        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(makeSession(), args);
+        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(CLUSTER_ID, args);
 
         // then
         assertThat(sut.getTypes()).isEmpty();

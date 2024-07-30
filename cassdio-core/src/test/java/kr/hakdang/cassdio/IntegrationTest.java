@@ -1,9 +1,11 @@
 package kr.hakdang.cassdio;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.InetSocketAddress;
 

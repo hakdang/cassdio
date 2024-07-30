@@ -13,6 +13,7 @@ import com.datastax.oss.driver.internal.core.type.codec.MapCodec;
 import com.datastax.oss.driver.internal.core.util.Strings;
 import kr.hakdang.cassdio.common.utils.Jsons;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 public abstract class BaseClusterCommander {
+
+    @Autowired
+    protected CqlSessionFactory cqlSessionFactory;
 
     protected List<Map<String, Object>> convertRows(CqlSession session, ResultSet resultSet) {
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();

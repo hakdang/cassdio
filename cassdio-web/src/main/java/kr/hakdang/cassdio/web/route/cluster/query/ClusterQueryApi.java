@@ -1,7 +1,5 @@
 package kr.hakdang.cassdio.web.route.cluster.query;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
 import kr.hakdang.cassdio.core.domain.cluster.query.ClusterQueryCommander;
 import kr.hakdang.cassdio.core.domain.cluster.query.QueryDTO;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
@@ -25,15 +23,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/cassandra/cluster")
 public class ClusterQueryApi {
-
-    private final ClusterConnector clusterConnector;
     private final ClusterQueryCommander clusterQueryCommander;
 
     public ClusterQueryApi(
-        ClusterConnector clusterConnector,
         ClusterQueryCommander clusterQueryCommander
     ) {
-        this.clusterConnector = clusterConnector;
         this.clusterQueryCommander = clusterQueryCommander;
     }
 
@@ -43,20 +37,19 @@ public class ClusterQueryApi {
         @PathVariable(required = false) String keyspace,
         @RequestBody ClusterQueryRequest request
     ) {
-        log.info("clusterId : {}, keyspace : {}", clusterId, keyspace);
-
         Map<String, Object> responseMap = new HashMap<>();
 
-        try (CqlSession session = clusterConnector.makeSession(clusterId, keyspace)) {
-            QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(session, request.makeArgs());
+        QueryDTO.ClusterQueryCommanderResult result = clusterQueryCommander.execute(
+            clusterId,
+            request.makeArgs(keyspace)
+        );
 
-            responseMap.put("wasApplied", result.isWasApplied());
-            responseMap.put("nextCursor", result.getNextCursor());
-            responseMap.put("rows", result.getRows());
-            responseMap.put("rowHeader", result.getRowHeader());
-            if (request.isTrace()) {
-                responseMap.put("queryTrace", result.getQueryTrace());
-            }
+        responseMap.put("wasApplied", result.isWasApplied());
+        responseMap.put("nextCursor", result.getNextCursor());
+        responseMap.put("rows", result.getRows());
+        responseMap.put("rowHeader", result.getRowHeader());
+        if (request.isTrace()) {
+            responseMap.put("queryTrace", result.getQueryTrace());
         }
 
         return ApiResponse.ok(responseMap);
