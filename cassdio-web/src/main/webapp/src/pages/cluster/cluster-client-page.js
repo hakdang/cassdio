@@ -1,28 +1,29 @@
 import {useParams} from "react-router-dom";
-import useCassdio from "../../hooks/useCassdio";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import Spinner from "../../components/common/spinner";
-import ClusterMonitoringNavLink from "../../components/cluster/cluster-monitoring-nav-link";
+import Spinner from "components/common/spinner";
+import ClusterMonitoringNavLink from "components/cluster/cluster-monitoring-nav-link";
+import clusterClientApi from "remotes/clusterClientApi";
 
 const ClusterClientPage = () => {
 
     const routeParams = useParams();
-    const {errorCatch} = useCassdio();
 
     const [loading, setLoading] = useState(false);
     const [clients, setClients] = useState([]);
     const [groupedClients, setGroupedClients] = useState([])
 
-    useEffect(() => {
+    const pageInit = () => {
         setLoading(true)
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/client`,
-        }).then((response) => {
-            setClients(response.data.result.clients)
+        clusterClientApi({
+            clusterId: routeParams.clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
 
-            const groupedClients = response.data.result.clients.reduce((acc, client) => {
+            setClients(data.result.clients)
+
+            const groupedClients = data.result.clients.reduce((acc, client) => {
                 if (!acc[client.address]) {
                     acc[client.address] = {
                         address: client.address,
@@ -39,16 +40,18 @@ const ClusterClientPage = () => {
                 .sort(([, a], [, b]) => b.connectionCount - a.connectionCount)
                 .flatMap(([address, data]) => [address, data]);
             setGroupedClients(groupedClientsArray);
-        }).catch((error) => {
-            errorCatch(error)
         }).finally(() => {
             setLoading(false)
         });
+    }
+
+    useEffect(() => {
+
+        pageInit();
 
         return () => {
         };
     }, [routeParams.clusterId]);
-
 
     return (
         <>
@@ -115,7 +118,7 @@ const ClusterClientPage = () => {
                                             {client.username}
                                         </td>
                                         <td className={"text-center"}>
-                                            {client.driverVersion || '-' }
+                                            {client.driverVersion || '-'}
                                         </td>
                                         <td className={"text-center"}>
                                             {client.requestCount}

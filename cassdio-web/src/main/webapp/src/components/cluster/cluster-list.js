@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import Spinner from "components/common/spinner";
 
 import ClusterManageModal from "./modal/cluster-manage-modal";
-import useCluster from "../../hooks/useCluster";
+import useCluster from "hooks/useCluster";
 
 const ClusterList = () => {
 

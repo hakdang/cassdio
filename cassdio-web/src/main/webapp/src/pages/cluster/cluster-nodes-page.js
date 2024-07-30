@@ -1,15 +1,16 @@
-import {Link, useParams} from "react-router-dom";
-import useCassdio from "../../hooks/useCassdio";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import Spinner from "../../components/common/spinner";
-import {DateUtils} from "../../utils/timeUtils";
-import ClusterMonitoringNavLink from "../../components/cluster/cluster-monitoring-nav-link";
+import {useParams} from "react-router-dom";
+
+import Spinner from "components/common/spinner";
+
+import ClusterMonitoringNavLink from "components/cluster/cluster-monitoring-nav-link";
+
+import clusterNodesApi from "remotes/clusterNodesApi";
+import {DateUtils} from "utils/timeUtils";
 
 const ClusterNodesPage = ({}) => {
 
     const routeParams = useParams();
-    const {errorCatch} = useCassdio();
 
     const [nodeLoading, setNodeLoading] = useState(false);
     const [nodeList, setNodeList] = useState([]);
@@ -42,16 +43,17 @@ const ClusterNodesPage = ({}) => {
     function getNodes(clusterId) {
         setNodeLoading(true)
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}/node`,
-        }).then((response) => {
-            const nodes = response.data.result.items
+        clusterNodesApi({
+            clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            const nodes = data.result.items
             setNodeList(nodes)
             setTotalNodeSize(nodes.length)
             setAvailableNodeSize(nodes.filter(node => node.nodeState === 'UP' || node.nodeState === 'UNKNOWN').length)
-        }).catch((error) => {
-            errorCatch(error);
         }).finally(() => {
             setNodeLoading(false)
         });

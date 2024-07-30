@@ -1,10 +1,11 @@
 import AxiosUtils from "utils/axiosUtils";
 
-export default async function bootstrapApi() {
+export default async function clusterDetailApi({clusterId}) {
     try {
         const response = await AxiosUtils.axiosInstance({
             method: "GET",
-            url: `/api/bootstrap`,
+            url: `/api/cassandra/cluster/${clusterId}`,
+            params: {}
         });
 
         return await response.data;

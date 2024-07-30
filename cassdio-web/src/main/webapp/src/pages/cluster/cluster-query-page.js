@@ -1,18 +1,16 @@
 import {useParams} from "react-router-dom";
-import useCassdio from "hooks/useCassdio";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import QueryEditor from "components/cluster/query-editor";
 import QueryResult from "components/cluster/query-result";
 import QueryTraceViewModal from "components/cluster/modal/query-trace-view-modal";
 import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
-import {useCassdioState} from "../../context/cassdioContext";
+import {useCassdioState} from "context/cassdioContext";
 import clusterQueryApi from "remotes/clusterQueryApi";
 
 const ClusterQueryPage = () => {
     const routeParams = useParams();
 
-    const {errorCatch} = useCassdio();
     const [showQueryTrace, setShowQueryTrace] = useState(false);
 
     const {
@@ -60,27 +58,29 @@ const ClusterQueryPage = () => {
             query: query,
             cursor: cursor,
             queryOptions: queryOptions,
-        }).then((response) => {
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
             setQueryParam({
                 query: query,
-                nextCursor: response.data.result.nextCursor
+                nextCursor: data.result.nextCursor
             })
 
             let rows = [];
             if (!cursor) {
-                rows = response.data.result.rows;
+                rows = data.result.rows;
             } else {
-                rows = [...queryResult.rows, ...response.data.result.rows];
+                rows = [...queryResult.rows, ...data.result.rows];
             }
 
             setQueryResult({
-                wasApplied: response.data.result.wasApplied,
+                wasApplied: data.result.wasApplied,
                 rows: rows,
-                rowHeader: response.data.result.rowHeader,
-                queryTrace: response.data.result.queryTrace,
+                rowHeader: data.result.rowHeader,
+                queryTrace: data.result.queryTrace,
             })
-        }).catch((error) => {
-            errorCatch(error);
         }).finally(() => {
             setLoading(false);
         })

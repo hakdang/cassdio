@@ -126,7 +126,7 @@ public class ClusterTableApi {
     }
 
     //권한 추가해서 ADMIN 만 동작할 수 있도록 해야함.
-    @DeleteMapping("/table/{table}")
+    @DeleteMapping("/table/{table}/drop")
     public ApiResponse<Void> tableDrop(
         @PathVariable String clusterId,
         @PathVariable String keyspace,

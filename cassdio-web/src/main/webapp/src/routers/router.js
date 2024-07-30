@@ -26,9 +26,13 @@ const Router = createBrowserRouter([
             path: `/`,
             element: <CassdioDefaultLayout/>,
             loader: async () => {
-                const bootstrap = await bootstrapApi();
+                const data = await bootstrapApi();
+                if (!data.ok) {
+                    return {};
+                }
+
                 return {
-                    bootstrap,
+                    bootstrap: data.result,
                 }
             },
             children: [
@@ -83,29 +87,25 @@ const Router = createBrowserRouter([
                             path: `monitoring`,
                             element: <ClusterMonitoringDashboardPage/>,
                             loader: () => {
-                                return {
-                                }
+                                return {}
                             },
                         }, {
                             path: `monitoring/nodes`,
                             element: <ClusterNodesPage/>,
                             loader: () => {
-                                return {
-                                }
+                                return {}
                             },
                         }, {
                             path: `monitoring/client`,
                             element: <ClusterClientPage/>,
                             loader: () => {
-                                return {
-                                }
+                                return {}
                             }
                         }, {
                             path: `monitoring/metrics`,
                             element: <ClusterMetricsPage/>,
                             loader: () => {
-                                return {
-                                }
+                                return {}
                             },
                         }
                     ]

@@ -2,37 +2,36 @@ import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "components/common/spinner";
-import axios from "axios";
-import useCassdio from "hooks/useCassdio";
+import clusterKeyspaceListApi from "remotes/clusterKeyspaceListApi";
 
 const ClusterDashboardPage = ({}) => {
 
     const routeParams = useParams();
     const [clusterId, setClusterId] = useState(``)
 
-    const {errorCatch} = useCassdio();
     const [keyspaceList, setKeyspaceList] = useState([]);
     const [keyspaceLoading, setKeyspaceLoading] = useState(false);
+
+    const getKeyspaceList = () => {
+        clusterKeyspaceListApi({
+            clusterId: routeParams.clusterId,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            setKeyspaceList(data.result.keyspaceList);
+        }).finally(() => {
+            setKeyspaceLoading(false)
+        });
+    }
 
     useEffect(() => {
         //show component
         setClusterId(routeParams.clusterId);
-
         setKeyspaceLoading(true)
 
-        //TODO: 모듈화 해야함.
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace`,
-            params: {}
-        }).then((response) => {
-            setKeyspaceList(response.data.result.keyspaceList);
-
-        }).catch((error) => {
-            errorCatch(error)
-        }).finally(() => {
-            setKeyspaceLoading(false)
-        });
+        getKeyspaceList();
 
         return () => {
             //hide component
