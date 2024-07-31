@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import kr.hakdang.cassdio.IntegrationTest;
-import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableException.ClusterTableNotFoundException;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO.ClusterTableGetArgs;
@@ -9,12 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 /**
  * ClusterTableGetCommanderTest
@@ -27,9 +23,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
 
     private final ClusterTableCommander clusterTableCommander;
 
-    @MockBean
-    private CqlSessionFactory cqlSessionFactory;
-
     @Autowired
     private ClusterTableGetCommander clusterTableGetCommander;
 
@@ -41,8 +34,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
     @Disabled
 //TODO 변경필요
     void get_table_in_keyspace() {
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         ClusterTableGetArgs args = ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)
             .table("test_table_1")
@@ -88,7 +79,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
     @Test
     void when_get_not_exists_table_throw_not_exists_exception() {
         // given
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
         TableDTO.ClusterTableGetArgs args = TableDTO.ClusterTableGetArgs.builder()
             .keyspace(keyspaceName)
             .table("not_exists_table")
@@ -101,9 +91,6 @@ class ClusterTableGetCommanderTest extends IntegrationTest {
 
     @Test
     void get_system_table_describe() {
-        // given
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         // when
         String sut = clusterTableCommander.tableDescribe(CLUSTER_ID, "system_schema", "tables");
 

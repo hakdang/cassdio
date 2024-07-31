@@ -1,21 +1,15 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.Version;
 import kr.hakdang.cassdio.IntegrationTest;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
-import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 @Slf4j
 class ClusterKeyspaceCommanderTest extends IntegrationTest {
@@ -26,13 +20,8 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
     @Autowired
     private ClusterVersionCommander clusterVersionCommander;
 
-    @MockBean
-    private CqlSessionFactory cqlSessionFactory;
-
     @Test
     void allSystemKeyspaceList() {
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         //system keyspace 체크
         List<String> keyspaceNameList = clusterKeyspaceCommander.allKeyspaceNameList(CLUSTER_ID).stream()
             .filter(KeyspaceDTO.KeyspaceNameResult::isSystemKeyspace)
@@ -58,16 +47,12 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
      */
     @Test
     void generalKeyspaceList() {
-        CqlSession session = makeSession();
-
-        given(cqlSessionFactory.get(anyString())).willReturn(session);
-
         //system keyspace 체크
         KeyspaceDTO.ClusterKeyspaceListResult keyspaceNameList = clusterKeyspaceCommander.generalKeyspaceList(CLUSTER_ID);
 
         for (KeyspaceResult keyspaceResult : keyspaceNameList.getKeyspaceList()) {
             Assertions.assertFalse(
-                ClusterUtils.isSystemKeyspace(session.getContext(), keyspaceResult.getKeyspaceName()),
+                ClusterUtils.isSystemKeyspace(makeSession().getContext(), keyspaceResult.getKeyspaceName()),
                 "include system table"
             );
         }

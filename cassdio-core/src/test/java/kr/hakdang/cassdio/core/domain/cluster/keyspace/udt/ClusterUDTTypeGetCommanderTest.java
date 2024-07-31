@@ -1,17 +1,13 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.udt;
 
 import kr.hakdang.cassdio.IntegrationTest;
-import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.ClusterUDTTypeGetArgs;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeException.ClusterUDTTypeNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 
 /**
  * ClusterUDTTypeGetCommanderTest
@@ -24,14 +20,9 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
     @Autowired
     private ClusterUDTTypeGetCommander clusterUDTTypeGetCommander;
 
-    @MockBean
-    private CqlSessionFactory cqlSessionFactory;
-
     @Test
     void get_udt_type_in_keyspace() {
         // given
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         ClusterUDTTypeGetArgs args = ClusterUDTTypeGetArgs.builder()
             .keyspace(keyspaceName)
             .type("test_type_1")
@@ -51,8 +42,6 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
     @Test
     void when_get_not_exists_udt_type_in_keyspace_throw_not_exists_exception() {
         // given
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         ClusterUDTTypeGetArgs args = ClusterUDTTypeGetArgs.builder()
             .keyspace(keyspaceName)
             .type("not_exist_type")
@@ -66,8 +55,6 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
     @Test
     void when_get_not_exists_udt_type_in_keyspace_throw_not_exists_exception_2() {
         // given
-        given(cqlSessionFactory.get(anyString())).willReturn(makeSession());
-
         ClusterUDTTypeGetArgs args = ClusterUDTTypeGetArgs.builder()
             .keyspace("another_keyspace")
             .type("test_type_1")
