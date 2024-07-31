@@ -8,21 +8,23 @@ if (frontend.toBoolean()) {
 
     node {
         version = '20.15.1'
-        npmVersion = '9.8.0'
+        yarnVersion = '1.22.22'
         download = true
 
         nodeProjectDir.set(projectDir)
     }
 
-    task npmInstall2(type: NpmTask) {
+    tasks.register('yarnInstall2', YarnTask) {
         args = ['install']
     }
 
-    task npmBuild(type: NpmTask, dependsOn: npmInstall2) {
+    tasks.register('yarnBuild', YarnTask) {
+        dependsOn yarnInstall2
         args = ['run', 'build']
     }
 
-    task copyDist(type: Copy, dependsOn: npmBuild) {
+    tasks.register('copyDist', Copy) {
+        dependsOn yarnBuild
         from("${projectDir}/build") {
             include '**/*'
         }
@@ -30,7 +32,8 @@ if (frontend.toBoolean()) {
         includeEmptyDirs = true
     }
 
-    task deleteDist(type: Delete, dependsOn: copyDist) {
+    tasks.register('deleteDist', Delete) {
+        dependsOn copyDist
         delete "${projectDir}/build"
     }
 

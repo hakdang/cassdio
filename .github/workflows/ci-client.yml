@@ -49,6 +49,6 @@ jobs:
 
       - name: Install and Build
         run: |
-          npm install
-          npm run build
+          yarn install
+          yarn run build
         working-directory: cassdio-web/src/main/webapp
