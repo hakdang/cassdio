@@ -1,5 +1,8 @@
 package kr.hakdang.cassdio.common.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 import java.util.zip.CRC32;
 
@@ -9,7 +12,8 @@ import java.util.zip.CRC32;
  * @author akageun
  * @since 2024-07-17
  */
-public abstract class IdGenerator {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class IdGenerator {
 
     public static String makeId() {
         String uuid = UUID.randomUUID().toString();

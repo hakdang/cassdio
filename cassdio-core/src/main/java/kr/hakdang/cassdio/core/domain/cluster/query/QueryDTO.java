@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.query;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
-import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,6 +17,7 @@ import java.util.Map;
  * @author akageun
  * @since 2024-07-25
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QueryDTO {
 
     @Getter

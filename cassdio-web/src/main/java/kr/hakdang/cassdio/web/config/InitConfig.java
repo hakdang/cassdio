@@ -14,5 +14,7 @@ public class InitConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        // Do Nothing
     }
+
 }
