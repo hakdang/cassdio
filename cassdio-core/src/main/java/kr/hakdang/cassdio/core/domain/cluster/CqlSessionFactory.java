@@ -30,13 +30,7 @@ public class CqlSessionFactory {
 
     public CqlSession get(String clusterId) {
         String key = String.format("%s", clusterId);
-        CqlSession session = SESSION.get(key);
-        if (session == null) {
-            session = makeSession(clusterId);
-            SESSION.put(key, session);
-        }
-
-        return session;
+        return SESSION.computeIfAbsent(key, this::makeSession);
     }
 
     public CqlSession makeSession(String clusterId) {
