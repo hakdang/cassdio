@@ -1,9 +1,7 @@
 package kr.hakdang.cassdio.web.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -44,7 +42,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         return requestedResource;
                     }
 
-                    //return new PathResource("/error");
                     return new ClassPathResource("/static/index.html");
                 }
             })

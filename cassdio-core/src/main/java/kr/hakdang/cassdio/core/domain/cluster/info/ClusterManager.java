@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 public class ClusterManager implements InitializingBean, DisposableBean {
 
+    public static final String CLUSTER = "cluster";
     @Value("${cassdio.system.database.path}")
     private String dbPath;
 
@@ -36,7 +37,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     public void register(ClusterInfo info) {
         ConcurrentMap<String, String> map = mapDb
-            .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+            .hashMap(CLUSTER, Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         map.put(info.getClusterId(), Jsons.toJson(info));
@@ -46,7 +47,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     public void update(String clusterId, ClusterInfo info) {
         ConcurrentMap<String, String> map = mapDb
-            .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+            .hashMap(CLUSTER, Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         map.put(clusterId, Jsons.toJson(info));
@@ -56,7 +57,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     public List<ClusterInfo> findAll() {
         ConcurrentMap<String, String> map = mapDb
-            .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+            .hashMap(CLUSTER, Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         return map.values().stream()
@@ -66,7 +67,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     public ClusterInfo findById(String clusterId) {
         ConcurrentMap<String, String> map = mapDb
-            .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+            .hashMap(CLUSTER, Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         String value = map.get(clusterId);
@@ -80,7 +81,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
 
     public void deleteById(String clusterId) {
         ConcurrentMap<String, String> map = mapDb
-            .hashMap("cluster", Serializer.STRING, Serializer.STRING)
+            .hashMap(CLUSTER, Serializer.STRING, Serializer.STRING)
             .createOrOpen();
 
         map.remove(clusterId);
