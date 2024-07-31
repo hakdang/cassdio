@@ -26,7 +26,7 @@ This management system helps simplify system operations and enhance stability. I
 
 ### Support Versions
 
-Version | Supported | Cassandra Docs
+ Version | Supported | Cassandra Docs                                           
 -- | -- | --
 3.11 | O | [Link](https://cassandra.apache.org/doc/3.11/index.html)
 4.0 | O | [Link](https://cassandra.apache.org/doc/4.0/index.html)
@@ -62,3 +62,6 @@ java -jar ./cassdio-0.0.2.jar
 
 [//]: # ()
 
+### License
+
+Cassdio is Open Source software released under the Apache 2.0 license.
