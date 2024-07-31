@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClusterVersionGetCommander extends BaseClusterCommander {
 
-    private final CqlSessionFactory cqlSessionFactory;
-
     public ClusterVersionGetCommander(
         CqlSessionFactory cqlSessionFactory
     ) {

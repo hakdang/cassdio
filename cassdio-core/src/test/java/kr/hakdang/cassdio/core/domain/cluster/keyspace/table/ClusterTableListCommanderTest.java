@@ -4,7 +4,6 @@ import kr.hakdang.cassdio.IntegrationTest;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestConstructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,8 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2024-07-01
  */
 @Slf4j
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class ClusterTableListCommanderTest extends IntegrationTest {
+class ClusterTableListCommanderTest extends IntegrationTest {
 
     private final ClusterTableListCommander clusterTableListCommander;
 
@@ -81,7 +79,7 @@ public class ClusterTableListCommanderTest extends IntegrationTest {
 
         // then
         assertThat(sut).isNotNull();
-        assertThat(sut.getRows()).hasSize(0);
+        assertThat(sut.getRows()).isEmpty();
 //        assertThat(sut.getNextPageState()).isNull();
     }
 

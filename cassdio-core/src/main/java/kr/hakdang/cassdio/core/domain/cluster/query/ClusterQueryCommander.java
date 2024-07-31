@@ -53,10 +53,8 @@ public class ClusterQueryCommander extends BaseClusterCommander {
         QueryDTO.ClusterQueryCommanderArgs args
     ) {
         CqlSession session = cqlSessionFactory.get(clusterId);
-        if (useKeyspaceQueryCommandNotSupportWithSession(session)) {
-            if (StringUtils.isNotBlank(args.getKeyspace())) {
-                throw new NotSupportedCassandraVersionException("It is available in Cassandra version 4.0 and later");
-            }
+        if (useKeyspaceQueryCommandNotSupportWithSession(session) && StringUtils.isNotBlank(args.getKeyspace())) {
+            throw new NotSupportedCassandraVersionException("It is available in Cassandra version 4.0 and later");
         }
 
         SimpleStatementBuilder simpleBuilder = SimpleStatement.builder(args.getQuery())

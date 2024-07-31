@@ -29,8 +29,8 @@ class ClusterConnectionTest {
         assertThat(connection.isAuthCredentials()).isFalse();
         assertThat(connection.getContactPoints()).isEqualTo("127.0.0.1");
         assertThat(connection.getPort()).isEqualTo(29042);
-        assertThat(connection.getUsername()).isEqualTo(null);
-        assertThat(connection.getPassword()).isEqualTo(null);
+        assertThat(connection.getUsername()).isNull();
+        assertThat(connection.getPassword()).isNull();
         assertThat(connection.getLocalDatacenter()).isEqualTo("dc1");
     }
 

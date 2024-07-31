@@ -16,5 +16,5 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 public abstract class BaseTest {
 
-    protected final static String CLUSTER_ID = "12345";
+    protected static final String CLUSTER_ID = "12345";
 }

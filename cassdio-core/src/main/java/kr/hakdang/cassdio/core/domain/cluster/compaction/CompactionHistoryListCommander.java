@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -39,7 +38,7 @@ public class CompactionHistoryListCommander extends BaseClusterCommander {
             .map(CompactionHistory::from)
             .filter(history -> StringUtils.isBlank(keyspace) || history.getKeyspaceName().equals(keyspace))
             .sorted(Comparator.comparing(CompactionHistory::getCompactedAt).reversed())
-            .collect(Collectors.toList());
+            .toList();
 
         return CompactionHistoryListResult.builder()
             .histories(historyList)
