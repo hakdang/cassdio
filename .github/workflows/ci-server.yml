@@ -31,6 +31,13 @@ jobs:
           cache: gradle
         timeout-minutes: 3
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Test
         run: ./gradlew unitTest
 
