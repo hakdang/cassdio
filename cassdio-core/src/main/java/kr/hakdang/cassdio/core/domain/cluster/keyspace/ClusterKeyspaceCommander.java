@@ -15,11 +15,10 @@ import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResult;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -41,12 +40,12 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 @Service
 public class ClusterKeyspaceCommander extends BaseClusterCommander {
 
-    private final ClusterVersionCommander clusterVersionCommander;
+    private final ClusterVersionEvaluator clusterVersionEvaluator;
 
     public ClusterKeyspaceCommander(
-        ClusterVersionCommander clusterVersionCommander
+        ClusterVersionEvaluator clusterVersionEvaluator
     ) {
-        this.clusterVersionCommander = clusterVersionCommander;
+        this.clusterVersionEvaluator = clusterVersionEvaluator;
     }
 
     /**
@@ -73,7 +72,7 @@ public class ClusterKeyspaceCommander extends BaseClusterCommander {
             result.add(KeyspaceDTO.KeyspaceNameResult.make(tempRow, keyspaceFilter));
         }
 
-        if (clusterVersionCommander.getCassandraVersion(clusterId).compareTo(Version.V4_0_0) >= 0) {
+        if (clusterVersionEvaluator.isGreaterThanOrEqual(clusterId, Version.V4_0_0)) {
             SimpleStatement virtualSimpleStatement = makeKeyspaceListSelect(true);
 
             ResultSet resultSet2 = session.execute(virtualSimpleStatement);

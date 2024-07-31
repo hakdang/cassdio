@@ -3,7 +3,7 @@ package kr.hakdang.cassdio.core.domain.cluster.keyspace;
 import com.datastax.oss.driver.api.core.Version;
 import kr.hakdang.cassdio.IntegrationTest;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
     private ClusterKeyspaceCommander clusterKeyspaceCommander;
 
     @Autowired
-    private ClusterVersionCommander clusterVersionCommander;
+    private ClusterVersionEvaluator clusterVersionEvaluator;
 
     @Test
     void allSystemKeyspaceList() {
@@ -32,7 +32,7 @@ class ClusterKeyspaceCommanderTest extends IntegrationTest {
             Assertions.assertTrue(keyspaceNameList.contains(systemKeyspace.getKeyspaceName()), "Default System Table Empty!!!");
         }
 
-        if (clusterVersionCommander.getCassandraVersion(CLUSTER_ID).compareTo(Version.V4_0_0) >= 0) {
+        if (clusterVersionEvaluator.isGreaterThanOrEqual(CLUSTER_ID, Version.V4_0_0)) {
             expectedSize += CassandraSystemKeyspace.virtualSystemKeyspaceList().size();
             for (CassandraSystemKeyspace virtualKeyspace : CassandraSystemKeyspace.virtualSystemKeyspaceList()) {
                 Assertions.assertTrue(keyspaceNameList.contains(virtualKeyspace.getKeyspaceName()), "Default Virtual System Table Empty!!!");

@@ -7,11 +7,10 @@ import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,21 +28,19 @@ public class ClusterClientListCommander extends BaseClusterCommander {
 
     private final CqlSessionFactory cqlSessionFactory;
 
-    private final ClusterVersionCommander clusterVersionCommander;
+    private final ClusterVersionEvaluator clusterVersionEvaluator;
 
     public ClusterClientListCommander(
-        ClusterVersionCommander clusterVersionCommander,
+        ClusterVersionEvaluator clusterVersionEvaluator,
         CqlSessionFactory cqlSessionFactory
     ) {
-        this.clusterVersionCommander = clusterVersionCommander;
+        this.clusterVersionEvaluator = clusterVersionEvaluator;
         this.cqlSessionFactory = cqlSessionFactory;
     }
 
     public ClusterClientListResult getClients(String clusterId) {
         CqlSession session = cqlSessionFactory.get(clusterId);
-
-        Version version = clusterVersionCommander.getCassandraVersion(clusterId);
-        if (version.compareTo(Version.V4_0_0) < 0) {
+        if (clusterVersionEvaluator.isLessThan(clusterId, Version.V4_0_0)) {
             throw new NotSupportedCassandraVersionException("It is available in Cassandra version 4.0 and later");
         }
 
