@@ -8,7 +8,6 @@ import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,7 +24,7 @@ class ClusterClientListCommanderTest extends BaseTest {
     @Mock
     private ClusterVersionCommander clusterVersionCommander;
 
-    @MockBean
+    @Mock
     private CqlSessionFactory cqlSessionFactory;
 
     private ClusterClientListCommander clusterClientListCommander;
