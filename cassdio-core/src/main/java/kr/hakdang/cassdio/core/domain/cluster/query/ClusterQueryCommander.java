@@ -12,7 +12,7 @@ import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,21 +32,20 @@ import java.util.List;
 @Service
 public class ClusterQueryCommander extends BaseClusterCommander {
 
-    private final ClusterVersionCommander clusterVersionCommander;
+    private final ClusterVersionEvaluator clusterVersionEvaluator;
 
     public ClusterQueryCommander(
-        ClusterVersionCommander clusterVersionCommander
+        ClusterVersionEvaluator clusterVersionEvaluator
     ) {
-        this.clusterVersionCommander = clusterVersionCommander;
+        this.clusterVersionEvaluator = clusterVersionEvaluator;
     }
 
     public boolean useKeyspaceQueryCommandNotSupport(String clusterId) {
-        CqlSession session = cqlSessionFactory.get(clusterId);
-        return useKeyspaceQueryCommandNotSupportWithSession(session);
+        return clusterVersionEvaluator.isLessThan(clusterId, Version.V4_0_0);
     }
 
     public boolean useKeyspaceQueryCommandNotSupportWithSession(CqlSession session) {
-        return clusterVersionCommander.getCassandraVersionWithSession(session).compareTo(Version.V4_0_0) < 0;
+        return clusterVersionEvaluator.isLessThan(session, Version.V4_0_0);
     }
 
     public QueryDTO.ClusterQueryCommanderResult execute(
