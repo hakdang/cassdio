@@ -10,6 +10,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.github.node-gradle.node' version '7.0.2'
+    id "org.sonarqube" version "5.1.0.4882"
 }
 
 allprojects {
@@ -75,5 +76,13 @@ subprojects {
             showCauses = true
             events = ['FAILED']
         }
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "hakdang_cassdio"
+        property "sonar.organization", "hakdang"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
