@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.InetSocketAddress;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -32,7 +31,7 @@ public abstract class IntegrationTest extends BaseTest {
 
     @BeforeEach
     void setup() {
-        given(clusterManager.findById(eq(CLUSTER_ID))).willReturn(ClusterInfo.builder()
+        given(clusterManager.findById(CLUSTER_ID)).willReturn(ClusterInfo.builder()
             .contactPoints("127.0.0.1")
             .port(29042)
             .localDatacenter("dc1")

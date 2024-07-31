@@ -1,17 +1,15 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.Version;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.context.DriverContext;
-import com.datastax.oss.driver.api.core.metadata.Node;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.select.SelectFrom;
-import com.datastax.oss.driver.internal.core.channel.DriverChannel;
-import com.datastax.oss.driver.internal.core.context.InternalDriverContext;
 import com.datastax.oss.driver.internal.core.metadata.schema.queries.KeyspaceFilter;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 
@@ -21,7 +19,8 @@ import java.util.Collections;
  * @author akageun
  * @since 2024-07-05
  */
-public abstract class ClusterUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ClusterUtils {
 
     public static KeyspaceFilter makeKeyspaceFilter(DriverContext context) {
         return KeyspaceFilter.newInstance(context.getSessionName(), context.getConfig()

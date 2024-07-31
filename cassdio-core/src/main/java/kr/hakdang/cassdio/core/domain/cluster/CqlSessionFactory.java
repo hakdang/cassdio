@@ -3,10 +3,10 @@ package kr.hakdang.cassdio.core.domain.cluster;
 import com.datastax.oss.driver.api.core.CqlSession;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * CqlSessionFactory
@@ -21,7 +21,7 @@ public class CqlSessionFactory {
     private final ClusterProvider clusterProvider;
     private final ClusterConnector clusterConnector;
 
-    public static ConcurrentHashMap<String, CqlSession> SESSION = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, CqlSession> SESSION = new ConcurrentHashMap<>();
 
     public CqlSessionFactory(ClusterProvider clusterProvider, ClusterConnector clusterConnector) {
         this.clusterProvider = clusterProvider;

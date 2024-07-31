@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ClusterNodeListCommander
@@ -17,8 +16,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ClusterNodeListCommander extends BaseClusterCommander {
-
-    private final CqlSessionFactory cqlSessionFactory;
 
     public ClusterNodeListCommander(
         CqlSessionFactory cqlSessionFactory
@@ -33,7 +30,7 @@ public class ClusterNodeListCommander extends BaseClusterCommander {
             .map(ClusterNode::from)
             .sorted(Comparator.comparing(ClusterNode::getDatacenter)
                 .thenComparing(ClusterNode::getRack))
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

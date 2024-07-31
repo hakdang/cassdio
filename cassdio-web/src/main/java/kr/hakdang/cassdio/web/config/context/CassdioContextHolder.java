@@ -1,11 +1,15 @@
 package kr.hakdang.cassdio.web.config.context;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * CassdioContextHolder
  *
  * @author akageun
  * @since 2024-07-29
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CassdioContextHolder {
 
     private static final ThreadLocal<CassdioContext> DATA = new ThreadLocal<>();

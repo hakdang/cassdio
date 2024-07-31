@@ -23,7 +23,7 @@ class ClusterQueryCommanderTest extends IntegrationTest {
     @Value("${cassdio.test-cassandra.keyspace}")
     private String keyspaceName;
 
-    private final static String TABLE_NAME = "test_table_1";
+    private static final String TABLE_NAME = "test_table_1";
 
     @Test
     void queryTest() {

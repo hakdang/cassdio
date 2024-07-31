@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import kr.hakdang.cassdio.common.utils.IdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

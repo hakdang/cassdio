@@ -1,6 +1,5 @@
 package kr.hakdang.cassdio.web.route.cluster;
 
-import kr.hakdang.cassdio.core.domain.cluster.ClusterConnection;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -14,7 +14,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTabl
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -25,8 +24,6 @@ import java.util.stream.StreamSupport;
  */
 @Service
 public class ClusterClientListCommander extends BaseClusterCommander {
-
-    private final CqlSessionFactory cqlSessionFactory;
 
     private final ClusterVersionEvaluator clusterVersionEvaluator;
 
@@ -53,7 +50,7 @@ public class ClusterClientListCommander extends BaseClusterCommander {
 
         List<ClusterClient> clients = StreamSupport.stream(rs.spliterator(), false)
             .map(ClusterClient::from)
-            .collect(Collectors.toList());
+            .toList();
 
         return ClusterClientListResult.builder()
             .clients(clients)

@@ -19,8 +19,6 @@ import java.util.UUID;
 @Service
 public class ClusterNodeGetCommander extends BaseClusterCommander {
 
-    private final CqlSessionFactory cqlSessionFactory;
-
     public ClusterNodeGetCommander(
         CqlSessionFactory cqlSessionFactory
     ) {
