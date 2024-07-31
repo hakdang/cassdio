@@ -1,16 +1,21 @@
 # Cassdio (`Cass`andra Stu`dio`)
+
 Cassdio is centralized web management system for managing [Apache Cassandra](https://cassandra.apache.org/_/index.html)!
 
-Cassdio provide powerful tools to efficiently manage and monitor Apache Cassandra databases. You can monitor the real-time status of your database clusters and perform various tasks intuitively through a user-friendly interface.
+Cassdio provide powerful tools to efficiently manage and monitor Apache Cassandra databases. You can monitor the
+real-time status of your database clusters and perform various tasks intuitively through a user-friendly interface.
 
-This management system helps simplify system operations and enhance stability. It's an essential tool for managing Apache Cassandra databases, offering excellent functionality and user convenience.
+This management system helps simplify system operations and enhance stability. It's an essential tool for managing
+Apache Cassandra databases, offering excellent functionality and user convenience.
 
 [![latest-tag](https://badgen.net/github/release/hakdang/cassdio)](https://github.com/hakdang/cassdio/releases)
 
 ## Demo
+
 ![intro_screenshot](./docs/screenshot/intro_s1.gif)
 
 ## Features
+
 - `Multi Cassandra Cluster(With AuthCredentials)`
     - Node Monitoring
 - `View Keysapce`
@@ -22,16 +27,17 @@ This management system helps simplify system operations and enhance stability. I
     - CQL Query
 
 ## Requirements
+
 - JDK 21
 
-### Support Versions
+### Support Cassandra Versions
 
  Version | Supported | Cassandra Docs                                           
--- | -- | --
-3.11 | O | [Link](https://cassandra.apache.org/doc/3.11/index.html)
-4.0 | O | [Link](https://cassandra.apache.org/doc/4.0/index.html)
-4.1 | O | [Link](https://cassandra.apache.org/doc/4.1/index.html)
-5.0 | O | [Link](https://cassandra.apache.org/doc/5.0/index.html)
+---------|-----------|----------------------------------------------------------
+ 3.11    | O         | [Link](https://cassandra.apache.org/doc/3.11/index.html) 
+ 4.0     | O         | [Link](https://cassandra.apache.org/doc/4.0/index.html)  
+ 4.1     | O         | [Link](https://cassandra.apache.org/doc/4.1/index.html)  
+ 5.0     | O         | [Link](https://cassandra.apache.org/doc/5.0/index.html)  
 
 ## Getting Started
 
@@ -54,6 +60,7 @@ java -jar ./cassdio-0.0.2.jar
 [//]: # (## Environment)
 
 [//]: # ()
+
 [//]: # (env name | description | env value | default value)
 
 [//]: # (-- | -- | -- | --)
@@ -62,6 +69,6 @@ java -jar ./cassdio-0.0.2.jar
 
 [//]: # ()
 
-### License
+## License
 
-Cassdio is Open Source software released under the Apache 2.0 license.
+Cassdio is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
