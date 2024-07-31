@@ -2,7 +2,7 @@ package kr.hakdang.cassdio.web.route.cluster;
 
 import jakarta.validation.Valid;
 import kr.hakdang.cassdio.common.CassdioConstants;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterConnector;
+import kr.hakdang.cassdio.core.domain.cluster.CassdioVersionChecker;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterProvider;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
@@ -32,14 +32,14 @@ import java.util.Map;
 @RequestMapping("/api/cassandra/cluster")
 public class ClusterApi {
 
-    private final ClusterConnector clusterConnector;
+    private final CassdioVersionChecker cassdioVersionChecker;
     private final ClusterProvider clusterProvider;
 
     public ClusterApi(
-        ClusterConnector clusterConnector,
+        CassdioVersionChecker cassdioVersionChecker,
         ClusterProvider clusterProvider
     ) {
-        this.clusterConnector = clusterConnector;
+        this.cassdioVersionChecker = cassdioVersionChecker;
         this.clusterProvider = clusterProvider;
     }
 
@@ -75,6 +75,8 @@ public class ClusterApi {
     public ApiResponse<Void> clusterRegister(
         @Valid @RequestBody ClusterRegisterRequest request
     ) {
+        cassdioVersionChecker.verifyCompatibilityCassandraVersion(request.makeArgs().makeClusterConnector());
+
         clusterProvider.register(request.makeArgs());
 
         return ApiResponse.ok();
