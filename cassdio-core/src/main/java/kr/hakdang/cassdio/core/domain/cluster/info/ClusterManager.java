@@ -2,7 +2,6 @@ package kr.hakdang.cassdio.core.domain.cluster.info;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.micrometer.common.util.StringUtils;
-import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.common.utils.Jsons;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterException;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,8 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 public class ClusterManager implements InitializingBean, DisposableBean {
 
-    public static final String CLUSTER = "cluster";
+    private static final String CLUSTER = "cluster";
+
     @Value("${cassdio.system.database.path}")
     private String dbPath;
 
@@ -97,7 +96,7 @@ public class ClusterManager implements InitializingBean, DisposableBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         File file = new File(dbPath);
         if (!file.exists()) {
             boolean result = file.mkdirs();
