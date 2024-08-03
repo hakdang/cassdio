@@ -20,6 +20,7 @@ import AdminHomePage from "pages/admin/admin-home-page";
 import NotFound from "pages/not-found";
 
 import bootstrapApi from "remotes/bootstrapApi";
+import AdminClusterPage from "../pages/admin/admin-cluster-page";
 
 const Router = createBrowserRouter([
         {
@@ -119,6 +120,12 @@ const Router = createBrowserRouter([
                         {
                             index: true,
                             element: <AdminHomePage/>
+                        }, {
+                            path: `cluster`,
+                            element: <AdminClusterPage/>,
+                            loader: () => {
+                                return {}
+                            },
                         },
 
                     ]

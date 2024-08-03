@@ -10,8 +10,8 @@ const CassdioHeader = () => {
                 Cassdio
             </Link>
 
-            <ul className="navbar-nav flex-row d-md-none">
-                <li className="nav-item text-nowrap">
+            <ul className="navbar-nav flex-row ">
+                <li className="nav-item text-nowrap d-md-none">
                     <button className="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas"
                             data-bs-target={`#${cassdioHelper.CASSDIO_SIDEBAR_ID}`}
                             aria-controls={`${cassdioHelper.CASSDIO_SIDEBAR_ID}`}

@@ -5,11 +5,14 @@ import clusterListApi from "remotes/clusterListApi";
 import clusterDeleteApi from "remotes/clusterDeleteApi";
 import clusterDetailApi from "remotes/clusterDetailApi";
 import clusterSaveApi from "remotes/clusterSaveApi";
+import clusterSessionClearAllApi from "../remotes/clusterSessionResetAllApi";
+import clusterSessionClearOneApi from "../remotes/clusterSessionResetOneApi";
 
 export default function useCluster() {
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
     const [clusterDetailLoading, setClusterDetailLoading] = useState(false);
+    const [sessionClearAllLoading, setSessionClearAllLoading] = useState(false);
 
     const doGetClusterList = () => {
         setClustersLoading(true)
@@ -126,16 +129,47 @@ export default function useCluster() {
         });
     }
 
+    const doSessionClearAll = () => {
+        setSessionClearAllLoading(true)
+
+        clusterSessionClearAllApi()
+            .then((data) => {
+                if (!data.ok) {
+                    return;
+                }
+
+                toast.info("Complete");
+            }).finally(() => {
+            setSessionClearAllLoading(false)
+        });
+    }
+    const doSessionClearOne = ({clusterId}) => {
+        clusterSessionClearOneApi({
+            clusterId: clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            toast.info("Complete");
+
+        }).finally(() => {
+        });
+    }
+
     return {
         doGetClusterList,
         removeClusterId,
         doSaveCluster,
         doGetCluster,
+        doSessionClearAll,
+        doSessionClearOne,
         clusters,
         clusterDetailLoading,
         clusterInfo,
         setClusterInfo,
         saveLoading,
         clustersLoading,
+        sessionClearAllLoading,
     }
 }
