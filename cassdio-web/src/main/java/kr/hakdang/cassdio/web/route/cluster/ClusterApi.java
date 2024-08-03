@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kr.hakdang.cassdio.common.CassdioConstants;
 import kr.hakdang.cassdio.core.domain.cluster.CassdioVersionChecker;
 import kr.hakdang.cassdio.core.domain.cluster.ClusterProvider;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +35,16 @@ public class ClusterApi {
 
     private final CassdioVersionChecker cassdioVersionChecker;
     private final ClusterProvider clusterProvider;
+    private final CqlSessionFactory cqlSessionFactory;
 
     public ClusterApi(
         CassdioVersionChecker cassdioVersionChecker,
-        ClusterProvider clusterProvider
+        ClusterProvider clusterProvider,
+        CqlSessionFactory cqlSessionFactory
     ) {
         this.cassdioVersionChecker = cassdioVersionChecker;
         this.clusterProvider = clusterProvider;
+        this.cqlSessionFactory = cqlSessionFactory;
     }
 
     @GetMapping("")
@@ -61,15 +65,43 @@ public class ClusterApi {
         return ApiResponse.ok(responseMap);
     }
 
-    @GetMapping("/{clusterId}")
-    public ApiResponse<Map<String, Object>> clusterDetail(
-        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
+    @PostMapping("/session/clear")
+    public ApiResponse<Map<String, Object>> clusterSessionAllClear(
     ) {
         Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("cluster", clusterProvider.findByIdWithoutCache(clusterId));
+
+        cqlSessionFactory.clearAll();
 
         return ApiResponse.ok(responseMap);
     }
+
+    @GetMapping("/{clusterId}")
+    public ApiResponse<Map<String, Object>> clusterDetail(
+        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId,
+        @RequestParam(required = false, defaultValue = "false") boolean withPassword
+    ) {
+        Map<String, Object> responseMap = new HashMap<>();
+        ClusterInfo info = clusterProvider.findByIdWithoutCache(clusterId);
+        if (!withPassword) {
+            info = info.toBuilder().password(null).build();
+        }
+
+        responseMap.put("cluster", info);
+
+        return ApiResponse.ok(responseMap);
+    }
+
+    @PostMapping("/{clusterId}/session/clear")
+    public ApiResponse<Map<String, Object>> clusterSessionOneClear(
+        @PathVariable(name = CassdioConstants.CLUSTER_ID_PATH) String clusterId
+    ) {
+        Map<String, Object> responseMap = new HashMap<>();
+
+        cqlSessionFactory.clear(clusterId);
+
+        return ApiResponse.ok(responseMap);
+    }
+
 
     @PostMapping("")
     public ApiResponse<Void> clusterRegister(

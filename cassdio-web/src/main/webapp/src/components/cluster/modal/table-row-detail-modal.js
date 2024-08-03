@@ -1,7 +1,17 @@
 import {useEffect} from "react";
 import {Modal, OverlayTrigger, Tooltip} from "react-bootstrap";
+import {toast} from "react-toastify";
 
 const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHeader}) => {
+
+    const handleCopyClipBoard = async (data) => {
+        try {
+            await navigator.clipboard.writeText(data);
+            await toast.info("Copied")
+        } catch (e) {
+            toast.error('Fail Copy');
+        }
+    };
 
     useEffect(() => {
         //show component
@@ -49,7 +59,7 @@ const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHead
                                             {rowDetailView[info.column_name]}
                                         </td>
                                         <td>
-                                            <a className={"btn btn-sm btn-outline-secondary"}>COPY</a>
+                                            <a className={"btn btn-sm btn-outline-secondary"} onClick={e => handleCopyClipBoard(rowDetailView[info.column_name])}>COPY</a>
                                         </td>
                                     </tr>
                                 )
