@@ -25,16 +25,18 @@ public class ClusterQueryRequest {
     private boolean trace = false;
 
     @Builder
-    public ClusterQueryRequest(String query, String cursor, int pageSize, int timeoutSeconds, boolean trace) {
+    public ClusterQueryRequest(String query, String cursor, int pageSize, int timeoutSeconds, int consistencyLevelProtocolCode, boolean trace) {
         this.query = query;
         this.cursor = cursor;
         this.pageSize = pageSize;
         this.timeoutSeconds = timeoutSeconds;
+        this.consistencyLevelProtocolCode = consistencyLevelProtocolCode;
         this.trace = trace;
     }
 
-    public QueryDTO.ClusterQueryCommanderArgs makeArgs() {
+    public QueryDTO.ClusterQueryCommanderArgs makeArgs(String keyspace) {
         return QueryDTO.ClusterQueryCommanderArgs.builder()
+            .keyspace(keyspace)
             .query(query)
             .cursor(cursor)
             .pageSize(pageSize)

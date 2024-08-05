@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * LocalCacheConfig
@@ -30,7 +29,7 @@ public class LocalCacheConfig {
                 .expireAfterWrite(cache.getDuration())
                 .build()
             ))
-            .collect(Collectors.toList());
+            .toList();
         cacheManager.setCaches(caches);
         return cacheManager;
     }

@@ -8,20 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * ClusterVersionCommanderTest
+ * ClusterVersionGetCommanderTest
  *
  * @author seungh0
  * @since 2024-07-26
  */
-class ClusterVersionCommanderTest extends IntegrationTest {
+class ClusterVersionGetCommanderTest extends IntegrationTest {
 
     @Autowired
-    private ClusterVersionCommander clusterVersionCommander;
+    private ClusterVersionGetCommander clusterVersionGetCommander;
 
     @Test
     void get_cassandra_version() {
         // when
-        Version version = clusterVersionCommander.getCassandraVersion(makeSession());
+        Version version = clusterVersionGetCommander.getCassandraVersion(CLUSTER_ID);
 
         // then
         assertThat(version).isNotNull();

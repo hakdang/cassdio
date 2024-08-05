@@ -1,35 +1,35 @@
 import {Link, useParams} from "react-router-dom";
-import useCassdio from "../../hooks/useCassdio";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import React, {useEffect, useState} from "react";
 import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
 import Spinner from "../../components/common/spinner";
 import {ByteFormatUtils} from "../../utils/byteFormat";
+import clusterCompactionHistoryApi from "../../remotes/clusterCompactionHistoryApi";
 
 const ClusterKeyspaceCompactionPage = () => {
 
     const routeParams = useParams();
-    const {errorCatch} = useCassdio();
 
     const [loading, setLoading] = useState(false);
     const [histories, setHistories] = useState([]);
 
-    useEffect(() => {
-        console.log(routeParams.keyspaceName)
-        setLoading(true)
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/compaction-history`,
-            params: {
-                keyspace: routeParams.keyspaceName
+    const clusterCompactionHistory = () => {
+        clusterCompactionHistoryApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
             }
-        }).then((response) => {
-            setHistories(response.data.result.histories)
-        }).catch((error) => {
-            errorCatch(error)
+
+            setHistories(data.result.histories)
         }).finally(() => {
             setLoading(false)
         });
+    }
+
+    useEffect(() => {
+        setLoading(true)
+        clusterCompactionHistory();
 
         return () => {
         };
@@ -40,7 +40,12 @@ const ClusterKeyspaceCompactionPage = () => {
             <ClusterKeyspaceBreadcrumb
                 clusterId={routeParams.clusterId}
                 keyspaceName={routeParams.keyspaceName}
-            />
+                active={"KEYSPACE_MONITORING"}
+            >
+                <li className={`breadcrumb-item active}`}>
+                    Monitoring
+                </li>
+            </ClusterKeyspaceBreadcrumb>
 
             <div
                 className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -68,14 +73,16 @@ const ClusterKeyspaceCompactionPage = () => {
                                 return (
                                     <tr key={infoIndex}>
                                         <td className={"text-center"}>
-                                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}`}
-                                                  className={"link-body-emphasis text-decoration-underline"}>
+                                            <Link
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}`}
+                                                className={"link-body-emphasis text-decoration-underline"}>
                                                 {compaction.keyspaceName}
                                             </Link>
                                         </td>
                                         <td className={"text-center"}>
-                                            <Link to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}/table/${compaction.columnFamilyName}`}
-                                                  className={"link-body-emphasis text-decoration-underline"}>
+                                            <Link
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${compaction.keyspaceName}/table/${compaction.columnFamilyName}`}
+                                                className={"link-body-emphasis text-decoration-underline"}>
                                                 {compaction.columnFamilyName}
                                             </Link>
                                         </td>

@@ -1,4 +1,4 @@
-package kr.hakdang.cassdio.core.domain.cluster;
+package kr.hakdang.cassdio.core.domain.cluster.node;
 
 import com.datastax.oss.driver.api.core.metadata.Node;
 import com.datastax.oss.driver.api.core.metadata.NodeState;

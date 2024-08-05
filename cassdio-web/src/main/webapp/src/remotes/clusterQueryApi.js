@@ -1,4 +1,4 @@
-import axiosInstance from "../utils/axiosUtils";
+import AxiosUtils from "utils/axiosUtils";
 
 export default async function clusterQueryApi(
     {clusterId, keyspaceName = null, query, cursor, queryOptions,}
@@ -9,7 +9,7 @@ export default async function clusterQueryApi(
             url = `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/query`;
         }
 
-        const response = await axiosInstance({
+        const response = await AxiosUtils.axiosInstance({
             method: "POST",
             url: url,
             data: {
@@ -22,8 +22,8 @@ export default async function clusterQueryApi(
             },
         })
 
-        return await response;
+        return await response.data;
     } catch (error) {
-        //TODO : error
+        return await error.response.data;
     }
 }

@@ -2,9 +2,9 @@ import {useEffect} from "react";
 
 import {Modal} from "react-bootstrap";
 import Spinner from "components/common/spinner";
-import useCluster from "../../../hooks/useCluster";
+import useCluster from "hooks/useCluster";
 
-const ClusterManageModal = ({show, handleClose, clusterId}) => {
+const ClusterManageModal = ({show, handleClose, clusterId, readonly = false}) => {
     const {
         doGetClusterList,
         removeClusterId,
@@ -53,7 +53,8 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                         <div className="col-6 mb-2">
                             <label htmlFor="clusterPort" className="form-label">Cluster Port</label>
                             <div className="input-group">
-                                <input type="number" className="form-control form-control-sm" id="clusterPort" placeholder=""
+                                <input type="number" className="form-control form-control-sm" id="clusterPort"
+                                       placeholder=""
                                        value={clusterInfo.port || 0}
                                        onChange={evt => setClusterInfo(t => {
                                            return {...t, port: evt.target.value}
@@ -110,7 +111,8 @@ const ClusterManageModal = ({show, handleClose, clusterId}) => {
                                         Password
                                     </label>
                                     <div className="input-group">
-                                        <input type="password" className="form-control form-control-sm" id="clusterPassword"
+                                        <input type="password" className="form-control form-control-sm"
+                                               id="clusterPassword"
                                                placeholder="Cluster Password"
                                                value={clusterInfo.password || ''}
                                                onChange={evt => setClusterInfo(t => {

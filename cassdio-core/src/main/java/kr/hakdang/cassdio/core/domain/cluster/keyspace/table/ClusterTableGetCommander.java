@@ -25,7 +25,9 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 @Service
 public class ClusterTableGetCommander extends BaseClusterCommander {
 
-    public CqlSessionSelectResult tableDetail(CqlSession session, TableDTO.ClusterTableGetArgs args) {
+    public CqlSessionSelectResult tableDetail(String clusterId, TableDTO.ClusterTableGetArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         int limit = 1;
         SimpleStatement statement = ClusterUtils.getSchemaTables(session, args.getKeyspace())
             .all()

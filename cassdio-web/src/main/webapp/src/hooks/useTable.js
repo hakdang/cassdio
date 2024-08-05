@@ -1,14 +1,14 @@
-import axios from "axios";
 import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
-import useCassdio from "hooks/useCassdio";
 import {CassdioUtils} from "utils/cassdioUtils";
+import clusterTableTruncateApi from "../remotes/clusterTableTruncateApi";
+import clusterTableDropApi from "../remotes/clusterTableDropApi";
+import clusterTableRowApi from "../remotes/clusterTableRowApi";
 
 export default function useTable() {
     const navigate = useNavigate();
     const routeParams = useParams();
-    const {errorCatch} = useCassdio();
 
     const [queryLoading, setQueryLoading] = useState(false)
 
@@ -18,15 +18,18 @@ export default function useTable() {
         }
         //TODO : progressbar
 
-        axios({
-            method: "DELETE",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/truncate`,
-            params: {},
-        }).then((response) => {
+        clusterTableTruncateApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+            tableName: routeParams.tableName,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
             toast.info("complete")
-            doGetTableList(null);
-        }).catch((error) => {
-            errorCatch(error);
+            doGetTableRows(null);
+
         }).finally(() => {
         })
     }
@@ -37,15 +40,17 @@ export default function useTable() {
 
         //TODO : progressbar
 
-        axios({
-            method: "DELETE",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}`,
-            params: {},
-        }).then((response) => {
+        clusterTableDropApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+            tableName: routeParams.tableName,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
             toast.info("complete")
             navigate(`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`)
-        }).catch((error) => {
-            errorCatch(error);
         }).finally(() => {
         })
     }
@@ -61,7 +66,7 @@ export default function useTable() {
     const [queryResult, setQueryResult] = useState(initQueryResult)
     const [nextCursor, setNextCursor] = useState('')
 
-    const doGetTableList = (cursor, setLoading) => {
+    const doGetTableRows = (cursor, setLoading) => {
         if (cursor === null) {
             setQueryResult(initQueryResult)
         }
@@ -71,25 +76,20 @@ export default function useTable() {
             setLoading(true)
         }
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/table/${routeParams.tableName}/row`,
-            params: {
-                pageSize: 50,
-                timeoutSeconds: 3,
-                cursor: cursor,
-            },
-        }).then((response) => {
-            setNextCursor(response.data.result.nextCursor)
+        clusterTableRowApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+            tableName: routeParams.tableName,
+            cursor: cursor,
+        }).then((data) => {
+            setNextCursor(data.result.nextCursor)
 
             setQueryResult({
-                rows: [...queryResult.rows, ...response.data.result.rows],
-                rowHeader: response.data.result.rowHeader,
-                columnList: response.data.result.columnList,
-                convertedRowHeader: CassdioUtils.convertRowHeader(response.data.result.columnList, response.data.result.rowHeader),
+                rows: [...queryResult.rows, ...data.result.rows],
+                rowHeader: data.result.rowHeader,
+                columnList: data.result.columnList,
+                convertedRowHeader: CassdioUtils.convertRowHeader(data.result.columnList, data.result.rowHeader),
             })
-        }).catch((error) => {
-            errorCatch(error);
         }).finally(() => {
             if (!setLoading) {
                 setQueryLoading(false);
@@ -102,7 +102,7 @@ export default function useTable() {
     return {
         doTableTruncate,
         doTableDrop,
-        doGetTableList,
+        doGetTableRows,
         queryLoading,
         queryResult,
         nextCursor

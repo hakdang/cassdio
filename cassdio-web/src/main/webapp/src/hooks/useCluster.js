@@ -1,27 +1,29 @@
-import axios from "axios";
-
-import useCassdio from "hooks/useCassdio";
 import {toast} from "react-toastify";
 import {useState} from "react";
 
-export default function useCluster() {
-    const {errorCatch} = useCassdio();
+import clusterListApi from "remotes/clusterListApi";
+import clusterDeleteApi from "remotes/clusterDeleteApi";
+import clusterDetailApi from "remotes/clusterDetailApi";
+import clusterSaveApi from "remotes/clusterSaveApi";
+import clusterSessionClearAllApi from "../remotes/clusterSessionResetAllApi";
+import clusterSessionClearOneApi from "../remotes/clusterSessionResetOneApi";
 
+export default function useCluster() {
     const [clustersLoading, setClustersLoading] = useState(false);
     const [clusters, setClusters] = useState([]);
     const [clusterDetailLoading, setClusterDetailLoading] = useState(false);
+    const [sessionClearAllLoading, setSessionClearAllLoading] = useState(false);
 
     const doGetClusterList = () => {
         setClustersLoading(true)
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster`,
-            params: {}
-        }).then((response) => {
-            setClusters(response.data.result.clusters)
-        }).catch((error) => {
-            errorCatch(error)
+        clusterListApi(
+        ).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            setClusters(data.result.clusters)
         }).finally(() => {
             setClustersLoading(false)
         });
@@ -32,15 +34,15 @@ export default function useCluster() {
             return;
         }
 
-        axios({
-            method: "DELETE",
-            url: `/api/cassandra/cluster/${clusterId}`,
-            params: {}
-        }).then((response) => {
+        clusterDeleteApi({
+            clusterId: clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
             toast.info("Complete");
             doGetClusterList();
-        }).catch((error) => {
-            errorCatch(error)
         }).finally(() => {
 
         });
@@ -90,30 +92,17 @@ export default function useCluster() {
 
         setSaveLoading(true);
 
-        let method = "POST"
-        let url = "/api/cassandra/cluster";
-        if (clusterId) {
-            method = "PUT";
-            url = `/api/cassandra/cluster/${clusterId}`;
-        }
+        clusterSaveApi({
+            clusterId,
+            clusterInfo
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
 
-        axios({
-            method: method,
-            url: url,
-            data: {
-                contactPoints: clusterInfo.contactPoints,
-                port: clusterInfo.port,
-                localDatacenter: clusterInfo.localDatacenter,
-                username: clusterInfo.username,
-                password: clusterInfo.password,
-                memo : clusterInfo.memo,
-            },
-        }).then((response) => {
             doGetClusterList();
             toast.info("Complete");
             handleClose();
-        }).catch((error) => {
-            errorCatch(error);
         }).finally(() => {
             setSaveLoading(false);
         })
@@ -122,21 +111,49 @@ export default function useCluster() {
     const doGetCluster = (clusterId) => {
         setClusterDetailLoading(true)
 
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}`,
-            params: {}
-        }).then((response) => {
-            const result = response.data.result.cluster;
+        clusterDetailApi({
+            clusterId: clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            const result = data.result.cluster;
             const clusterAuthCredentials = !!(result.username && result.password);
             setClusterInfo({
                 ...result,
                 clusterAuthCredentials: clusterAuthCredentials
             })
-        }).catch((error) => {
-            errorCatch(error)
         }).finally(() => {
             setClusterDetailLoading(false)
+        });
+    }
+
+    const doSessionClearAll = () => {
+        setSessionClearAllLoading(true)
+
+        clusterSessionClearAllApi()
+            .then((data) => {
+                if (!data.ok) {
+                    return;
+                }
+
+                toast.info("Complete");
+            }).finally(() => {
+            setSessionClearAllLoading(false)
+        });
+    }
+    const doSessionClearOne = ({clusterId}) => {
+        clusterSessionClearOneApi({
+            clusterId: clusterId
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            toast.info("Complete");
+
+        }).finally(() => {
         });
     }
 
@@ -145,11 +162,14 @@ export default function useCluster() {
         removeClusterId,
         doSaveCluster,
         doGetCluster,
+        doSessionClearAll,
+        doSessionClearOne,
         clusters,
         clusterDetailLoading,
         clusterInfo,
         setClusterInfo,
         saveLoading,
         clustersLoading,
+        sessionClearAllLoading,
     }
 }

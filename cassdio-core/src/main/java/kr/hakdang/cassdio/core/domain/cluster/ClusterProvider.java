@@ -1,5 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
+import kr.hakdang.cassdio.common.utils.IdGenerator;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfoArgs;
 import kr.hakdang.cassdio.core.domain.cluster.info.ClusterManager;
@@ -22,9 +23,11 @@ import java.util.List;
 public class ClusterProvider {
 
     private final ClusterManager clusterManager;
+    private final ClusterNameCommander clusterNameCommander;
 
-    public ClusterProvider(ClusterManager clusterManager) {
+    public ClusterProvider(ClusterManager clusterManager, ClusterNameCommander clusterNameCommander) {
         this.clusterManager = clusterManager;
+        this.clusterNameCommander = clusterNameCommander;
     }
 
     public List<ClusterInfo> findAll() {
@@ -45,12 +48,16 @@ public class ClusterProvider {
     }
 
     public void register(ClusterInfoArgs args) {
-        clusterManager.register(args);
+        String clusterId = IdGenerator.makeId();
+        String clusterName = clusterNameCommander.getClusterName(args.makeClusterConnector());
+
+        clusterManager.register(args.makeClusterInfo(clusterId, clusterName));
     }
 
     @CacheEvict(cacheNames = CacheType.CacheTypeNames.CLUSTER_DETAIL, key = "#clusterId")
     public void updateById(String clusterId, ClusterInfoArgs args) {
-        clusterManager.update(clusterId, args);
+        String clusterName = clusterNameCommander.getClusterName(args.makeClusterConnector());
+        clusterManager.update(clusterId, args.makeClusterInfo(clusterId, clusterName));
     }
 
     @CacheEvict(cacheNames = CacheType.CacheTypeNames.CLUSTER_DETAIL, key = "#clusterId")

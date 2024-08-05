@@ -29,7 +29,7 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
             .build();
 
         // when
-        ClusterUDTType sut = clusterUDTTypeGetCommander.getType(makeSession(), args);
+        ClusterUDTType sut = clusterUDTTypeGetCommander.getType(CLUSTER_ID, args);
 
         // then
         assertThat(sut.getTypeName()).isEqualTo("test_type_1");
@@ -48,7 +48,7 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
             .build();
 
         // when
-        assertThatThrownBy(() -> clusterUDTTypeGetCommander.getType(makeSession(), args))
+        assertThatThrownBy(() -> clusterUDTTypeGetCommander.getType(CLUSTER_ID, args))
             .isInstanceOf(ClusterUDTTypeNotFoundException.class);
     }
 
@@ -61,7 +61,7 @@ class ClusterUDTTypeGetCommanderTest extends IntegrationTest {
             .build();
 
         // when & then
-        assertThatThrownBy(() -> clusterUDTTypeGetCommander.getType(makeSession(), args))
+        assertThatThrownBy(() -> clusterUDTTypeGetCommander.getType(CLUSTER_ID, args))
             .isInstanceOf(ClusterUDTTypeNotFoundException.class);
     }
 

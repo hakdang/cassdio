@@ -1,21 +1,23 @@
-import useTable from "../../hooks/useTable";
-import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
+import {useParams} from "react-router-dom";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
-import DataRowItem from "../../components/cluster/data-row-item";
-import TableDetailModal from "../../components/cluster/modal/table-detail-modal";
-import TableDataManageModal from "../../components/cluster/modal/table-data-manage-modal";
-import TableExportModal from "../../components/cluster/modal/table-export-modal";
-import TableImportModal from "../../components/cluster/modal/table-import-modal";
-import TableRowDetailModal from "../../components/cluster/modal/table-row-detail-modal";
+
+import useTable from "hooks/useTable";
+
+import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
+
+import DataRowItem from "components/cluster/data-row-item";
+import TableDetailModal from "components/cluster/modal/table-detail-modal";
+import TableExportModal from "components/cluster/modal/table-export-modal";
+import TableImportModal from "components/cluster/modal/table-import-modal";
+import TableRowDetailModal from "components/cluster/modal/table-row-detail-modal";
 
 const ClusterTablePage = () => {
 
     const {
         doTableTruncate,
         doTableDrop,
-        doGetTableList,
+        doGetTableRows,
         queryLoading,
         queryResult,
         nextCursor,
@@ -25,7 +27,6 @@ const ClusterTablePage = () => {
     const [showDetail, setShowDetail] = useState(false);
     const [showExport, setShowExport] = useState(false);
     const [showImport, setShowImport] = useState(false);
-    const [showDataManage, setShowDataManage] = useState(false);
     const [showRowDetail, setShowRowDetail] = useState(false);
     const [tableName, setTableName] = useState('');
     const [moreQueryLoading, setMoreQueryLoading] = useState(false)
@@ -35,7 +36,7 @@ const ClusterTablePage = () => {
         //show component
         setTableName(routeParams.tableName);
 
-        doGetTableList(null)
+        doGetTableRows(null)
 
         return () => {
             //hide component
@@ -201,7 +202,7 @@ const ClusterTablePage = () => {
                 <div className={"row"}>
                     <div className="d-grid gap-2 col-6 mx-auto">
                         <button className="btn btn-outline-secondary" type="button"
-                                onClick={() => doGetTableList(nextCursor, setMoreQueryLoading)}>
+                                onClick={() => doGetTableRows(nextCursor, setMoreQueryLoading)}>
                             More
 
                             {
@@ -222,16 +223,6 @@ const ClusterTablePage = () => {
                     keyspaceName={routeParams.keyspaceName}
                     tableName={tableName}
                     handleClose={() => setShowDetail(false)}
-                />
-            }
-
-            {
-                showDataManage && <TableDataManageModal
-                    show={showDataManage}
-                    clusterId={routeParams.clusterId}
-                    keyspaceName={routeParams.keyspaceName}
-                    tableName={tableName}
-                    handleClose={() => setShowDataManage(false)}
                 />
             }
 

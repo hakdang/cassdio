@@ -1,4 +1,4 @@
-package kr.hakdang.cassdio.web.common.dto.response;
+package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import lombok.AccessLevel;

@@ -1,18 +1,14 @@
-import axiosInstance from "utils/axiosUtils";
+import AxiosUtils from "utils/axiosUtils";
 
-export default async function bootstrapApi(
-    {}
-) {
+export default async function bootstrapApi() {
     try {
-        const response = await axiosInstance({
+        const response = await AxiosUtils.axiosInstance({
             method: "GET",
             url: `/api/bootstrap`,
         });
 
-        console.log("bootstrap response : ", response);
-
-        return await response.data.result;
+        return await response.data;
     } catch (error) {
-        //TODO : error
+        return await error.response.data;
     }
 }

@@ -4,10 +4,8 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
-import kr.hakdang.cassdio.core.domain.cluster.info.ClusterInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -25,14 +23,6 @@ import java.util.List;
 @Service
 public class ClusterConnector {
 
-    private final ClusterProvider clusterProvider;
-
-    public ClusterConnector(
-        ClusterProvider clusterProvider
-    ) {
-        this.clusterProvider = clusterProvider;
-    }
-
     public List<InetSocketAddress> makeContactPoint(String contactPoints, int port) {
         String[] contactPointArr = StringUtils.split(contactPoints, ",");
 
@@ -45,10 +35,6 @@ public class ClusterConnector {
     }
 
     public CqlSession makeSession(ClusterConnection clusterConnection) {
-        return makeSession(clusterConnection, null);
-    }
-
-    public CqlSession makeSession(ClusterConnection clusterConnection, String keyspace) {
         CqlSessionBuilder builder = CqlSession.builder()
             .addContactPoints(makeContactPoint(clusterConnection.getContactPoints(), clusterConnection.getPort()))
             .withLocalDatacenter(clusterConnection.getLocalDatacenter());
@@ -59,30 +45,14 @@ public class ClusterConnector {
 
         builder.withConfigLoader(
             DriverConfigLoader.programmaticBuilder()
+//                .withDuration(DefaultDriverOption.HEARTBEAT_INTERVAL, Duration.ofSeconds(30))
+//                .withDuration(DefaultDriverOption.HEARTBEAT_TIMEOUT, Duration.ofSeconds(60))
+                .withInt(DefaultDriverOption.SESSION_LEAK_THRESHOLD, 0)
                 .withDuration(DefaultDriverOption.CONNECTION_INIT_QUERY_TIMEOUT, Duration.ofSeconds(5))
                 .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5))
                 .build()
         );
 
-        if (StringUtils.isNotBlank(keyspace)) {
-            builder.withKeyspace(keyspace);
-        }
         return builder.build();
-    }
-
-    public CqlSession makeSession(String clusterId) {
-        ClusterInfo info = clusterProvider.findById(clusterId);
-        if (info == null) {
-            throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
-        }
-        return makeSession(info.makeClusterConnector(), null);
-    }
-
-    public CqlSession makeSession(String clusterId, String keyspace) {
-        ClusterInfo info = clusterProvider.findById(clusterId);
-        if (info == null) {
-            throw new IllegalArgumentException(String.format("failed to load Cluster(%s)", clusterId));
-        }
-        return makeSession(info.makeClusterConnector(), keyspace);
     }
 }

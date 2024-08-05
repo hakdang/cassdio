@@ -24,7 +24,9 @@ import java.time.Duration;
 @Service
 public class ClusterTableRowCommander extends BaseClusterCommander {
 
-    public CqlSessionSelectResults rowSelect(CqlSession session, TableDTO.ClusterTableRowArgs args) {
+    public CqlSessionSelectResults rowSelect(String clusterId, TableDTO.ClusterTableRowArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = QueryBuilder.selectFrom(args.getKeyspace(), args.getTable())
             .all()
             .build()

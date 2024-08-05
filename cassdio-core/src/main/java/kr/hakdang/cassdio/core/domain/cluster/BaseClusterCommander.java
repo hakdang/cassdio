@@ -13,6 +13,7 @@ import com.datastax.oss.driver.internal.core.type.codec.MapCodec;
 import com.datastax.oss.driver.internal.core.util.Strings;
 import kr.hakdang.cassdio.common.utils.Jsons;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 public abstract class BaseClusterCommander {
+
+    @Autowired
+    protected CqlSessionFactory cqlSessionFactory;
 
     protected List<Map<String, Object>> convertRows(CqlSession session, ResultSet resultSet) {
         ColumnDefinitions definitions = resultSet.getColumnDefinitions();
@@ -47,40 +51,44 @@ public abstract class BaseClusterCommander {
             TypeCodec<Object> codec = codecRegistry.codecFor(definition.getType());
             Object value = codec.decode(row.getBytesUnsafe(i), row.protocolVersion());
 
-            String formatedValue;
-            if (codec instanceof MapCodec) {
-                DataType cqlType = codec.getCqlType();
-                DataType keyType = ((MapType) cqlType).getKeyType();
-                DataType valueType = ((MapType) cqlType).getValueType();
-                TypeCodec<Object> keyCodec = codecRegistry.codecFor(keyType);
-                TypeCodec<Object> valueCodec = codecRegistry.codecFor(valueType);
-                Map<Object, Object> valueMap = (Map<Object, Object>) value;
-                Map<String, String> convertedMap = new HashMap<>();
-                for (Map.Entry<Object, Object> entry : valueMap.entrySet()) {
-                    String key = keyCodec.format(entry.getKey());
-                    if (Strings.isQuoted(key)) {
-                        key = Strings.unquote(key);
-                    }
-
-                    String entryValue = valueCodec.format(entry.getValue());
-                    if (Strings.isQuoted(entryValue)) {
-                        entryValue = Strings.unquote(entryValue);
-                    }
-
-                    convertedMap.put(key, entryValue);
-                }
-
-                formatedValue = Jsons.toJson(convertedMap);
-            } else {
-                formatedValue = codec.format(value);
-                if (Strings.isQuoted(formatedValue)) {
-                    formatedValue = Strings.unquote(formatedValue);
-                }
-            }
+            String formatedValue = makeFormatedValue(codecRegistry, codec, value);
 
             result.put(name, formatedValue);
         }
 
         return result;
+    }
+
+    private static String makeFormatedValue(CodecRegistry codecRegistry, TypeCodec<Object> codec, Object value) {
+        if (codec instanceof MapCodec) {
+            DataType cqlType = codec.getCqlType();
+            DataType keyType = ((MapType) cqlType).getKeyType();
+            DataType valueType = ((MapType) cqlType).getValueType();
+            TypeCodec<Object> keyCodec = codecRegistry.codecFor(keyType);
+            TypeCodec<Object> valueCodec = codecRegistry.codecFor(valueType);
+            Map<Object, Object> valueMap = (Map<Object, Object>) value;
+            Map<String, String> convertedMap = new HashMap<>();
+            for (Map.Entry<Object, Object> entry : valueMap.entrySet()) {
+                String key = keyCodec.format(entry.getKey());
+                if (Strings.isQuoted(key)) {
+                    key = Strings.unquote(key);
+                }
+
+                String entryValue = valueCodec.format(entry.getValue());
+                if (Strings.isQuoted(entryValue)) {
+                    entryValue = Strings.unquote(entryValue);
+                }
+
+                convertedMap.put(key, entryValue);
+            }
+
+            return Jsons.toJson(convertedMap);
+        }
+
+        String formatedValue = codec.format(value);
+        if (Strings.isQuoted(formatedValue)) {
+            formatedValue = Strings.unquote(formatedValue);
+        }
+        return formatedValue;
     }
 }

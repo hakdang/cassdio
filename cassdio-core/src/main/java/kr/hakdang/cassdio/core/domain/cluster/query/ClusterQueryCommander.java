@@ -1,18 +1,18 @@
 package kr.hakdang.cassdio.core.domain.cluster.query;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.Version;
 import com.datastax.oss.driver.api.core.cql.ColumnDefinitions;
 import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 import com.datastax.oss.driver.api.core.cql.TraceEvent;
-import com.datastax.oss.driver.api.core.type.codec.registry.CodecRegistry;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import io.micrometer.common.util.StringUtils;
+import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterUtils;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ClusterQueryCommander
@@ -34,10 +32,31 @@ import java.util.Map;
 @Service
 public class ClusterQueryCommander extends BaseClusterCommander {
 
+    private final ClusterVersionEvaluator clusterVersionEvaluator;
+
+    public ClusterQueryCommander(
+        ClusterVersionEvaluator clusterVersionEvaluator
+    ) {
+        this.clusterVersionEvaluator = clusterVersionEvaluator;
+    }
+
+    public boolean useKeyspaceQueryCommandNotSupport(String clusterId) {
+        return clusterVersionEvaluator.isLessThan(clusterId, Version.V4_0_0);
+    }
+
+    public boolean useKeyspaceQueryCommandNotSupportWithSession(CqlSession session) {
+        return clusterVersionEvaluator.isLessThan(session, Version.V4_0_0);
+    }
+
     public QueryDTO.ClusterQueryCommanderResult execute(
-        CqlSession session,
+        String clusterId,
         QueryDTO.ClusterQueryCommanderArgs args
     ) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        if (useKeyspaceQueryCommandNotSupportWithSession(session) && StringUtils.isNotBlank(args.getKeyspace())) {
+            throw new NotSupportedCassandraVersionException("It is available in Cassandra version 4.0 and later");
+        }
+
         SimpleStatementBuilder simpleBuilder = SimpleStatement.builder(args.getQuery())
             .setPageSize(args.getPageSize())                    // 10 per pages
             .setTimeout(Duration.ofSeconds(args.getTimeoutSeconds()))  // 3s timeout
@@ -89,7 +108,6 @@ public class ClusterQueryCommander extends BaseClusterCommander {
             builder.queryTrace(cassdioQueryTrace);
         }
 
-        return
-            builder.build();
+        return builder.build();
     }
 }

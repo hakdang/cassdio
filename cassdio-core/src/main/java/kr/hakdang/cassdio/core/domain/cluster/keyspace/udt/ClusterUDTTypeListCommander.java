@@ -11,7 +11,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.udt.ClusterUDTTypeArgs.Cl
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
@@ -28,7 +27,9 @@ import static kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.Cassa
 @Service
 public class ClusterUDTTypeListCommander extends BaseClusterCommander {
 
-    public ClusterUDTTypeListResult listTypes(CqlSession session, ClusterUDTTypeListArgs args) {
+    public ClusterUDTTypeListResult listTypes(String clusterId, ClusterUDTTypeListArgs args) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = QueryBuilder
             .selectFrom(SYSTEM_SCHEMA.getKeyspaceName(), SYSTEM_SCHEMA_TYPES.getTableName())
             .all()
@@ -42,7 +43,7 @@ public class ClusterUDTTypeListCommander extends BaseClusterCommander {
         List<ClusterUDTType> types = StreamSupport.stream(rs.spliterator(), false)
             .limit(rs.getAvailableWithoutFetching())
             .map(ClusterUDTType::from)
-            .collect(Collectors.toList());
+            .toList();
 
         return ClusterUDTTypeListResult.of(types, rs.getExecutionInfo().getPagingState());
     }

@@ -1,10 +1,8 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
 import Spinner from "components/common/spinner";
-
-import ClusterManageModal from "./modal/cluster-manage-modal";
-import useCluster from "../../hooks/useCluster";
+import useCluster from "hooks/useCluster";
 
 const ClusterList = () => {
 
@@ -35,82 +33,53 @@ const ClusterList = () => {
                 <h2 className="h2">Clusters</h2>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group me-2">
-                        <button type="button" className="btn btn-sm btn-outline-secondary"
-                                onClick={e => setShowClusterModal(true)}>
-                            New Cluster
-                        </button>
+                        <Link to={`/admin/cluster`} className="btn btn-sm btn-outline-secondary">
+                            New
+                        </Link>
                     </div>
                 </div>
             </div>
 
-            <Spinner loading={clustersLoading}>
-                <div className="table-responsive small">
-                    <table className="table table-sm table-hover">
-                        <thead>
-                        <tr className={"table-dark"}>
-                            <th className={"text-center"} scope="col">#</th>
-                            <th className={"text-center"} scope="col">Cluster Id</th>
-                            <th className={"text-center"} scope="col">Cluster Name</th>
-                            <th className={"text-center"} scope="col">ContactPoints</th>
-                            <th className={"text-center"} scope="col">Port</th>
-                            <th className={"text-center"} scope="col">Local Datacenter</th>
-                        </tr>
-                        </thead>
-                        <tbody className="table-group-divider">
-                        {
-                            (clusters && clusters.length > 0) ? clusters.map((info, infoIndex) => {
+            <div className="row g-4">
+                <Spinner loading={clustersLoading}>
+                    {
+                        (clusters && clusters.length > 0) ? clusters.map((info, infoIndex) => {
                                 return (
-                                    <tr key={infoIndex}>
-                                        <td className={"text-center"}>
-                                            <a className={"btn btn-sm btn-outline-warning"}
-                                               onClick={e => {
-                                                   setDetailClusterId(info.clusterId);
-                                                   setShowClusterModal(true);
-                                               }}>
-                                                <i className="bi bi-pencil-fill"></i>
-                                            </a>
-                                            <a className={"btn btn-sm btn-outline-danger"}
-                                               onClick={e => {
-                                                   removeClusterId(info.clusterId);
-                                               }}>
-                                                <i className="bi bi-trash"></i>
-                                            </a>
-                                        </td>
-                                        <td className={"text-center"}>
-                                            <Link
-                                                className={"text-decoration-none"}
-                                                to={`/cluster/${info.clusterId}`}>
-                                                {info.clusterId}
-                                            </Link>
-                                        </td>
-                                        <td className={"text-center"}>
-                                            <Link
-                                                className={"text-decoration-none"}
-                                                to={`/cluster/${info.clusterId}`}>
-                                                {info.clusterName}
-                                            </Link>
-                                        </td>
-                                        <td className={"text-center text-truncate"}>{info.contactPoints}</td>
-                                        <td className={"text-center"}>{info.port}</td>
-                                        <td className={"text-center"}>{info.localDatacenter}</td>
-                                    </tr>
-                                )
-                            }) : <tr>
-                                <td className={"text-center"} colSpan={6}>No Data</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </Spinner>
+                                    <div className={"col-md-4 col-sm-12"} key={`clusters${infoIndex}`}>
+                                        <div className="card">
+                                            <div className="card-body">
+                                            <h4 className="card-title">
+                                                <Link
+                                                    className={"text-decoration-none link-body-emphasis"}
+                                                    to={`/cluster/${info.clusterId}`}>
+                                                    {info.clusterName}
+                                                </Link>
+                                            </h4>
+                                            <h6 className="card-subtitle mb-2 text-body-secondary">Cluster Id
+                                                : {info.clusterId}</h6>
+                                            <p className="card-text text-truncate">{info.memo}</p>
 
-            {
-                showClusterModal && <ClusterManageModal
-                    show={showClusterModal}
-                    clusterId={detailClusterId}
-                    handleClose={() => closeClusterModal()}/>
-            }
+                                            <Link to={`/cluster/${info.clusterId}`}
+                                                  className="btn btn-primary btn-sm">
+                                                Go To
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                            }) :
+                            <div className={"col"}>
+                                <p>
+                                    No Data
 
+                                    <Link to={`/admin/cluster`} className={`ms-2 btn btn-sm btn-outline-primary`}>
+                                        Go to registration
+                                    </Link>
+                                </p>
+                            </div>
+                    }
+                </Spinner>
+            </div>
         </>
     )
 }

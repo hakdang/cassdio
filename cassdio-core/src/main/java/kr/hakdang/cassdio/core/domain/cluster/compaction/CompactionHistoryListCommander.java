@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -24,11 +23,14 @@ import java.util.stream.StreamSupport;
 @Service
 public class CompactionHistoryListCommander extends BaseClusterCommander {
 
-    public CompactionHistoryListResult getCompactionHistories(CqlSession session, String keyspace) {
+    public CompactionHistoryListResult getCompactionHistories(String clusterId, String keyspace) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement = QueryBuilder
             .selectFrom(CassandraSystemKeyspace.SYSTEM.getKeyspaceName(), CassandraSystemTable.SYSTEM_COMPACTION_HISTORY.getTableName())
             .all()
-            .build();
+            .build()
+            .setKeyspace(keyspace);
 
         ResultSet rs = session.execute(statement);
 
@@ -36,7 +38,7 @@ public class CompactionHistoryListCommander extends BaseClusterCommander {
             .map(CompactionHistory::from)
             .filter(history -> StringUtils.isBlank(keyspace) || history.getKeyspaceName().equals(keyspace))
             .sorted(Comparator.comparing(CompactionHistory::getCompactedAt).reversed())
-            .collect(Collectors.toList());
+            .toList();
 
         return CompactionHistoryListResult.builder()
             .histories(historyList)

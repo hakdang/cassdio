@@ -32,11 +32,13 @@ import static java.util.Collections.emptyList;
 @Service
 public class ClusterTableColumnCommander extends BaseClusterCommander {
 
-    public CqlSessionSelectResults columnList(CqlSession session, String keyspace, String table) {
-        return columnList(session, keyspace, table, emptyList());
+    public CqlSessionSelectResults columnList(String clusterId, String keyspace, String table) {
+        return columnList(clusterId, keyspace, table, emptyList());
     }
 
-    public CqlSessionSelectResults columnList(CqlSession session, String keyspace, String table, List<String> columnList) {
+    public CqlSessionSelectResults columnList(String clusterId, String keyspace, String table, List<String> columnList) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
         SimpleStatement statement;
 
         Select select = getColumnTable(session, keyspace)

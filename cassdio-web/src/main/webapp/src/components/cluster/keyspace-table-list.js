@@ -1,8 +1,7 @@
 import {Link} from "react-router-dom";
 import TableDetailModal from "./modal/table-detail-modal";
-import {useEffect, useState} from "react";
-import axios from "axios";
-import useCassdio from "../../hooks/useCassdio";
+import React, {useEffect, useState} from "react";
+import clusterTableListApi from "remotes/clusterTableListApi";
 
 const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
     const [moreLoading, setMoreLoading] = useState(false);
@@ -12,22 +11,21 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
     const [rows, setRows] = useState(tableList.rows || []);
     const [nextCursor, setNextCursor] = useState(tableList.nextCursor);
 
-    const {errorCatch} = useCassdio();
-
     const moreList = (cursor) => {
         setMoreLoading(true)
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table`,
-            params: {
-                cursor: cursor
-            }
-        }).then((response) => {
-            setRows([...rows, ...response.data.result.tableList.rows]);
-            setNextCursor(response.data.result.tableList.nextCursor);
 
-        }).catch((error) => {
-            errorCatch(error)
+        clusterTableListApi({
+            clusterId: clusterId,
+            keyspaceName: keyspaceName,
+            cursor: cursor,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            setRows([...rows, ...data.result.tableList.rows]);
+            setNextCursor(data.result.tableList.nextCursor);
+
         }).finally(() => {
             setMoreLoading(false)
         });
@@ -43,7 +41,7 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
     }, []);
 
     return (
-        <div className={"overflow-y-auto"} style={{maxHeight:"350px"}}>
+        <div className={"overflow-y-auto"} style={{maxHeight: "350px"}}>
             <ul className="list-group ">
                 {
                     rows && rows.length <= 0 ? <>
@@ -61,7 +59,7 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                                             <Link
                                                 className={"link-body-emphasis text-decoration-none"}
                                                 to={`/cluster/${clusterId}/keyspace/${keyspaceName}/table/${info.table_name}`}>
-                                                {info.table_name}
+                                                <i className="bi bi-table"></i> {info.table_name}
                                             </Link>
                                         </div>
                                         {info.comment}

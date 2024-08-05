@@ -1,28 +1,25 @@
-import axios from "axios";
-
-import useCassdio from "hooks/useCassdio";
 import {useState} from "react";
+import clusterKeyspaceNameListApi from "remotes/clusterKeyspaceNameListApi";
 
 export default function useKeyspace() {
-    const {errorCatch} = useCassdio();
-
     const [keyspaceNamesLoading, setKeyspaceNamesLoading] = useState(false);
     const [keyspaceGeneralNames, setKeyspaceGeneralNames] = useState([]);
     const [keyspaceSystemNames, setKeyspaceSystemNames] = useState([]);
 
     const doGetKeyspaceNames = (clusterId, cacheEvict) => {
         setKeyspaceNamesLoading(true);
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${clusterId}/keyspace-name`,
-            params: {
-                cacheEvict: cacheEvict
+        clusterKeyspaceNameListApi({
+            clusterId,
+            cacheEvict,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
             }
-        }).then((response) => {
+
             const userCreatedList = [];
             const systemCreatedList = [];
 
-            const tempKeyspaceList = response.data.result.keyspaceNameList;
+            const tempKeyspaceList = data.result.keyspaceNameList;
 
             for (const ele of tempKeyspaceList) {
                 if (ele.systemKeyspace) {
@@ -33,13 +30,10 @@ export default function useKeyspace() {
             }
             setKeyspaceGeneralNames(userCreatedList);
             setKeyspaceSystemNames(systemCreatedList);
-        }).catch((error) => {
-            errorCatch(error)
         }).finally(() => {
             setKeyspaceNamesLoading(false);
         });
     }
-
 
     return {
         doGetKeyspaceNames,

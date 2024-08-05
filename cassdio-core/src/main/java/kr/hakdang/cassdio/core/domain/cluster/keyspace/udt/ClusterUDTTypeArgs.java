@@ -13,6 +13,7 @@ import lombok.ToString;
  * @author seungh0
  * @since 2024-07-06
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClusterUDTTypeArgs {
 
     @ToString

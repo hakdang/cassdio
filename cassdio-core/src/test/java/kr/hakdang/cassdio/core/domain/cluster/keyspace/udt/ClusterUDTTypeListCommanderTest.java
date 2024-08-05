@@ -27,7 +27,7 @@ class ClusterUDTTypeListCommanderTest extends IntegrationTest {
             .build();
 
         // when
-        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(makeSession(), args);
+        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(CLUSTER_ID, args);
 
         // then
         assertThat(sut.getTypes()).hasSize(1);
@@ -48,7 +48,7 @@ class ClusterUDTTypeListCommanderTest extends IntegrationTest {
             .build();
 
         // when
-        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(makeSession(), args);
+        ClusterUDTTypeListResult sut = clusterUDTTypeListCommander.listTypes(CLUSTER_ID, args);
 
         // then
         assertThat(sut.getTypes()).isEmpty();

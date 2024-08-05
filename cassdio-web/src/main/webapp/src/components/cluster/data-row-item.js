@@ -7,16 +7,16 @@ export default function DataRowItem(props) {
 
     const [renderData, setRenderData] = useState();
 
-    function isJson(item) {
-        let value = typeof item !== "string" ? JSON.stringify(item) : item;
-        try {
-            value = JSON.parse(value);
-        } catch (e) {
-            return false;
-        }
-
-        return typeof value === "object" && value !== null;
-    }
+    // function isJson(item) {
+    //     let value = typeof item !== "string" ? JSON.stringify(item) : item;
+    //     try {
+    //         value = JSON.parse(value);
+    //     } catch (e) {
+    //         return false;
+    //     }
+    //
+    //     return typeof value === "object" && value !== null;
+    // }
 
     const handleCopyClipBoard = async (data) => {
         try {

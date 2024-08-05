@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.query;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
-import com.datastax.oss.driver.api.core.cql.QueryTrace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,6 +17,7 @@ import java.util.Map;
  * @author akageun
  * @since 2024-07-25
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QueryDTO {
 
     @Getter
@@ -38,7 +38,7 @@ public class QueryDTO {
             String cursor,
             Integer pageSize,
             Integer timeoutSeconds,
-            int consistencyLevelProtocolCode,
+            Integer consistencyLevelProtocolCode,
             boolean trace
         ) {
             if (pageSize == null || pageSize <= 0) {
@@ -57,15 +57,17 @@ public class QueryDTO {
                 throw new RuntimeException("timeout 60 over");
             }
 
-            DefaultConsistencyLevel level = DefaultConsistencyLevel.fromCode(consistencyLevelProtocolCode);
-
             this.keyspace = keyspace;
             this.query = query;
             this.cursor = cursor;
             this.pageSize = pageSize;
             this.timeoutSeconds = timeoutSeconds;
-            this.consistencyLevel = level;
+
             this.trace = trace;
+
+            if (consistencyLevelProtocolCode != null) {
+                this.consistencyLevel = DefaultConsistencyLevel.fromCode(consistencyLevelProtocolCode);
+            }
         }
     }
 

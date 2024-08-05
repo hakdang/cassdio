@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-function errorCatch(error) {
+const errorCatch = (error) => {
     if (axios.isAxiosError(error)) {
         const {message} = error;
         const {method, url} = error.config;
@@ -71,4 +71,6 @@ function errorCatch(error) {
     }
 }
 
-export default axiosInstance;
+export default {
+    axiosInstance,
+};

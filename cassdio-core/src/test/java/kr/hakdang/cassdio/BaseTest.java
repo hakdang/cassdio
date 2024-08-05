@@ -15,4 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @ExtendWith(SpringExtension.class)
 public abstract class BaseTest {
+
+    protected static final String CLUSTER_ID = "12345";
 }

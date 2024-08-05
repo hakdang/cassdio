@@ -1,18 +1,17 @@
-import {Link, useParams} from "react-router-dom";
-import useCassdio from "../../hooks/useCassdio";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
-import ClusterKeyspaceBreadcrumb from "../../components/cluster/cluster-keyspace-breadcrumb";
-import Spinner from "../../components/common/spinner";
-import {CassdioUtils} from "../../utils/cassdioUtils";
-import KeyspaceTableList from "../../components/cluster/keyspace-table-list";
+import {Link, useParams} from "react-router-dom";
+
+import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-breadcrumb";
+import Spinner from "components/common/spinner";
+import {CassdioUtils} from "utils/cassdioUtils";
+import KeyspaceTableList from "components/cluster/keyspace-table-list";
+import clusterKeyspaceDetailApi from "remotes/clusterKeyspaceDetailApi";
 
 const ClusterKeyspacePage = () => {
 
-
     const routeParams = useParams();
-    const {errorCatch} = useCassdio();
 
+    const [queryEditorSupport, setQueryEditorSupport] = useState(false);
     const [detailLoading, setDetailLoading] = useState(false);
     const [keyspaceDescribe, setKeyspaceDescribe] = useState('');
     const [keyspaceDetail, setKeyspaceDetail] = useState({
@@ -21,27 +20,31 @@ const ClusterKeyspacePage = () => {
     });
     const [tableList, setTableList] = useState({});
 
-    useEffect(() => {
-        //show component
-        setKeyspaceDescribe('');
+    const getKeyspaceDetail = () => {
         setDetailLoading(true)
-        axios({
-            method: "GET",
-            url: `/api/cassandra/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}`,
-            params: {
-                withTableList: true,
+        clusterKeyspaceDetailApi({
+            clusterId: routeParams.clusterId,
+            keyspaceName: routeParams.keyspaceName,
+            withTableList: true,
+        }).then((data) => {
+            if (!data.ok) {
+                return;
             }
-        }).then((response) => {
-            setKeyspaceDescribe(response.data.result.describe)
-            setKeyspaceDetail(response.data.result.detail);
 
-            setTableList(response.data.result.tableList)
+            setKeyspaceDescribe(data.result.describe)
+            setKeyspaceDetail(data.result.detail);
+            setQueryEditorSupport(data.result.queryEditorSupport);
+            setTableList(data.result.tableList)
 
-        }).catch((error) => {
-            errorCatch(error)
         }).finally(() => {
             setDetailLoading(false)
         });
+    }
+
+    useEffect(() => {
+        //show component
+        setKeyspaceDescribe('');
+        getKeyspaceDetail();
 
         return () => {
             //hide component
@@ -65,10 +68,14 @@ const ClusterKeyspacePage = () => {
                 </h2>
                 <div className="btn-toolbar mb-2 mb-md-0">
                     <div className="btn-group me-2">
-                        <Link role="button" className="btn btn-sm btn-outline-secondary"
-                         to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`}>
-                            <i className="bi bi-journal-code"></i> Query
-                        </Link>
+                        {
+                            queryEditorSupport &&
+                            <Link role="button" className="btn btn-sm btn-outline-secondary"
+                                  to={`/cluster/${routeParams.clusterId}/keyspace/${routeParams.keyspaceName}/query`}>
+                                <i className="bi bi-journal-code"></i> Query
+                            </Link>
+                        }
+
                         {/*<button type="button" className="btn btn-sm btn-outline-secondary">Export</button>*/}
                     </div>
                     {/*<button type="button"*/}

@@ -7,13 +7,13 @@ import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import kr.hakdang.cassdio.common.error.NotSupportedCassandraVersionException;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
-import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionCommander;
+import kr.hakdang.cassdio.core.domain.cluster.ClusterVersionEvaluator;
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionFactory;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
@@ -25,15 +25,19 @@ import java.util.stream.StreamSupport;
 @Service
 public class ClusterClientListCommander extends BaseClusterCommander {
 
-    private final ClusterVersionCommander clusterVersionCommander;
+    private final ClusterVersionEvaluator clusterVersionEvaluator;
 
-    public ClusterClientListCommander(ClusterVersionCommander clusterVersionCommander) {
-        this.clusterVersionCommander = clusterVersionCommander;
+    public ClusterClientListCommander(
+        ClusterVersionEvaluator clusterVersionEvaluator,
+        CqlSessionFactory cqlSessionFactory
+    ) {
+        this.clusterVersionEvaluator = clusterVersionEvaluator;
+        this.cqlSessionFactory = cqlSessionFactory;
     }
 
-    public ClusterClientListResult getClients(CqlSession session) {
-        Version version = clusterVersionCommander.getCassandraVersion(session);
-        if (version.compareTo(Version.V4_0_0) < 0) {
+    public ClusterClientListResult getClients(String clusterId) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+        if (clusterVersionEvaluator.isLessThan(clusterId, Version.V4_0_0)) {
             throw new NotSupportedCassandraVersionException("It is available in Cassandra version 4.0 and later");
         }
 
@@ -46,7 +50,7 @@ public class ClusterClientListCommander extends BaseClusterCommander {
 
         List<ClusterClient> clients = StreamSupport.stream(rs.spliterator(), false)
             .map(ClusterClient::from)
-            .collect(Collectors.toList());
+            .toList();
 
         return ClusterClientListResult.builder()
             .clients(clients)
