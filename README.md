@@ -45,9 +45,9 @@ Apache Cassandra databases, offering excellent functionality and user convenienc
 ### Installation
 
 ```
-wget https://github.com/hakdang/cassdio/releases/download/v0.0.2/cassdio-0.0.2.jar
+wget https://github.com/hakdang/cassdio/releases/download/v0.1.0/cassdio-0.1.0.jar
 
-java -jar ./cassdio-0.0.2.jar
+java -jar ./cassdio-0.1.0.jar
 ```
 
 ### Browser
