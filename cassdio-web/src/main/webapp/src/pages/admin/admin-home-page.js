@@ -11,10 +11,10 @@ const AdminHomePage = () => {
 
             <div className={"row"}>
                 <div className={"col-sm-12 col-md-4"}>
-                    <div className="card">
+                    <div className="card  border-dark ">
                         <div className="card-body">
                             <h5 className="card-title">Cluster Manage</h5>
-                            <Link to={`/admin/cluster`} className="btn btn-primary">Go To</Link>
+                            <Link to={`/admin/cluster`} className="btn btn-outline-danger btn-sm">Go To</Link>
                         </div>
                     </div>
                 </div>

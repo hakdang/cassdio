@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 
-import CassdioSidebar from "../components/layout/cassdio-sidebar";
-import ClusterList from "../components/cluster/cluster-list";
-import HomeSidebarLink from "../components/home-sidebar-link";
+import CassdioSidebar from "components/layout/cassdio-sidebar";
+import ClusterList from "components/cluster/cluster-list";
+import HomeSidebarLink from "components/home-sidebar-link";
 
 const CassdioHomePage = () => {
 
