@@ -45,9 +45,9 @@ Apache Cassandra databases, offering excellent functionality and user convenienc
 ### Installation
 
 ```
-wget https://github.com/hakdang/cassdio/releases/download/v0.1.0/cassdio-0.1.0.jar
+https://github.com/hakdang/cassdio/releases/latest/download/cassdio.jar
 
-java -jar ./cassdio-0.1.0.jar
+java -jar ./cassdio.jar
 ```
 
 ### Browser
@@ -56,7 +56,7 @@ java -jar ./cassdio-0.1.0.jar
 
 ### Jar Build Command
 
-> ./gradlew :clean :cassdio-web:build -Pfrontend=true
+> ./gradlew :cassdio-core:clean  :cassdio-web:clean :cassdio-web:build -Pfrontend=true
 
 [//]: # (## Environment)
 
