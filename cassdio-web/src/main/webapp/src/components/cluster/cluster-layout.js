@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {Link, Outlet, useParams} from "react-router-dom";
 
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import CassdioSidebar from "components/layout/cassdio-sidebar";
 import useKeyspace from "hooks/useKeyspace";
 
-const ClusterLayout = ({}) => {
+const ClusterLayout = () => {
     const routeParams = useParams();
 
-    const [clusterId, setClusterId] = useState(``)
     const {
         doGetKeyspaceNames,
         keyspaceNamesLoading,
@@ -16,16 +15,14 @@ const ClusterLayout = ({}) => {
         keyspaceSystemNames,
     } = useKeyspace();
 
-
     useEffect(() => {
         //show component
-        setClusterId(routeParams.clusterId);
         doGetKeyspaceNames(routeParams.clusterId, false);
 
         return () => {
             //hide component
         };
-    }, [clusterId]);
+    }, [routeParams.clusterId, doGetKeyspaceNames]);
 
     return (
         <div className="container-fluid h-100">
@@ -36,21 +33,21 @@ const ClusterLayout = ({}) => {
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}`}>
+                                to={`/cluster/${routeParams.clusterId}`}>
                                 <i className="bi bi-house"></i> Dashboard
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/query`}>
+                                to={`/cluster/${routeParams.clusterId}/query`}>
                                 <i className="bi bi-journal-code"></i> Query Editor
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link
                                 className={`nav-link d-flex align-items-center gap-2 link-body-emphasis text-decoration-none`}
-                                to={`/cluster/${clusterId}/monitoring/nodes`}>
+                                to={`/cluster/${routeParams.clusterId}/monitoring/nodes`}>
                                 <i className="bi bi-eye"></i> Monitoring
                             </Link>
                         </li>
@@ -73,9 +70,11 @@ const ClusterLayout = ({}) => {
 
                     <h6 className="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary ">
                         <span>Keyspace</span>
-                        <a className="link-danger"
-                           role={"button"}
-                           onClick={e => doGetKeyspaceNames(routeParams.clusterId, true)}>
+                        <Link className="link-danger"
+                              role={"button"}
+                              onClick={e => doGetKeyspaceNames(routeParams.clusterId, true)}
+                              to="{() => false}"
+                        >
 
                             <OverlayTrigger placement="top" overlay={
                                 <Tooltip id="tooltip">
@@ -84,9 +83,7 @@ const ClusterLayout = ({}) => {
                             }>
                                 <i className="bi bi-arrow-clockwise fs-5"></i>
                             </OverlayTrigger>
-
-
-                        </a>
+                        </Link>
                     </h6>
                     <ul className="nav flex-column">
                         {
@@ -100,7 +97,7 @@ const ClusterLayout = ({}) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>
@@ -130,7 +127,7 @@ const ClusterLayout = ({}) => {
                                     return (
                                         <li className="nav-item" key={`sidebarKeyspace${infoIndex}`}>
                                             <Link
-                                                to={`/cluster/${clusterId}/keyspace/${info.keyspaceName}`}
+                                                to={`/cluster/${routeParams.clusterId}/keyspace/${info.keyspaceName}`}
                                                 className={`nav-link d-flex align-items-center link-body-emphasis text-decoration-none gap-2`}>
                                                 <i className="bi bi-database"></i> {info.keyspaceName}
                                             </Link>

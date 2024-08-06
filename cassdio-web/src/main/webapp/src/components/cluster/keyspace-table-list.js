@@ -65,13 +65,14 @@ const KeyspaceTableList = ({clusterId, keyspaceName, tableList}) => {
                                         {info.comment}
                                     </div>
                                     <div className={"btn-group btn-group-sm"}>
-                                        <a className={"btn btn-sm btn-outline-primary"} role={"button"}
-                                           onClick={() => {
-                                               setTableName(info.table_name);
-                                               setShowDetail(true);
-                                           }}>
+                                        <button
+                                            className={"btn btn-sm btn-outline-primary"}
+                                            onClick={() => {
+                                                setTableName(info.table_name);
+                                                setShowDetail(true);
+                                            }}>
                                             Detail
-                                        </a>
+                                        </button>
                                     </div>
                                 </li>
                             ))}

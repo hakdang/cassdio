@@ -4,15 +4,15 @@ import ClusterKeyspaceBreadcrumb from "components/cluster/cluster-keyspace-bread
 import Spinner from "components/common/spinner";
 import clusterKeyspaceListApi from "remotes/clusterKeyspaceListApi";
 
-const ClusterDashboardPage = ({}) => {
+const ClusterDashboardPage = () => {
 
     const routeParams = useParams();
-    const [clusterId, setClusterId] = useState(``)
 
     const [keyspaceList, setKeyspaceList] = useState([]);
     const [keyspaceLoading, setKeyspaceLoading] = useState(false);
 
     const getKeyspaceList = () => {
+        setKeyspaceLoading(true)
         clusterKeyspaceListApi({
             clusterId: routeParams.clusterId,
         }).then((data) => {
@@ -28,15 +28,12 @@ const ClusterDashboardPage = ({}) => {
 
     useEffect(() => {
         //show component
-        setClusterId(routeParams.clusterId);
-        setKeyspaceLoading(true)
-
         getKeyspaceList();
 
         return () => {
             //hide component
         };
-    }, [clusterId]);
+    }, [routeParams.clusterId, getKeyspaceList]);
 
     return (
         <>

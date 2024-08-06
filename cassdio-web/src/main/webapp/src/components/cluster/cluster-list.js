@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {Link} from "react-router-dom";
 
 import Spinner from "components/common/spinner";
@@ -6,15 +6,7 @@ import useCluster from "hooks/useCluster";
 
 const ClusterList = () => {
 
-    const {doGetClusterList, removeClusterId, clusters, clustersLoading} = useCluster();
-
-    const [showClusterModal, setShowClusterModal] = useState(false);
-    const [detailClusterId, setDetailClusterId] = useState(null);
-
-    const closeClusterModal = () => {
-        setShowClusterModal(false)
-        setDetailClusterId(null);
-    }
+    const {doGetClusterList, clusters, clustersLoading} = useCluster();
 
     useEffect(() => {
         //show component
@@ -24,7 +16,7 @@ const ClusterList = () => {
         return () => {
             //hide component
         };
-    }, []);
+    }, [doGetClusterList]);
 
     return (
         <>
@@ -48,25 +40,25 @@ const ClusterList = () => {
                                     <div className={"col-md-4 col-sm-12"} key={`clusters${infoIndex}`}>
                                         <div className="card">
                                             <div className="card-body">
-                                            <h4 className="card-title">
-                                                <Link
-                                                    className={"text-decoration-none link-body-emphasis"}
-                                                    to={`/cluster/${info.clusterId}`}>
-                                                    {info.clusterName}
-                                                </Link>
-                                            </h4>
-                                            <h6 className="card-subtitle mb-2 text-body-secondary">Cluster Id
-                                                : {info.clusterId}</h6>
-                                            <p className="card-text text-truncate">{info.memo}</p>
+                                                <h4 className="card-title">
+                                                    <Link
+                                                        className={"text-decoration-none link-body-emphasis"}
+                                                        to={`/cluster/${info.clusterId}`}>
+                                                        {info.clusterName}
+                                                    </Link>
+                                                </h4>
+                                                <h6 className="card-subtitle mb-2 text-body-secondary">Cluster Id
+                                                    : {info.clusterId}</h6>
+                                                <p className="card-text text-truncate">{info.memo}</p>
 
-                                            <Link to={`/cluster/${info.clusterId}`}
-                                                  className="btn btn-primary btn-sm">
-                                                Go To
-                                            </Link>
+                                                <Link to={`/cluster/${info.clusterId}`}
+                                                      className="btn btn-primary btn-sm">
+                                                    Go To
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
+                                )
                             }) :
                             <div className={"col"}>
                                 <p>

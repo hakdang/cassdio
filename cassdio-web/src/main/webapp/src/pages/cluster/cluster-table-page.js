@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 
 import useTable from "hooks/useTable";
@@ -105,8 +105,8 @@ const ClusterTablePage = () => {
                             <i className="bi bi-three-dots"></i>
                         </button>
                         <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" role={"button"} onClick={doTableTruncate}>Truncate</a></li>
-                            <li><a className="dropdown-item" role={"button"} onClick={doTableDrop}>Drop</a></li>
+                            <li><Link className="dropdown-item" role={"button"} onClick={doTableTruncate} to="{() => false}">Truncate</Link></li>
+                            <li><Link className="dropdown-item" role={"button"} onClick={doTableDrop} to="{() => false}">Drop</Link></li>
                         </ul>
                     </div>
                 </div>

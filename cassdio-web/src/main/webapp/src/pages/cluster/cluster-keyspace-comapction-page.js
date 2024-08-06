@@ -13,6 +13,7 @@ const ClusterKeyspaceCompactionPage = () => {
     const [histories, setHistories] = useState([]);
 
     const clusterCompactionHistory = () => {
+        setLoading(true)
         clusterCompactionHistoryApi({
             clusterId: routeParams.clusterId,
             keyspaceName: routeParams.keyspaceName,
@@ -28,12 +29,12 @@ const ClusterKeyspaceCompactionPage = () => {
     }
 
     useEffect(() => {
-        setLoading(true)
+
         clusterCompactionHistory();
 
         return () => {
         };
-    }, [routeParams.clusterId, routeParams.keyspaceName]);
+    }, [routeParams.clusterId, routeParams.keyspaceName, clusterCompactionHistory]);
 
     return (
         <>

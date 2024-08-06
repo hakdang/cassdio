@@ -59,7 +59,11 @@ const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHead
                                             {rowDetailView[info.column_name]}
                                         </td>
                                         <td>
-                                            <a className={"btn btn-sm btn-outline-secondary"} onClick={e => handleCopyClipBoard(rowDetailView[info.column_name])}>COPY</a>
+                                            <button
+                                                className={"btn btn-sm btn-outline-secondary"}
+                                                onClick={e => handleCopyClipBoard(rowDetailView[info.column_name])}>
+                                                <i className="bi bi-clipboard"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 )

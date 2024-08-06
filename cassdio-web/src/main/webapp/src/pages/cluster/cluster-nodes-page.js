@@ -8,7 +8,7 @@ import ClusterMonitoringNavLink from "components/cluster/cluster-monitoring-nav-
 import clusterNodesApi from "remotes/clusterNodesApi";
 import {DateUtils} from "utils/timeUtils";
 
-const ClusterNodesPage = ({}) => {
+const ClusterNodesPage = () => {
 
     const routeParams = useParams();
 
@@ -19,7 +19,6 @@ const ClusterNodesPage = ({}) => {
 
     useEffect(() => {
         //show component
-        setNodeList([])
         getNodes(routeParams.clusterId)
         return () => {
             //hide component
