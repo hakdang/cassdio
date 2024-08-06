@@ -6,11 +6,8 @@ import useCluster from "hooks/useCluster";
 
 const ClusterManageModal = ({show, handleClose, clusterId, readonly = false}) => {
     const {
-        doGetClusterList,
-        removeClusterId,
         doSaveCluster,
         doGetCluster,
-        clusters,
         clusterDetailLoading,
         clusterInfo,
         setClusterInfo,
@@ -27,7 +24,7 @@ const ClusterManageModal = ({show, handleClose, clusterId, readonly = false}) =>
         return () => {
             //hide component
         };
-    }, []);
+    }, [clusterId, doGetCluster]);
 
     return (
         <Modal show={show} size={"xl"} onHide={handleClose}>

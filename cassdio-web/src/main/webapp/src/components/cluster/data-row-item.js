@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
 
 export default function DataRowItem(props) {
     const data = props.data;
@@ -60,7 +61,10 @@ export default function DataRowItem(props) {
                 {data}
             </Tooltip>
         }>
-            <a role={"button"} onClick={e => handleCopyClipBoard(data)}>{renderData}</a>
+            <Link to="{() => false}" role={"button"}
+                  onClick={e => handleCopyClipBoard(data)}>
+                {renderData}
+            </Link>
         </OverlayTrigger>
     )
 }

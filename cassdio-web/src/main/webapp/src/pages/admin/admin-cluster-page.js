@@ -14,13 +14,10 @@ const AdminClusterPage = () => {
         doSessionClearOne,
         clusters,
         clustersLoading,
-
-        sessionClearAllLoading,
     } = useCluster();
 
     const [showClusterModal, setShowClusterModal] = useState(false);
     const [detailClusterId, setDetailClusterId] = useState(null);
-
 
     const closeClusterModal = () => {
         setShowClusterModal(false)
@@ -50,7 +47,7 @@ const AdminClusterPage = () => {
         return () => {
             //hide component
         };
-    }, []);
+    }, [doGetClusterList]);
 
     return (
         <>
@@ -96,14 +93,14 @@ const AdminClusterPage = () => {
                                     <tr key={infoIndex}>
                                         <td className={"text-center"}>
                                             <div className={"btn-group btn-group-sm"}>
-                                                <a className={"btn btn-sm btn-outline-info"}
+                                                <button className={"btn btn-sm btn-outline-info"}
                                                    onClick={e => {
                                                        setDetailClusterId(info.clusterId);
                                                        setShowClusterModal(true);
                                                    }}>
                                                     <i className="bi bi-pencil-fill"></i>
-                                                </a>
-                                                <a className={"btn btn-sm btn-outline-info"} role={"button"}
+                                                </button>
+                                                <button className={"btn btn-sm btn-outline-info"}
                                                    onClick={e => {
                                                        sessionOneReset(info.clusterId)
                                                    }}>
@@ -114,13 +111,13 @@ const AdminClusterPage = () => {
                                                     }>
                                                         <i className="bi bi-x-octagon-fill"></i>
                                                     </OverlayTrigger>
-                                                </a>
-                                                <a className={"btn btn-sm btn-outline-info"}
+                                                </button>
+                                                <button className={"btn btn-sm btn-outline-info"}
                                                    onClick={e => {
                                                        removeClusterId(info.clusterId);
                                                    }}>
                                                     <i className="bi bi-trash"></i>
-                                                </a>
+                                                </button>
                                             </div>
                                         </td>
                                         <td className={"text-center"}>

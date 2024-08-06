@@ -70,7 +70,7 @@ const errorCatch = (error) => {
         toast.error(`Error ${0}, ${error.toString()}`);
     }
 }
-
+// eslint-disable-next-line
 export default {
     axiosInstance,
 };

@@ -43,14 +43,13 @@ const ClusterKeyspacePage = () => {
 
     useEffect(() => {
         //show component
-        setKeyspaceDescribe('');
         getKeyspaceDetail();
 
         return () => {
             //hide component
 
         };
-    }, [routeParams.clusterId, routeParams.keyspaceName]);
+    }, [routeParams.clusterId, routeParams.keyspaceName, getKeyspaceDetail]);
 
 
     return (

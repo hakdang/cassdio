@@ -1,12 +1,9 @@
-import ClusterMonitoringNavLink from "../../components/cluster/cluster-monitoring-nav-link";
+import ClusterMonitoringNavLink from "components/cluster/cluster-monitoring-nav-link";
 
-const ClusterMonitoringDashboardPage = ({}) => {
-
-
+const ClusterMonitoringDashboardPage = () => {
     return (
         <>
             <ClusterMonitoringNavLink/>
-
             Dashboard
         </>
     )
