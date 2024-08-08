@@ -1,7 +1,6 @@
 import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
-import {CassdioUtils} from "utils/cassdioUtils";
 import clusterTableTruncateApi from "../remotes/clusterTableTruncateApi";
 import clusterTableDropApi from "../remotes/clusterTableDropApi";
 import clusterTableRowApi from "../remotes/clusterTableRowApi";
@@ -59,9 +58,11 @@ export default function useTable() {
         rows: [],
         rowHeader: [],
         columnList: [],
-        convertedRowHeader: [],
     };
 
+    const doInitQueryResult = () => {
+        setQueryResult(initQueryResult);
+    }
 
     const [queryResult, setQueryResult] = useState(initQueryResult)
     const [nextCursor, setNextCursor] = useState('')
@@ -88,7 +89,6 @@ export default function useTable() {
                 rows: [...queryResult.rows, ...data.result.rows],
                 rowHeader: data.result.rowHeader,
                 columnList: data.result.columnList,
-                convertedRowHeader: CassdioUtils.convertRowHeader(data.result.columnList, data.result.rowHeader),
             })
         }).finally(() => {
             if (!setLoading) {
@@ -103,6 +103,7 @@ export default function useTable() {
         doTableTruncate,
         doTableDrop,
         doGetTableRows,
+        doInitQueryResult,
         queryLoading,
         queryResult,
         nextCursor
