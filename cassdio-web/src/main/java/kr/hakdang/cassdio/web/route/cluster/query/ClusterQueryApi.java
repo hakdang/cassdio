@@ -1,5 +1,8 @@
 package kr.hakdang.cassdio.web.route.cluster.query;
 
+import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.core.domain.cluster.query.ClusterQueryCommander;
 import kr.hakdang.cassdio.core.domain.cluster.query.QueryDTO;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,11 +28,14 @@ import java.util.Map;
 @RequestMapping("/api/cassandra/cluster")
 public class ClusterQueryApi {
     private final ClusterQueryCommander clusterQueryCommander;
+    private final ClusterTableColumnCommander clusterTableColumnCommander;
 
     public ClusterQueryApi(
-        ClusterQueryCommander clusterQueryCommander
+        ClusterQueryCommander clusterQueryCommander,
+        ClusterTableColumnCommander clusterTableColumnCommander
     ) {
         this.clusterQueryCommander = clusterQueryCommander;
+        this.clusterTableColumnCommander = clusterTableColumnCommander;
     }
 
     @PostMapping(value = {"/{clusterId}/query", "/{clusterId}/keyspace/{keyspace}/query"})
@@ -44,10 +51,26 @@ public class ClusterQueryApi {
             request.makeArgs(keyspace)
         );
 
+        CassdioColumnDefinition columnDefinition = result.getRowHeader().getFirst();
+
+        List<String> columnListForParam = result.getRowHeader()
+            .stream()
+            .map(CassdioColumnDefinition::getColumnName)
+            .toList();
+
+        CqlSessionSelectResults columnListResult = clusterTableColumnCommander.columnList(
+            clusterId,
+            columnDefinition.getKeyspace(),
+            columnDefinition.getTable(),
+            columnListForParam
+        );
+
         responseMap.put("wasApplied", result.isWasApplied());
         responseMap.put("nextCursor", result.getNextCursor());
         responseMap.put("rows", result.getRows());
         responseMap.put("rowHeader", result.getRowHeader());
+        responseMap.put("columnList", columnListResult);
+
         if (request.isTrace()) {
             responseMap.put("queryTrace", result.getQueryTrace());
         }
