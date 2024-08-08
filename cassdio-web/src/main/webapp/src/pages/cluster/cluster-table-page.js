@@ -18,6 +18,7 @@ const ClusterTablePage = () => {
         doTableTruncate,
         doTableDrop,
         doGetTableRows,
+        doInitQueryResult,
         queryLoading,
         queryResult,
         nextCursor,
@@ -41,6 +42,7 @@ const ClusterTablePage = () => {
         return () => {
             //hide component
             setTableName('');
+            doInitQueryResult();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableName]);
@@ -99,7 +101,7 @@ const ClusterTablePage = () => {
                     {/*</button>*/}
 
                     <div className="dropdown">
-                        <button className="btn btn-outline-danger btn-sm dropdown-toggle" type="button"
+                        <button className="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
                             <i className="bi bi-three-dots"></i>
@@ -119,7 +121,7 @@ const ClusterTablePage = () => {
                     <tr className={"table-dark"}>
                         <th className={"text-center"} scope="col">#</th>
                         {
-                            queryResult.convertedRowHeader.map((info, infoIndex) => {
+                            queryResult.columnList.rows && queryResult.columnList.rows.map((info, infoIndex) => {
                                 return (
                                     <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
                                         scope="col">
@@ -150,7 +152,7 @@ const ClusterTablePage = () => {
                     {
                         queryResult.rows.length <= 0 ? <>
                                 <tr>
-                                    <td className={"text-center"} colSpan={queryResult.convertedRowHeader.length + 1}>
+                                    <td className={"text-center"} colSpan={queryResult.columnList.rows && queryResult.columnList.rows.length + 1}>
                                         No Data
                                     </td>
                                 </tr>
@@ -179,7 +181,7 @@ const ClusterTablePage = () => {
                                             </div>
                                         </td>
                                         {
-                                            queryResult.convertedRowHeader.map((info, infoIndex) => {
+                                            queryResult.columnList.rows && queryResult.columnList.rows.map((info, infoIndex) => {
                                                 return (
                                                     <td className={"text-center text-break text-truncate"}
                                                         key={`resultItem${infoIndex}`}>
@@ -243,7 +245,7 @@ const ClusterTablePage = () => {
                 showRowDetail && rowDetailView && <TableRowDetailModal
                     show={showRowDetail}
                     rowDetailView={rowDetailView}
-                    convertedRowHeader={queryResult.convertedRowHeader}
+                    columnList={queryResult.columnList}
                     handleClose={() => setShowRowDetail(false)}
                 />
             }

@@ -17,7 +17,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static java.util.Collections.emptyList;
@@ -55,10 +57,21 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
 
         ResultSet resultSet = session.execute(statement);
 
+        List<Map<String, Object>> rows = convertRows(session, resultSet)
+            .stream()
+            .peek(row -> row.put("sortValue", makeSortValue(row)))
+            .sorted(Comparator.comparing(row -> String.valueOf(row.get("sortValue"))))
+            .toList();
+
         return CqlSessionSelectResults.of(
-            convertRows(session, resultSet),
+            rows,
             CassdioColumnDefinition.makes(resultSet.getColumnDefinitions())
         );
+    }
+
+    private String makeSortValue(Map<String, Object> row) {
+        ColumnKind columnKind = ColumnKind.findByCode(String.valueOf(row.get("kind")));
+        return String.format("%s-%s", columnKind.getOrder(), row.get("position"));
     }
 
     private SelectFrom getColumnTable(CqlSession session, String keyspace) {
