@@ -36,14 +36,10 @@ const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName
                 return;
             }
 
-            const sortedColumnList = CassdioUtils.columnListSorting(
-                data.result.columnList
-            );
-
             setTableInfo({
                 detail: data.result.detail,
                 describe: data.result.describe,
-                columnList: sortedColumnList,
+                columnList: data.result.columnList,
             })
 
         })
