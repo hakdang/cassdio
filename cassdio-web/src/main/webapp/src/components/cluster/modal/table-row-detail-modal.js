@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import {Modal, OverlayTrigger, Tooltip} from "react-bootstrap";
 import {toast} from "react-toastify";
 
-const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHeader}) => {
+const TableRowDetailModal = ({show, handleClose, rowDetailView, columnList}) => {
 
     const handleCopyClipBoard = async (data) => {
         try {
@@ -32,7 +32,7 @@ const TableRowDetailModal = ({show, handleClose, rowDetailView, convertedRowHead
                     <table className="table table-sm table-hover">
                         <tbody>
                         {
-                            convertedRowHeader && convertedRowHeader.map((info, infoIndex) => {
+                            columnList.rows && columnList.rows.map((info, infoIndex) => {
                                 return (
                                     <tr key={`row${infoIndex}`}>
                                         <th className={"text-center"} key={`resultHeader${infoIndex}`}
