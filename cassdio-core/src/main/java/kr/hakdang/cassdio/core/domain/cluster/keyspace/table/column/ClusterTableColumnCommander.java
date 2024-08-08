@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static java.util.Collections.emptyList;
@@ -67,6 +68,11 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
             rows,
             CassdioColumnDefinition.makes(resultSet.getColumnDefinitions())
         );
+    }
+
+    public List<String> columnSortedList(String clusterId, String keyspace, String table) {
+        CqlSessionSelectResults results = columnList(clusterId, keyspace, table);
+        return results.getRows().stream().map(row -> String.valueOf(row.get("column_name"))).collect(Collectors.toList());
     }
 
     private String makeSortValue(Map<String, Object> row) {
