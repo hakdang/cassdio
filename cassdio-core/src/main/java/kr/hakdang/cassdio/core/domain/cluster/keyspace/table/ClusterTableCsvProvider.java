@@ -17,21 +17,19 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class ClusterCsvProvider {
+public class ClusterTableCsvProvider {
 
-    public void importerCsvSampleDownload(Writer writer, List<String> headerList) {
+    public void importerCsvSampleDownload(Writer writer, List<String> sortedColumnList) {
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-            .setHeader(headerList.toArray(String[]::new))
+            .setHeader(sortedColumnList.toArray(String[]::new))
             .build();
 
         try (final CSVPrinter printer = new CSVPrinter(writer, csvFormat)) {
+            //printer.printRecord(author, title);
             log.info("create complete importer csv sample");
-
-            printer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 
