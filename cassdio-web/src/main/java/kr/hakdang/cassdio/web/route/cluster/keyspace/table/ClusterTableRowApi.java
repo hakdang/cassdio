@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,9 +93,10 @@ public class ClusterTableRowApi {
         @PathVariable String keyspace,
         @PathVariable String table
     ) throws IOException {
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType("text/csv; charset=UTF-8");
         String exportFileName = "sample-" + LocalDateTime.now() + ".csv";
+
         response.setHeader("Content-disposition", "attachment;filename=" + exportFileName);
 
         Map<String, Object> responseMap = new HashMap<>();
@@ -115,7 +117,6 @@ public class ClusterTableRowApi {
         @RequestParam("file") MultipartFile file,
         ClusterTableRequest.TableRowImportRequest request
     ) throws IOException {
-
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<String> columnList = clusterTableColumnCommander.columnSortedList(clusterId, keyspace, table);
 
@@ -131,8 +132,6 @@ public class ClusterTableRowApi {
                 }
             }
         }
-
-
 
 
         List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
