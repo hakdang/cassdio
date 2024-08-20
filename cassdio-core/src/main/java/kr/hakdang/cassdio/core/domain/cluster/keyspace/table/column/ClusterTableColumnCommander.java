@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BatchStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
@@ -41,7 +42,6 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
 
     public CqlSessionSelectResults columnList(String clusterId, String keyspace, String table, List<String> columnList) {
         CqlSession session = cqlSessionFactory.get(clusterId);
-
         SimpleStatement statement;
 
         Select select = getColumnTable(session, keyspace)

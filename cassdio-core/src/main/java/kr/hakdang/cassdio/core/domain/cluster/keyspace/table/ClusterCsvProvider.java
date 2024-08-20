@@ -1,8 +1,11 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
+import com.datastax.oss.driver.api.core.cql.BatchStatement;
+import com.datastax.oss.driver.api.core.cql.BatchType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,5 +37,13 @@ public class ClusterCsvProvider {
 
     }
 
+    public void importCsvBatchInsert(BatchType batchType, List<String> columnList, Iterable<CSVRecord> records) {
 
+
+        for (CSVRecord record : records) {
+            for (String column : columnList) {
+                BatchStatement batchStatement = BatchStatement.newInstance(batchType);
+            }
+        }
+    }
 }

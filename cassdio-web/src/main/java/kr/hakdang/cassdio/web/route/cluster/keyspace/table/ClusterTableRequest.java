@@ -15,6 +15,6 @@ public class ClusterTableRequest {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TableRowImportRequest {
-
+        private int batchTypeCode;
     }
 }
