@@ -1,6 +1,7 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {Modal} from "react-bootstrap";
 import axios from "axios";
+import {toast} from "react-toastify";
 
 const TableImportModal = (props) => {
 
@@ -10,7 +11,7 @@ const TableImportModal = (props) => {
     const importSampleDownload = async () => {
         const config = {
             method: "POST",
-            url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/import/sample`,
+            url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/row/import/sample`,
             responseType: "blob",
         };
         const response = await axios(config);
@@ -27,6 +28,44 @@ const TableImportModal = (props) => {
         link.remove();
     }
 
+    const [files, setFiles] = useState([]);
+
+    const handleFilesChange = (e) => {
+        setFiles(Array.from(e.target.files));
+    }
+
+    const importFileUpload = (evt) => {
+        evt.preventDefault();
+
+        if (!files || files.length <= 0) {
+            toast.warn('File Empty');
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append('file', files[0])
+
+        axios({
+            method: 'post',
+            url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/row/import`,
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        })
+            .then((result) => {
+                console.log('요청성공')
+                console.log(result)
+
+            })
+            .catch((error) => {
+                console.log('요청실패')
+                console.log(error)
+            })
+
+    }
+
     useEffect(() => {
         //show component
 
@@ -40,26 +79,31 @@ const TableImportModal = (props) => {
         <>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Data Importer</Modal.Title>
+                    <Modal.Title>
+                        Data Importer
+                        <span className={"ms-3"}>
+                            <button className={"btn btn-sm btn-outline-info"}
+                                    onClick={importSampleDownload}>Sample
+                            </button>
+                        </span>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <>
-                        <div className={"row"}>
-                            <div className={"col-4"}>
-                                Sample
-                            </div>
-                            <div className={"col-8"}>
-                                <button className={"btn btn-sm btn-outline-info"}
-                                        onClick={importSampleDownload}>Download
-                                </button>
+                        <div className={"row mb-3"}>
+                            <div className={"col"}>
+                                {/*<label htmlFor="formFileSm" className="form-label">Small file input*/}
+                                {/*    example</label>*/}
+                                <input className="form-control form-control-sm" type="file"
+                                       onChange={handleFilesChange}/>
                             </div>
                         </div>
-                        <hr/>
+
                         <div className={"row"}>
-                            <div className={"col-4"}>
-                                Import
+                            <div className={"col-2"}>
+                                Option
                             </div>
-                            <div className={"col-8"}>
+                            <div className={"col-10"}>
                                 <div className={"row mb-3"}>
                                     <div className={"col"}>
                                         <div className="form-floating">
@@ -78,22 +122,32 @@ const TableImportModal = (props) => {
                                             <label htmlFor="queryLimitSelect">Per Commit Size</label>
                                         </div>
                                     </div>
-
-                                </div>
-
-                                <div className={"row"}>
                                     <div className={"col"}>
-                                        <button className={"btn btn-sm btn-outline-primary"}
-                                                onClick={importSampleDownload}>Upload
-                                        </button>
+                                        <div className="form-floating">
+                                            <select className="form-select form-select-sm" id="queryLimitSelect"
+                                                // onChange={e => {
+                                                //     setQueryOptions(t => {
+                                                //         return {...t, limit: parseInt(e.target.value)}
+                                                //     })
+                                                // }
+                                                // } value={queryOptions.limit || "10"}>
+                                            >
+                                                <option value="LOGGED">LOGGED</option>
+                                                <option value="UNLOGGED">UNLOGGED</option>
+                                                <option value="COUNTER">COUNTER</option>
+                                            </select>
+                                            <label htmlFor="queryLimitSelect">Batch Type</label>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </>
                 </Modal.Body>
                 <Modal.Footer>
+                    <button className={"btn btn-sm btn-outline-primary"} onClick={importFileUpload}>
+                        Upload
+                    </button>
                     <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>
                         Close
                     </button>
