@@ -6,6 +6,7 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterCsvProvider;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableRowCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,7 @@ import static java.util.Collections.emptyMap;
  * @author akageun
  * @since 2024-08-19
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/cassandra/cluster/{clusterId}/keyspace/{keyspace}")
 public class ClusterTableRowApi {
@@ -73,19 +75,6 @@ public class ClusterTableRowApi {
         return ApiResponse.ok(responseMap);
     }
 
-    @PostMapping("/table/{table}/row/export")
-    public ApiResponse<Map<String, Object>> tableRowExport(
-        @PathVariable String clusterId,
-        @PathVariable String keyspace,
-        @PathVariable String table,
-        @ModelAttribute ClusterTableRowRequest request
-    ) {
-        Map<String, Object> responseMap = new HashMap<>();
-
-        return ApiResponse.ok(responseMap);
-    }
-
-
     @PostMapping("/table/{table}/row/import/sample")
     public ApiResponse<Map<String, Object>> importerSampleDownload(
         HttpServletResponse response,
@@ -95,7 +84,7 @@ public class ClusterTableRowApi {
     ) throws IOException {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType("text/csv; charset=UTF-8");
-        String exportFileName = "sample-" + LocalDateTime.now() + ".csv";
+        String exportFileName = "sample-" + LocalDateTime.now() + ".csv"; //TODO : Formatting
 
         response.setHeader("Content-disposition", "attachment;filename=" + exportFileName);
 
@@ -114,8 +103,8 @@ public class ClusterTableRowApi {
         @PathVariable String clusterId,
         @PathVariable String keyspace,
         @PathVariable String table,
-        @RequestParam("file") MultipartFile file,
-        ClusterTableRequest.TableRowImportRequest request
+        @RequestParam("file") MultipartFile file
+        //ClusterTableRequest.TableRowImportRequest request
     ) throws IOException {
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<String> columnList = clusterTableColumnCommander.columnSortedList(clusterId, keyspace, table);
@@ -126,10 +115,16 @@ public class ClusterTableRowApi {
                 .build();
 
             Iterable<CSVRecord> records = csvFormat.parse(reader);
+            //Validation 방식에 대해 고민 필요
             for (CSVRecord record : records) {
+                StringBuilder sb = new StringBuilder();
                 for (String column : columnList) {
-
+                    String temp = record.get(column);
+                    log.info("column : {}, {}", temp, column);
+                    sb.append(temp);
                 }
+
+                log.info("record : {}", sb.toString());
             }
         }
 
