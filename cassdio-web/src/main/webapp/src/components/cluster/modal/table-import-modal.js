@@ -50,9 +50,6 @@ const TableImportModal = (props) => {
             method: 'post',
             url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/row/import`,
             data: formData,
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
         })
             .then((result) => {
                 console.log('요청성공')
