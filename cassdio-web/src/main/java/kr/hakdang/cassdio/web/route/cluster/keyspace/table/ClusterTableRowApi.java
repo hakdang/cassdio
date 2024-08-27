@@ -98,7 +98,7 @@ public class ClusterTableRowApi {
     }
 
     @PostMapping("/table/{table}/row/import")
-    public ApiResponse<Map<String, Object>> importDownload(
+    public ApiResponse<Map<String, Object>> importUpload(
         HttpServletResponse response,
         @PathVariable String clusterId,
         @PathVariable String keyspace,
@@ -106,38 +106,40 @@ public class ClusterTableRowApi {
         @RequestParam("file") MultipartFile file
         //ClusterTableRequest.TableRowImportRequest request
     ) throws IOException {
+
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<String> columnList = clusterTableColumnCommander.columnSortedList(clusterId, keyspace, table);
 
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                 .setHeader(columnList.toArray(String[]::new))
                 .setSkipHeaderRecord(true)
+                .setTrim(true)
                 .build();
 
             Iterable<CSVRecord> records = csvFormat.parse(reader);
             //Validation 방식에 대해 고민 필요
+
+            List<Map<String, Object>> values = new ArrayList<>();
+
             for (CSVRecord record : records) {
                 StringBuilder sb = new StringBuilder();
+
+                Map<String, Object> map = new HashMap<>();
+
                 for (String column : columnList) {
                     String temp = record.get(column);
                     log.info("column : {}, {}", temp, column);
                     sb.append(temp);
+
+                    map.put(column, temp);
                 }
 
-                log.info("record : {}", sb.toString());
+                values.add(map);
             }
+
+            clusterTableRowCommander.rowInserts(clusterId, keyspace, table, values);
         }
 
-
-        List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
-        List<String> headerList = new ArrayList<String>();
-
-
-//        try {
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e); //TODO : 상세화
-//        }
 
         return ApiResponse.ok(emptyMap());
     }

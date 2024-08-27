@@ -2,16 +2,14 @@ import {useEffect, useState} from "react";
 import {Modal} from "react-bootstrap";
 import axios from "axios";
 import {toast} from "react-toastify";
+import clusterTableRowImportApi from "../../../remotes/clusterTableRowImportApi";
 
-const TableImportModal = (props) => {
-
-    const show = props.show;
-    const handleClose = props.handleClose;
+const TableImportModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
 
     const importSampleDownload = async () => {
         const config = {
             method: "POST",
-            url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/row/import/sample`,
+            url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}/row/import/sample`,
             responseType: "blob",
         };
         const response = await axios(config);
@@ -46,20 +44,19 @@ const TableImportModal = (props) => {
 
         formData.append('file', files[0])
 
-        axios({
-            method: 'post',
-            url: `/api/cassandra/cluster/${props.clusterId}/keyspace/${props.keyspaceName}/table/${props.tableName}/row/import`,
-            data: formData,
-        })
-            .then((result) => {
-                console.log('요청성공')
-                console.log(result)
 
-            })
-            .catch((error) => {
-                console.log('요청실패')
-                console.log(error)
-            })
+        clusterTableRowImportApi({
+            clusterId, keyspaceName, tableName, formData
+        }).then((data) => {
+            if (!data.ok) {
+                return;
+            }
+
+            toast.info(`complete`);
+
+        }).finally(() => {
+
+        });
 
     }
 

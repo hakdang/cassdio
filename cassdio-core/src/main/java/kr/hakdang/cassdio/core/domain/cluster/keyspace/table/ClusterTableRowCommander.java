@@ -1,10 +1,16 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.BatchStatement;
+import com.datastax.oss.driver.api.core.cql.DefaultBatchType;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
+import com.datastax.oss.driver.api.querybuilder.insert.JsonInsert;
 import com.datastax.oss.protocol.internal.util.Bytes;
+import com.google.common.collect.Lists;
+import kr.hakdang.cassdio.common.utils.Jsons;
 import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
@@ -13,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ClusterTableRowCommander
@@ -41,5 +49,21 @@ public class ClusterTableRowCommander extends BaseClusterCommander {
             CassdioColumnDefinition.makes(resultSet.getColumnDefinitions()),
             resultSet.getExecutionInfo().getPagingState()
         );
+    }
+
+    public void rowInserts(String clusterId, String keyspace, String table, List<Map<String, Object>> values) {
+        CqlSession session = cqlSessionFactory.get(clusterId);
+
+        for (List<Map<String, Object>> list : Lists.partition(values, 50)) {
+            BatchStatement batchStatement = BatchStatement.newInstance(DefaultBatchType.LOGGED);
+
+            for (Map<String, Object> map : list) {
+                batchStatement = batchStatement.add(QueryBuilder.insertInto(keyspace, table).json(Jsons.toJson(map)).build());
+            }
+
+            ResultSet resultSet = session.execute(batchStatement);
+
+            log.info("result : {}", resultSet.wasApplied());
+        }
     }
 }
