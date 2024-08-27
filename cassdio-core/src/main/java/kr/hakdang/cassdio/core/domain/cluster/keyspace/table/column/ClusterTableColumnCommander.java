@@ -1,7 +1,6 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.cql.BatchStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
@@ -14,7 +13,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;

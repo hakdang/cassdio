@@ -37,13 +37,4 @@ public class ClusterCsvProvider {
 
     }
 
-    public void importCsvBatchInsert(BatchType batchType, List<String> columnList, Iterable<CSVRecord> records) {
-
-
-        for (CSVRecord record : records) {
-            for (String column : columnList) {
-                BatchStatement batchStatement = BatchStatement.newInstance(batchType);
-            }
-        }
-    }
 }
