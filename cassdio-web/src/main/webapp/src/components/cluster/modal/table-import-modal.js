@@ -6,6 +6,11 @@ import clusterTableRowImportApi from "../../../remotes/clusterTableRowImportApi"
 
 const TableImportModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
 
+    const [importOptions, setImportOptions] = useState({
+        perCommitSize: 50,
+        batchTypeCode: 'LOGGED',
+    });
+
     const importSampleDownload = async () => {
         const config = {
             method: "POST",
@@ -43,6 +48,8 @@ const TableImportModal = ({show, handleClose, clusterId, keyspaceName, tableName
         const formData = new FormData();
 
         formData.append('file', files[0])
+        formData.append(`perCommitSize`, importOptions.perCommitSize)
+        formData.append(`batchTypeCode`, importOptions.batchTypeCode)
 
 
         clusterTableRowImportApi({
@@ -101,36 +108,35 @@ const TableImportModal = ({show, handleClose, clusterId, keyspaceName, tableName
                                 <div className={"row mb-3"}>
                                     <div className={"col"}>
                                         <div className="form-floating">
-                                            <select className="form-select form-select-sm" id="queryLimitSelect"
-                                                // onChange={e => {
-                                                //     setQueryOptions(t => {
-                                                //         return {...t, limit: parseInt(e.target.value)}
-                                                //     })
-                                                // }
-                                                // } value={queryOptions.limit || "10"}>
+                                            <select className="form-select form-select-sm" id="perCommitSize"
+                                                    onChange={e => {
+                                                        setImportOptions(t => {
+                                                            return {...t, perCommitSize: parseInt(e.target.value)}
+                                                        })
+                                                    }
+                                                    } value={importOptions.perCommitSize || 50}
                                             >
-                                                <option value="10">10</option>
                                                 <option value="50">50</option>
                                                 <option value="100">100</option>
+                                                <option value="500">500</option>
                                             </select>
-                                            <label htmlFor="queryLimitSelect">Per Commit Size</label>
+                                            <label htmlFor="perCommitSize">Per Commit Size</label>
                                         </div>
                                     </div>
                                     <div className={"col"}>
                                         <div className="form-floating">
-                                            <select className="form-select form-select-sm" id="queryLimitSelect"
-                                                // onChange={e => {
-                                                //     setQueryOptions(t => {
-                                                //         return {...t, limit: parseInt(e.target.value)}
-                                                //     })
-                                                // }
-                                                // } value={queryOptions.limit || "10"}>
-                                            >
+                                            <select className="form-select form-select-sm" id="batchTypeCode"
+                                                    onChange={e => {
+                                                        setImportOptions(t => {
+                                                            return {...t, batchTypeCode: e.target.value}
+                                                        })
+                                                    }
+                                                    } value={importOptions.batchTypeCode || "LOGGED"}>
                                                 <option value="LOGGED">LOGGED</option>
                                                 <option value="UNLOGGED">UNLOGGED</option>
                                                 <option value="COUNTER">COUNTER</option>
                                             </select>
-                                            <label htmlFor="queryLimitSelect">Batch Type</label>
+                                            <label htmlFor="batchTypeCode">Batch Type</label>
                                         </div>
                                     </div>
                                 </div>
