@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,13 @@ public class ClusterTableRequest {
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class TableRowImportRequest {
-        private int batchTypeCode;
+        private int perCommitSize;
+        private String batchTypeCode;
+
+        @Builder
+        public TableRowImportRequest(int perCommitSize, String batchTypeCode) {
+            this.perCommitSize = perCommitSize;
+            this.batchTypeCode = batchTypeCode;
+        }
     }
 }

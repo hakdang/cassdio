@@ -15,6 +15,7 @@ import kr.hakdang.cassdio.core.domain.cluster.BaseClusterCommander;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -51,19 +52,25 @@ public class ClusterTableRowCommander extends BaseClusterCommander {
         );
     }
 
-    public void rowInserts(String clusterId, String keyspace, String table, List<Map<String, Object>> values) {
-        CqlSession session = cqlSessionFactory.get(clusterId);
+    public void rowInserts(TableDTO.ClusterTableRowImportArgs args, List<Map<String, Object>> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return;
+        }
 
-        for (List<Map<String, Object>> list : Lists.partition(values, 50)) {
-            BatchStatement batchStatement = BatchStatement.newInstance(DefaultBatchType.LOGGED);
+        CqlSession session = cqlSessionFactory.get(args.getClusterId());
+
+        for (List<Map<String, Object>> list : Lists.partition(values, args.getPerCommitSize())) {
+            BatchStatement batchStatement = BatchStatement.newInstance(args.getBatchType());
 
             for (Map<String, Object> map : list) {
-                batchStatement = batchStatement.add(QueryBuilder.insertInto(keyspace, table).json(Jsons.toJson(map)).build());
+                batchStatement = batchStatement.add(
+                    QueryBuilder.insertInto(args.getKeyspace(), args.getTable())
+                        .json(Jsons.toJson(map))
+                        .build()
+                );
             }
 
-            ResultSet resultSet = session.execute(batchStatement);
-
-            log.info("result : {}", resultSet.wasApplied());
+            session.execute(batchStatement);
         }
     }
 }

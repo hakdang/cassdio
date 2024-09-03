@@ -4,11 +4,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterCsvProvider;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableRowCommander;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,45 +97,29 @@ public class ClusterTableRowApi {
 
     @PostMapping("/table/{table}/row/import")
     public ApiResponse<Map<String, Object>> importUpload(
-        HttpServletResponse response,
         @PathVariable String clusterId,
         @PathVariable String keyspace,
         @PathVariable String table,
-        @RequestParam("file") MultipartFile file
-        //ClusterTableRequest.TableRowImportRequest request
+        @RequestParam("file") MultipartFile file,
+        ClusterTableRequest.TableRowImportRequest request
     ) throws IOException {
 
         try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<String> columnList = clusterTableColumnCommander.columnSortedList(clusterId, keyspace, table);
 
-            CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .setHeader(columnList.toArray(String[]::new))
-                .setSkipHeaderRecord(true)
-                .setTrim(true)
-                .build();
+            List<Map<String, Object>> values = clusterCsvProvider.importCsvReader(
+                reader, columnList
+            );
 
-            Iterable<CSVRecord> records = csvFormat.parse(reader);
-            //Validation 방식에 대해 고민 필요
-
-            List<Map<String, Object>> values = new ArrayList<>();
-
-            for (CSVRecord record : records) {
-                StringBuilder sb = new StringBuilder();
-
-                Map<String, Object> map = new HashMap<>();
-
-                for (String column : columnList) {
-                    String temp = record.get(column);
-                    log.info("column : {}, {}", temp, column);
-                    sb.append(temp);
-
-                    map.put(column, temp);
-                }
-
-                values.add(map);
-            }
-
-            clusterTableRowCommander.rowInserts(clusterId, keyspace, table, values);
+            clusterTableRowCommander.rowInserts(
+                TableDTO.ClusterTableRowImportArgs.builder()
+                    .clusterId(clusterId)
+                    .keyspace(keyspace)
+                    .table(table)
+                    .batchTypeCode(request.getBatchTypeCode())
+                    .perCommitSize(request.getPerCommitSize())
+                    .build()
+                , values);
         }
 
 
