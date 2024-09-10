@@ -51,7 +51,7 @@ const ClusterClientPage = () => {
 
         return () => {
         };
-    }, [routeParams.clusterId]);
+    }, [routeParams.clusterId, pageInit]);
 
     return (
         <>
