@@ -1,10 +1,28 @@
 import {useEffect} from "react";
 import {Modal} from "react-bootstrap";
+import axios from "axios";
 
-const TableExportModal = (props) => {
+const TableExportModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
 
-    const show = props.show;
-    const handleClose = props.handleClose;
+    const exporterDownload = async () => {
+        const config = {
+            method: "POST",
+            url: `/api/cassandra/cluster/${clusterId}/keyspace/${keyspaceName}/table/${tableName}/row/export`,
+            responseType: "blob",
+        };
+        const response = await axios(config);
+        const name = response.headers["content-disposition"]
+            .split("filename=")[1]
+            .replace(/"/g, "");
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", name);
+        link.style.cssText = "display:none";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
 
     useEffect(() => {
         //show component
@@ -25,6 +43,9 @@ const TableExportModal = (props) => {
                     Export
                 </Modal.Body>
                 <Modal.Footer>
+                    <button className={"btn btn-sm btn-outline-danger"} onClick={exporterDownload}>
+                        Exporter
+                    </button>
                     <button className={"btn btn-sm btn-outline-secondary"} onClick={handleClose}>
                         Close
                     </button>

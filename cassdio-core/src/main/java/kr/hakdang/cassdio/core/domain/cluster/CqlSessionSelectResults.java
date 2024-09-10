@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.core.domain.cluster;
 
 import com.datastax.oss.protocol.internal.util.Bytes;
+import io.micrometer.common.util.StringUtils;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -52,6 +53,7 @@ public class CqlSessionSelectResults {
             .nextCursor(nextCursor)
             .build();
     }
+
     public static CqlSessionSelectResults of(
         List<Map<String, Object>> rows,
         List<CassdioColumnDefinition> rowHeader
@@ -61,5 +63,9 @@ public class CqlSessionSelectResults {
             .rowHeader(rowHeader)
             .rows(rows)
             .build();
+    }
+
+    public boolean hasNext() {
+        return StringUtils.isNotBlank(nextCursor);
     }
 }

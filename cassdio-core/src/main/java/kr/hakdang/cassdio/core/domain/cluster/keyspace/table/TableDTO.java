@@ -80,7 +80,7 @@ public class TableDTO {
 
         private String cursor;
 
-        @Builder
+        @Builder(toBuilder = true)
         public ClusterTableRowArgs(String keyspace, String table, int pageSize, int timeoutSeconds, String cursor) {
             if (StringUtils.isBlank(keyspace)) {
                 throw new IllegalArgumentException("keyspace can't be null or empty");
@@ -100,6 +100,7 @@ public class TableDTO {
             this.timeoutSeconds = timeoutSeconds;
             this.cursor = cursor;
         }
+
     }
 
     @ToString
