@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * ClusterTableCsvProvider
@@ -66,4 +68,17 @@ public class ClusterCsvProvider {
         return values;
     }
 
+    public void exporterCsvDownload(Writer writer, List<String> headerList, Consumer<CSVPrinter> csvPrinterConsumer) {
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+            .setHeader(headerList.toArray(String[]::new))
+            .build();
+
+        try (final CSVPrinter printer = new CSVPrinter(writer, csvFormat)) {
+            csvPrinterConsumer.accept(printer);
+            printer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

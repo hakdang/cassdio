@@ -2,12 +2,15 @@ package kr.hakdang.cassdio.web.route.cluster.keyspace.table;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.hakdang.cassdio.core.domain.cluster.CqlSessionSelectResults;
+import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterCsvProvider;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.ClusterTableRowCommander;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +78,7 @@ public class ClusterTableRowApi {
     }
 
     @PostMapping("/table/{table}/row/import/sample")
-    public ApiResponse<Map<String, Object>> importerSampleDownload(
+    public void importerSampleDownload(
         HttpServletResponse response,
         @PathVariable String clusterId,
         @PathVariable String keyspace,
@@ -86,13 +90,9 @@ public class ClusterTableRowApi {
 
         response.setHeader("Content-disposition", "attachment;filename=" + exportFileName);
 
-        Map<String, Object> responseMap = new HashMap<>();
-
         List<String> columnList = clusterTableColumnCommander.columnSortedList(clusterId, keyspace, table);
 
         clusterCsvProvider.importerCsvSampleDownload(response.getWriter(), columnList);
-
-        return ApiResponse.ok(responseMap);
     }
 
     @PostMapping("/table/{table}/row/import")
@@ -124,5 +124,74 @@ public class ClusterTableRowApi {
 
 
         return ApiResponse.ok(emptyMap());
+    }
+
+    @PostMapping("/table/{table}/row/export")
+    public void exporterDownload(
+        HttpServletResponse response,
+        @PathVariable String clusterId,
+        @PathVariable String keyspace,
+        @PathVariable String table
+    ) throws IOException {
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("text/csv; charset=UTF-8");
+
+        String exportFileName = keyspace + "-" + table + "-" + LocalDateTime.now() + ".csv";
+
+        response.setHeader("Content-disposition", "attachment;filename=" + exportFileName);
+
+
+        TableDTO.ClusterTableRowArgs args = TableDTO.ClusterTableRowArgs.builder()
+            .keyspace(keyspace)
+            .table(table)
+            .build();
+
+        CqlSessionSelectResults results = clusterTableRowCommander.rowSelect(clusterId, args);
+
+        List<String> headerList = results.getRowHeader()
+            .stream()
+            .map(CassdioColumnDefinition::getColumnName)
+            .toList();
+
+        clusterCsvProvider.exporterCsvDownload(response.getWriter(), headerList, csvPrinter -> {
+            try {
+                setData(csvPrinter, headerList, results.getRows());
+
+                if (results.hasNext()) {
+                    boolean hasNext;
+                    String cursor = results.getNextCursor();
+                    do {
+
+                        TableDTO.ClusterTableRowArgs subArgs = TableDTO.ClusterTableRowArgs.builder()
+                            .keyspace(keyspace)
+                            .table(table)
+                            .cursor(cursor)
+                            .build();
+
+                        CqlSessionSelectResults subResult = clusterTableRowCommander.rowSelect(clusterId, subArgs);
+                        hasNext = subResult.hasNext();
+                        if (hasNext) {
+                            cursor = subResult.getNextCursor();
+                        }
+
+                        setData(csvPrinter, headerList, subResult.getRows());
+
+                    } while (hasNext);
+                }
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void setData(CSVPrinter csvPrinter, List<String> headerList, List<Map<String, Object>> rows) throws IOException {
+        for (Map<String, Object> row : rows) {
+            List<String> data = headerList.stream()
+                .map(header -> row.getOrDefault(header, "").toString())
+                .toList();
+
+            csvPrinter.printRecord(data);
+        }
     }
 }
