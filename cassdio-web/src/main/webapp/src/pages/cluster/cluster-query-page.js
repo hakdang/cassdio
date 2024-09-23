@@ -35,6 +35,7 @@ const ClusterQueryPage = () => {
         wasApplied: null,
         rows: [],
         rowHeader: [],
+        columnList: {},
         queryTrace: {},
     };
 
@@ -79,6 +80,7 @@ const ClusterQueryPage = () => {
                 wasApplied: data.result.wasApplied,
                 rows: rows,
                 rowHeader: data.result.rowHeader,
+                columnList : data.result.columnList,
                 queryTrace: data.result.queryTrace,
             })
         }).finally(() => {

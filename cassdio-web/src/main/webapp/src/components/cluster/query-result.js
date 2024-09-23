@@ -54,31 +54,39 @@ const QueryResult = ({queryExecute, result, query, nextCursor, setShowQueryTrace
                             <thead>
                             <tr className={"table-dark"}>
                                 {
-                                    result.rowHeader.map((info, infoIndex) => {
+                                    result.columnList.rows && result.columnList.rows.map((info, infoIndex) => {
                                         return (
-                                            <th className={"text-center text-truncate"}
-                                                key={`resultHeader${infoIndex}`}
+                                            <th className={"text-center text-truncate"} key={`resultHeader${infoIndex}`}
                                                 scope="col">
-
                                                 <OverlayTrigger placement="bottom" overlay={
                                                     <Tooltip id="tooltip">
-                                                        {info.columnName}<br/>
-                                                        ({info.type})
+                                                        {info.column_name} ({info.type})
                                                     </Tooltip>
                                                 }>
-                                                    <span style={{cursor: "pointer"}}>{info.columnName}</span>
+                                                <span style={{cursor: "pointer"}}>
+                                                     {
+                                                         info.kind === 'partition_key' &&
+                                                         <i className="bi bi-p-square me-1"></i>
+                                                     }
+                                                    {
+                                                        info.kind === 'clustering' &&
+                                                        <i className="bi bi-c-square me-1"></i>
+                                                    }
+                                                    {info.column_name}
+                                                </span>
                                                 </OverlayTrigger>
                                             </th>
                                         )
                                     })
                                 }
+
                             </tr>
                             </thead>
                             <tbody className="table-group-divider" style={{maxHeight: "50vh"}}>
                             {
                                 result.rows.length <= 0 ? <>
                                         <tr>
-                                            <td className={"text-center"} colSpan={result.rowHeader.length}>
+                                            <td className={"text-center"} colSpan={result.columnList.rows.length}>
                                                 No Data
                                             </td>
                                         </tr>
@@ -87,11 +95,11 @@ const QueryResult = ({queryExecute, result, query, nextCursor, setShowQueryTrace
                                         return (
                                             <tr key={`resultBody${rowIndex}`}>
                                                 {
-                                                    result.rowHeader.map((info, infoIndex) => {
+                                                    result.columnList.rows.map((info, infoIndex) => {
                                                         return (
                                                             <td className={`text-center text-break text-truncate`}
                                                                 key={`resultItem${infoIndex}`}>
-                                                                <DataRowItem data={row[info.columnName]}/>
+                                                                <DataRowItem data={row[info.column_name]}/>
                                                             </td>
                                                         )
                                                     })
