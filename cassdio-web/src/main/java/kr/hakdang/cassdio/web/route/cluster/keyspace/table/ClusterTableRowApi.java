@@ -9,7 +9,6 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.TableDTO;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.column.ClusterTableColumnCommander;
 import kr.hakdang.cassdio.web.common.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,7 +25,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +125,7 @@ public class ClusterTableRowApi {
     }
 
     @PostMapping("/table/{table}/row/export")
-    public void exporterDownload(
+    public void rowExporterDownload(
         HttpServletResponse response,
         @PathVariable String clusterId,
         @PathVariable String keyspace,
