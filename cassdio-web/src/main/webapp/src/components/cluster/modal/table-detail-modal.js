@@ -3,7 +3,6 @@ import {Modal} from "react-bootstrap";
 import TableDetailModalInfo from "./detail/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail/table-detail-modal-column-list";
-import {CassdioUtils} from "utils/cassdioUtils";
 import clusterTableDetailApi from "remotes/clusterTableDetailApi";
 
 const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
