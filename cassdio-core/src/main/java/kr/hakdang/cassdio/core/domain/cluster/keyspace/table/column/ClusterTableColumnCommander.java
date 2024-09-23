@@ -13,13 +13,13 @@ import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassandraSystemKeyspace;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.CassdioColumnDefinition;
 import kr.hakdang.cassdio.core.domain.cluster.keyspace.table.CassandraSystemTable;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static java.util.Collections.emptyList;
@@ -40,7 +40,6 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
 
     public CqlSessionSelectResults columnList(String clusterId, String keyspace, String table, List<String> columnList) {
         CqlSession session = cqlSessionFactory.get(clusterId);
-
         SimpleStatement statement;
 
         Select select = getColumnTable(session, keyspace)
@@ -67,6 +66,11 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
             rows,
             CassdioColumnDefinition.makes(resultSet.getColumnDefinitions())
         );
+    }
+
+    public List<String> columnSortedList(String clusterId, String keyspace, String table) {
+        CqlSessionSelectResults results = columnList(clusterId, keyspace, table);
+        return results.getRows().stream().map(row -> String.valueOf(row.get("column_name"))).collect(Collectors.toList());
     }
 
     private String makeSortValue(Map<String, Object> row) {

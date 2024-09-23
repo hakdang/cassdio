@@ -75,21 +75,21 @@ const ClusterTablePage = () => {
                         Detail
                     </button>
 
-                    {/*<div className="btn-group me-2">*/}
-                    {/*    <button type="button" className="btn btn-sm btn-outline-secondary"*/}
-                    {/*            onClick={() => {*/}
+                    <div className="btn-group me-2">
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                onClick={() => {
 
-                    {/*                setShowExport(true);*/}
-                    {/*            }}*/}
-                    {/*    >Export*/}
-                    {/*    </button>*/}
-                    {/*    <button type="button" className="btn btn-sm btn-outline-secondary"*/}
-                    {/*            onClick={() => {*/}
-                    {/*                setShowImport(true);*/}
-                    {/*            }}*/}
-                    {/*    >Import*/}
-                    {/*    </button>*/}
-                    {/*</div>*/}
+                                    setShowExport(true);
+                                }}
+                        >Export
+                        </button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                onClick={() => {
+                                    setShowImport(true);
+                                }}
+                        >Import
+                        </button>
+                    </div>
 
                     {/* MAP, Set 등 다 구현하려면 어려움 추후 대응 필요해보임*/}
                     {/*<button type="button"*/}
@@ -223,7 +223,7 @@ const ClusterTablePage = () => {
                     show={showDetail}
                     clusterId={routeParams.clusterId}
                     keyspaceName={routeParams.keyspaceName}
-                    tableName={tableName}
+                    tableName={routeParams.tableName}
                     handleClose={() => setShowDetail(false)}
                 />
             }
@@ -231,6 +231,9 @@ const ClusterTablePage = () => {
             {
                 showExport && <TableExportModal
                     show={showExport}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={routeParams.tableName}
                     handleClose={() => setShowExport(false)}
                 />
             }
@@ -238,6 +241,9 @@ const ClusterTablePage = () => {
             {
                 showImport && <TableImportModal
                     show={showImport}
+                    clusterId={routeParams.clusterId}
+                    keyspaceName={routeParams.keyspaceName}
+                    tableName={routeParams.tableName}
                     handleClose={() => setShowImport(false)}
                 />
             }
