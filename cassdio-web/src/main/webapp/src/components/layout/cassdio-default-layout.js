@@ -15,11 +15,13 @@ const CassdioDefaultLayout = ({}) => {
 
     useEffect(() => {
 
-        dispatch({
-            type: "SET_BOOTSTRAP",
-            consistencyLevels: bootstrap.consistencyLevels,
-            defaultConsistencyLevel: bootstrap.defaultConsistencyLevel,
-        });
+        if (bootstrap) {
+            dispatch({
+                type: "SET_BOOTSTRAP",
+                consistencyLevels: bootstrap.consistencyLevels,
+                defaultConsistencyLevel: bootstrap.defaultConsistencyLevel,
+            });
+        }
 
         return () => {
         };

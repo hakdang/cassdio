@@ -3,7 +3,6 @@ import {Modal} from "react-bootstrap";
 import TableDetailModalInfo from "./detail/table-detail-modal-info";
 import TableDetailModalDescribe from "./detail/table-detail-modal-describe";
 import TableDetailModalColumnList from "./detail/table-detail-modal-column-list";
-import {CassdioUtils} from "utils/cassdioUtils";
 import clusterTableDetailApi from "remotes/clusterTableDetailApi";
 
 const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName}) => {
@@ -36,14 +35,10 @@ const TableDetailModal = ({show, handleClose, clusterId, keyspaceName, tableName
                 return;
             }
 
-            const sortedColumnList = CassdioUtils.columnListSorting(
-                data.result.columnList
-            );
-
             setTableInfo({
                 detail: data.result.detail,
                 describe: data.result.describe,
-                columnList: sortedColumnList,
+                columnList: data.result.columnList,
             })
 
         })

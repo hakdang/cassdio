@@ -17,7 +17,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.bindMarker;
 import static java.util.Collections.emptyList;
@@ -39,26 +43,48 @@ public class ClusterTableColumnCommander extends BaseClusterCommander {
     public CqlSessionSelectResults columnList(String clusterId, String keyspace, String table, List<String> columnList) {
         CqlSession session = cqlSessionFactory.get(clusterId);
 
-        SimpleStatement statement;
-
         Select select = getColumnTable(session, keyspace)
             .all()
             .whereColumn(CassandraSystemTablesColumn.TABLES_KEYSPACE_NAME.getColumnName()).isEqualTo(bindMarker())
             .whereColumn(CassandraSystemTablesColumn.TABLES_TABLE_NAME.getColumnName()).isEqualTo(bindMarker());
 
-//        if (CollectionUtils.isNotEmpty(columnList)) {
-//            select.whereColumn("column_name").in(columnList.stream().map(info -> bindMarker()).toList());
-//        }
+        List<String> arr = new ArrayList<>();
+        arr.add(keyspace);
+        arr.add(table);
 
-        statement = select.build(keyspace, table)
+        if (CollectionUtils.isNotEmpty(columnList)) {
+            select = select.whereColumn("column_name").in(columnList.stream()
+                .map(info -> bindMarker())
+                .collect(Collectors.toSet()));
+
+            arr.addAll(columnList);
+        }
+
+        SimpleStatement statement = select.build(arr.toArray())
             .setTimeout(Duration.ofSeconds(3));
 
         ResultSet resultSet = session.execute(statement);
 
+        List<Map<String, Object>> rows = convertRows(session, resultSet)
+            .stream()
+            .peek(row -> row.put("sortValue", makeSortValue(row)))
+            .sorted(Comparator.comparing(row -> String.valueOf(row.get("sortValue"))))
+            .toList();
+
         return CqlSessionSelectResults.of(
-            convertRows(session, resultSet),
+            rows,
             CassdioColumnDefinition.makes(resultSet.getColumnDefinitions())
         );
+    }
+
+    public List<String> columnSortedList(String clusterId, String keyspace, String table) {
+        CqlSessionSelectResults results = columnList(clusterId, keyspace, table);
+        return results.getRows().stream().map(row -> String.valueOf(row.get("column_name"))).collect(Collectors.toList());
+    }
+
+    private String makeSortValue(Map<String, Object> row) {
+        ColumnKind columnKind = ColumnKind.findByCode(String.valueOf(row.get("kind")));
+        return String.format("%s-%s", columnKind.getOrder(), row.get("position"));
     }
 
     private SelectFrom getColumnTable(CqlSession session, String keyspace) {

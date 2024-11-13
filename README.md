@@ -2,7 +2,7 @@
 
 Cassdio is centralized web management system for managing [Apache Cassandra](https://cassandra.apache.org/_/index.html)!
 
-Cassdio provide powerful tools to efficiently manage and monitor Apache Cassandra databases. You can monitor the
+Cassdio provides powerful tools to efficiently manage and monitor Apache Cassandra databases. You can monitor the
 real-time status of your database clusters and perform various tasks intuitively through a user-friendly interface.
 
 This management system helps simplify system operations and enhance stability. It's an essential tool for managing
@@ -45,9 +45,9 @@ Apache Cassandra databases, offering excellent functionality and user convenienc
 ### Installation
 
 ```
-wget https://github.com/hakdang/cassdio/releases/download/v0.1.0/cassdio-0.1.0.jar
+https://github.com/hakdang/cassdio/releases/latest/download/cassdio.jar
 
-java -jar ./cassdio-0.1.0.jar
+java -jar ./cassdio.jar
 ```
 
 ### Browser
@@ -72,5 +72,5 @@ java -jar ./cassdio-0.1.0.jar
 
 ## License
 
-Cassdio is Open Source software released under
+Cassdio is open-source software released under
 the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).

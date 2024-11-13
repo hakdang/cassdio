@@ -1,11 +1,14 @@
 package kr.hakdang.cassdio.core.domain.cluster.keyspace.table;
 
+import com.datastax.oss.driver.api.core.cql.BatchType;
+import com.datastax.oss.driver.api.core.cql.DefaultBatchType;
 import io.micrometer.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.EnumUtils;
 
 /**
  * ClusterTableArgs
@@ -96,6 +99,33 @@ public class TableDTO {
             this.pageSize = pageSize;
             this.timeoutSeconds = timeoutSeconds;
             this.cursor = cursor;
+        }
+    }
+
+    @ToString
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ClusterTableRowImportArgs {
+        private String clusterId;
+        private String keyspace;
+        private String table;
+
+        private BatchType batchType;
+        private int perCommitSize = 50;
+
+        @Builder
+        public ClusterTableRowImportArgs(
+            String clusterId,
+            String keyspace,
+            String table,
+            String batchTypeCode,
+            int perCommitSize
+        ) {
+            this.clusterId = clusterId;
+            this.keyspace = keyspace;
+            this.table = table;
+            this.batchType = EnumUtils.getEnum(DefaultBatchType.class, batchTypeCode);
+            this.perCommitSize = perCommitSize;
         }
     }
 

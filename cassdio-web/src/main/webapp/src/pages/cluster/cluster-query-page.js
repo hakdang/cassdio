@@ -1,4 +1,4 @@
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import QueryEditor from "components/cluster/query-editor";
@@ -35,6 +35,7 @@ const ClusterQueryPage = () => {
         wasApplied: null,
         rows: [],
         rowHeader: [],
+        columnList: {},
         queryTrace: {},
     };
 
@@ -79,6 +80,7 @@ const ClusterQueryPage = () => {
                 wasApplied: data.result.wasApplied,
                 rows: rows,
                 rowHeader: data.result.rowHeader,
+                columnList : data.result.columnList,
                 queryTrace: data.result.queryTrace,
             })
         }).finally(() => {
