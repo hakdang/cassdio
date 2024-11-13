@@ -170,6 +170,7 @@ const QueryEditor = ({queryOptions, setQueryOptions, queryExecute}) => {
                                     <option value="10">10</option>
                                     <option value="50">50</option>
                                     <option value="100">100</option>
+                                    <option value="500">500</option>
                                 </select>
                                 <label htmlFor="queryLimitSelect">Limit</label>
                             </div>
@@ -200,7 +201,7 @@ const QueryEditor = ({queryOptions, setQueryOptions, queryExecute}) => {
                             <div className="form-floating mb-3">
                                 <input type="number" className="form-control form-control-sm" id="queryTimeoutSec"
                                        placeholder="Query Timeout Sec"
-                                       value={queryOptions.timeoutSeconds || 3}
+                                       value={queryOptions.timeoutSeconds || 0}
                                        onChange={
                                            e => {
                                                setQueryOptions(t => {
