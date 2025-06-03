@@ -2,6 +2,18 @@ spring.profiles.default: release
 spring.config:
   import:
     - classpath:/application-core.yml
+
+# Default Cassandra cluster configuration
+# Uncomment and configure the following settings to automatically register a default cluster on startup
+#cassdio:
+#  cassandra:
+#    default:
+#      contactPoints: "127.0.0.1"  # comma-separated list of contact points
+#      port: 9042                   # Cassandra port
+#      localDatacenter: "datacenter1"  # local datacenter name
+#      username: ""                 # optional: username for authentication
+#      password: ""                 # optional: password for authentication
+
 server:
   port: 20000
   shutdown: graceful
