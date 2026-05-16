@@ -1,10 +1,15 @@
 plugins {
     id 'application'
     id 'org.springframework.boot'
+    id 'org.asciidoctor.jvm.convert'
 }
 
 application {
     mainClass = 'kr.hakdang.cassdio.web.CassdioWebApplicationKt'
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
 }
 
 dependencies {
@@ -12,12 +17,25 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+    attributes 'snippets': snippetsDir
 }
 
 bootJar {
     mainClass = 'kr.hakdang.cassdio.web.CassdioWebApplicationKt'
     archiveBaseName.set('cassdio')
     archiveVersion.set('')
+    dependsOn asciidoctor
 }
 
 apply from: "${project.rootDir}/cassdio-web/frontend.build.gradle"

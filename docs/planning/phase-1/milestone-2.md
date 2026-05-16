@@ -28,10 +28,10 @@
 ```
 
 **체크리스트**:
-- [ ] ApiResponse<T> 제네릭 클래스 작성
-- [ ] 성공/실패 응답 빌더 메서드 구현
-- [ ] 페이징 응답 모델 정의
-- [ ] 공통 DTO 작성 및 테스트
+- [x] ApiResponse<T> 제네릭 클래스 작성
+- [x] 성공/실패 응답 빌더 메서드 구현
+- [x] 페이징 응답 모델 정의
+- [x] 공통 DTO 작성 및 테스트
 
 ---
 
@@ -47,10 +47,10 @@
 | E999 | Internal server error | 500 |
 
 **체크리스트**:
-- [ ] ErrorCode enum 정의
-- [ ] HTTP Status 매핑 구현
-- [ ] 에러 메시지 다국어 지원 구조
-- [ ] 에러 로깅 정책 수립
+- [x] ErrorCode enum 정의
+- [x] HTTP Status 매핑 구현
+- [x] 에러 메시지 다국어 지원 구조
+- [x] 에러 로깅 정책 수립
 
 ---
 
@@ -67,10 +67,10 @@
 - 기타 일반 예외
 
 **체크리스트**:
-- [ ] @RestControllerAdvice 클래스 작성
-- [ ] 예외별 @ExceptionHandler 메서드 구현
-- [ ] 예외 로깅 및 추적 ID 추가
-- [ ] 테스트 케이스 작성
+- [x] @RestControllerAdvice 클래스 작성
+- [x] 예외별 @ExceptionHandler 메서드 구현
+- [x] 예외 로깅 및 추적 ID 추가
+- [x] 테스트 케이스 작성
 
 ---
 
@@ -83,10 +83,10 @@
 - Validation error 응답 표준화
 
 **체크리스트**:
-- [ ] @Validated 적용
-- [ ] ConstraintViolationException 처리
-- [ ] 필드별 에러 메시지 구성
-- [ ] 다국어 메시지 지원
+- [x] @Validated 적용
+- [x] ConstraintViolationException 처리
+- [x] 필드별 에러 메시지 구성
+- [x] 다국어 메시지 지원
 
 ---
 
@@ -101,13 +101,13 @@
 - 테스트 성공 시에만 API docs 산출
 
 **체크리스트**:
-- [ ] Spring REST Docs 라이브러리 추가
-- [ ] Asciidoctor Gradle task 구성
-- [ ] 공통 request/response snippet 규칙 정의
-- [ ] 공통 error response 문서화 테스트 작성
-- [ ] health/version API 문서화 테스트 작성
-- [ ] 문서화 테스트가 실패하면 docs build도 실패하도록 구성
-- [ ] 테스트가 없는 API는 docs에 포함하지 않는 원칙 문서화
+- [x] Spring REST Docs 라이브러리 추가
+- [x] Asciidoctor Gradle task 구성
+- [x] 공통 request/response snippet 규칙 정의
+- [x] 공통 error response 문서화 테스트 작성
+- [x] health/version API 문서화 테스트 작성
+- [x] 문서화 테스트가 실패하면 docs build도 실패하도록 구성
+- [x] 테스트가 없는 API는 docs에 포함하지 않는 원칙 문서화
 
 **문서 생성 원칙**:
 
@@ -129,12 +129,12 @@ API Test Case 작성
 
 ## 📋 체크리스트
 
-- [ ] Feature 1 완료
-- [ ] Feature 2 완료
-- [ ] Feature 3 완료
-- [ ] Feature 4 완료
-- [ ] Feature 5 완료
-- [ ] 통합 테스트 및 문서화
+- [x] Feature 1 완료
+- [x] Feature 2 완료
+- [x] Feature 3 완료
+- [x] Feature 4 완료
+- [x] Feature 5 완료
+- [x] 통합 테스트 및 문서화
 
 ## 🔗 관련 문서
 
