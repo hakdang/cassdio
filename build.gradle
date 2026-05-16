@@ -1,33 +1,25 @@
-buildscript {
-    ext {
-        datastaxJavaDriverVersion = "4.17.0"
-    }
-}
-
 plugins {
-    id 'java'
-    id "application"
-    id 'org.springframework.boot' version '3.3.2'
-    id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.github.node-gradle.node' version '7.0.2'
-    id "org.sonarqube" version "5.1.0.4882"
+    id 'org.springframework.boot' version '3.4.2' apply false
+    id 'io.spring.dependency-management' version '1.1.6' apply false
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10' apply false
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.1.10' apply false
+    id 'org.jlleitschuh.gradle.ktlint' version '12.1.2' apply false
 }
 
 allprojects {
     group = 'kr.hakdang.cassdio'
     version = '0.1.0'
+
     repositories {
         mavenCentral()
     }
 }
 
 subprojects {
-    apply {
-        plugin "idea"
-        plugin "java-library"
-        plugin "org.springframework.boot"
-        plugin "io.spring.dependency-management"
-    }
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'org.jetbrains.kotlin.plugin.spring'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
     java {
         toolchain {
@@ -35,54 +27,28 @@ subprojects {
         }
     }
 
-    configurations {
-        compileOnly {
-            extendsFrom annotationProcessor
+    kotlin {
+        jvmToolchain(21)
+        compilerOptions {
+            freeCompilerArgs.add('-Xjsr305=strict')
         }
     }
 
     dependencies {
-        // Lombok
-        compileOnly("org.projectlombok:lombok")
-        annotationProcessor("org.projectlombok:lombok")
+        implementation 'org.jetbrains.kotlin:kotlin-reflect'
+        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
-        testCompileOnly("org.projectlombok:lombok")
-        testAnnotationProcessor("org.projectlombok:lombok")
-
-        // Test
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    }
-
-    tasks.register('unitTest', Test) {
-        group = "verification"
-        useJUnitPlatform {
-            excludeTags 'integration-test'
-        }
-    }
-
-    tasks.register('integrationTest', Test) {
-        group = "verification"
-        useJUnitPlatform {
-            includeTags 'integration-test'
-        }
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
     tasks.withType(Test).configureEach {
         useJUnitPlatform()
-        testLogging {
-            showExceptions = true
-            exceptionFormat = 'FULL'
-            showCauses = true
-            events = ['FAILED']
-        }
     }
-}
 
-sonar {
-    properties {
-        property "sonar.projectKey", "hakdang_cassdio"
-        property "sonar.organization", "hakdang"
-        property "sonar.host.url", "https://sonarcloud.io"
+    ktlint {
+        version = '1.5.0'
+        android = false
     }
 }

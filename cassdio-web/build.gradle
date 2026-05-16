@@ -1,28 +1,23 @@
-apply plugin: 'application'
-bootJar {
-    mainClass= "kr.hakdang.cassdio.web.CassdioWebApplication"
+plugins {
+    id 'application'
+    id 'org.springframework.boot'
+}
+
+application {
+    mainClass = 'kr.hakdang.cassdio.web.CassdioWebApplicationKt'
 }
 
 dependencies {
-    // Core
-    implementation project(":cassdio-core")
-
-    // Spring MVC
-    implementation("org.springframework.boot:spring-boot-starter-web")
-
-    // Spring Validation
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation project(':cassdio-core')
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 bootJar {
-    enabled = true
-    archiveBaseName.set("cassdio")
-    archiveVersion.set("");
-}
-jar {
-    enabled = true
-    archiveBaseName.set("cassdio")
-    archiveVersion.set("");
+    mainClass = 'kr.hakdang.cassdio.web.CassdioWebApplicationKt'
+    archiveBaseName.set('cassdio')
+    archiveVersion.set('')
 }
 
 apply from: "${project.rootDir}/cassdio-web/frontend.build.gradle"

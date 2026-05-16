@@ -1,42 +1,19 @@
-def frontend = project.findProperty('frontend') ?: false
-println("frontend " + frontend);
-if (frontend.toBoolean()) {
+tasks.register('frontendInstall', Exec) {
+    workingDir = file('src/main/webapp')
+    commandLine 'npm', 'install'
+}
 
-    apply plugin: "com.github.node-gradle.node"
+tasks.register('frontendLint', Exec) {
+    workingDir = file('src/main/webapp')
+    commandLine 'npm', 'run', 'lint'
+}
 
-    def projectDir = file("${project.rootDir}/cassdio-web/src/main/webapp")
+tasks.register('frontendTest', Exec) {
+    workingDir = file('src/main/webapp')
+    commandLine 'npm', 'run', 'test', '--', '--run'
+}
 
-    node {
-        version = '20.15.1'
-        yarnVersion = '1.22.22'
-        download = true
-
-        nodeProjectDir.set(projectDir)
-    }
-
-    tasks.register('yarnInstall2', YarnTask) {
-        args = ['install']
-    }
-
-    tasks.register('yarnBuild', YarnTask) {
-        dependsOn yarnInstall2
-        args = ['run', 'build']
-    }
-
-    tasks.register('copyDist', Copy) {
-        dependsOn yarnBuild
-        from("${projectDir}/build") {
-            include '**/*'
-        }
-        into "${project.rootDir}/cassdio-web/src/main/resources/static"
-        includeEmptyDirs = true
-    }
-
-    tasks.register('deleteDist', Delete) {
-        dependsOn copyDist
-        delete "${projectDir}/build"
-    }
-
-    processResources { dependsOn "deleteDist" }
-
+tasks.register('frontendBuild', Exec) {
+    workingDir = file('src/main/webapp')
+    commandLine 'npm', 'run', 'build'
 }
