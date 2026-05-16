@@ -1,17 +1,8 @@
-export type HealthResponse = {
-  status: string;
-  service: string;
-  timestamp: string;
-};
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '';
+import type { HealthResponse } from '../types/api';
+import { getApiData } from './apiClient';
 
 export async function fetchHealth(): Promise<HealthResponse> {
-  const response = await fetch(`${apiBaseUrl}/api/health`);
-
-  if (!response.ok) {
-    throw new Error(`Health request failed with status ${response.status}`);
-  }
-
-  return response.json() as Promise<HealthResponse>;
+  return getApiData<HealthResponse>('/api/health');
 }
+
+export type { HealthResponse };
