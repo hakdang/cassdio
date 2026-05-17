@@ -1,4 +1,4 @@
 rootProject.name = 'cassdio'
+
 include 'cassdio-core'
 include 'cassdio-web'
-

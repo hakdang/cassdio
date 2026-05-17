@@ -1,62 +1,44 @@
-name: "CI (Client)"
+name: Frontend CI
+
 on:
   pull_request:
-    branches:
-      - main
-      - develop
-    types:
-      - opened
-      - synchronize
-      - reopened
   push:
     branches:
       - main
       - develop
   workflow_dispatch:
 
-env:
-  CI: ''
 jobs:
-  ci:
-    name: Build on Node
+  build:
     runs-on: ubuntu-latest
-    continue-on-error: true
-    strategy:
-      matrix:
-        node: [ 20 ]
+    defaults:
+      run:
+        working-directory: cassdio-web/src/main/webapp
     steps:
-      - name: checkout@v4
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node ${{ matrix.node }}
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cassdio-web/src/main/webapp/package-lock.json
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Install
+        run: npm install
 
-      - name: Cache yarn cache
-        id: cache-yarn
-        uses: actions/cache@v3
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test -- --run
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Cache node modules
-        id: cache-npm
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node_modules-
-
-      - name: Install and Build
-        run: |
-          yarn install --frozen-lockfile
-          yarn run build
-        working-directory: cassdio-web/src/main/webapp
+          name: cassdio-frontend
+          path: cassdio-web/src/main/webapp/dist

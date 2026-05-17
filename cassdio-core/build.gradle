@@ -1,32 +1,16 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot'
+}
+
 dependencies {
-    // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.mapdb:mapdb:3.1.0")
-    implementation("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
-    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
-    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
-//    implementation("com.datastax.oss:java-driver-core:${datastaxJavaDriverVersion}")
-//    implementation("com.datastax.oss:java-driver-query-builder:${datastaxJavaDriverVersion}")
-//    implementation("com.datastax.oss:java-driver-mapper-runtime:${datastaxJavaDriverVersion}")
-
-    // Json
-    implementation("org.springframework.boot:spring-boot-starter-json")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
-    implementation("org.apache.commons:commons-csv:1.9.0")
-    // CommonsLang3
-    api("org.apache.commons:commons-lang3:3.13.0")
-    api("com.google.guava:guava:33.0.0-jre")
-    api("org.apache.commons:commons-collections4:4.4")
-    api("org.apache.commons:commons-csv:1.9.0")
-
-    // Cache
-    implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+    api 'org.springframework.boot:spring-boot-starter'
 }
 
 bootJar {
     enabled = false
 }
+
 jar {
     enabled = true
 }

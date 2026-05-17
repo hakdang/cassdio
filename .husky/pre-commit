@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+npm --prefix cassdio-web/src/main/webapp run lint
+./gradlew ktlintCheck
