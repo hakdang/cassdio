@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetchHealth, type HealthResponse } from '../utils/api';
 
-type UseHealthOptions = {
-  pollIntervalMs?: number;
-};
-
-export function useHealth(options: UseHealthOptions = {}) {
+export function useHealth() {
   const [data, setData] = useState<HealthResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,17 +22,7 @@ export function useHealth(options: UseHealthOptions = {}) {
 
   useEffect(() => {
     void refresh();
-
-    if (!options.pollIntervalMs) {
-      return undefined;
-    }
-
-    const intervalId = window.setInterval(() => {
-      void refresh();
-    }, options.pollIntervalMs);
-
-    return () => window.clearInterval(intervalId);
-  }, [options.pollIntervalMs, refresh]);
+  }, [refresh]);
 
   return { data, loading, error, refresh };
 }
