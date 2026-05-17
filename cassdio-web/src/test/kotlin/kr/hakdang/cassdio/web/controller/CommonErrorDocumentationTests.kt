@@ -19,7 +19,13 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
-@WebMvcTest(controllers = [CommonErrorDocumentationController::class])
+@WebMvcTest(
+    controllers = [CommonErrorDocumentationController::class],
+    properties = [
+        "spring.web.locale=en",
+        "spring.web.locale-resolver=fixed",
+    ],
+)
 @AutoConfigureRestDocs
 @Import(GlobalExceptionHandler::class, ErrorMessageResolver::class)
 class CommonErrorDocumentationTests(
@@ -30,7 +36,7 @@ class CommonErrorDocumentationTests(
         mockMvc
             .post("/api/test/validation") {
                 contentType = MediaType.APPLICATION_JSON
-                header("Accept-Language", "ko-KR")
+                header("Accept-Language", "en")
                 content = """{"name":""}"""
             }.andExpect {
                 status { isBadRequest() }
