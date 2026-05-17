@@ -28,7 +28,7 @@ Cassdio v2는 단순 Cassandra Web UI가 아니라, Cassandra 클러스터를 �
 | Phase | 주제 | 마일스톤 | 주요 목표 |
 |-------|------|---------:|---------|
 | 1 | Project Foundation | 3 | monorepo, backend/frontend 기반, 공통 UI layout |
-| 2 | Bootstrap & Metadata Foundation | 4 | 최초 실행 wizard, metadata Cassandra 초기화, 기본 seed |
+| 2 | Metadata Foundation | 4 | Metadata DB 접근 기반, metadata Cassandra 초기화, 기본 seed |
 | 3 | Identity, Login, Role & Permission | 4 | member, login/JWT, workspace, role, permission engine |
 | 4 | Cluster Management | 3 | cluster CRUD, Cassandra session, 운영 정보 |
 | 5 | Schema Explorer & Catalog | 3 | schema 탐색, catalog, schema 변경 이력 |
@@ -92,16 +92,16 @@ docs/planning/
 | M3 | Tailwind CSS | Tailwind 기반 디자인 토큰과 theme 확장 구조를 구성한다. |
 | M3 | Axios 공통 Client | token, timeout, refresh retry, 개인화 설정 기반 timeout 변경을 한 곳에서 관리한다. |
 
-### Phase 2. Bootstrap & Metadata Foundation
+### Phase 2. Metadata Foundation
 
-Cassdio 최초 실행 시 metadata Cassandra 정보를 입력받고, `cassdio_meta` keyspace와 기본 데이터를 idempotent하게 초기화한다. 여러 instance가 동시에 시작해도 bootstrap lock으로 중복 실행을 막는다.
+기본 기능 구현을 먼저 진행하기 위해 Metadata DB 접근 기반을 구성한다. 최초 실행 wizard, bootstrap token, super admin/workspace 초기 입력 흐름은 뒤 Phase로 이관하고, 우선 임시 Metadata DB 설정 인터페이스를 통해 `cassdio_meta` 접속 정보를 조회해 사용할 수 있게 한다.
 
 | Milestone | Feature | 상세 기능 설계 |
 |---|---|---|
-| M1. 최초 실행 Bootstrap | Bootstrap 상태 API | `/api/bootstrap/status`에서 metadata config 존재, schema version, super admin 존재 여부를 반환한다. |
-| M1 | Metadata Cassandra 입력 UI | setup wizard에서 contact points, port, datacenter, auth, TLS, keyspace 설정을 입력한다. |
-| M1 | 연결 테스트 | 입력값으로 Cassandra 연결, schema agreement, 권한을 검증하고 실패 사유를 분리한다. |
-| M1 | Bootstrap Token | 서버 로그 또는 env로 발급된 token을 wizard에서 확인해 무단 초기화를 방지한다. |
+| M1. Metadata DB 접근 기반 | Metadata DB 설정 인터페이스 | 기본 기능이 Metadata DB 접속 정보를 직접 설정 파일에서 읽지 않고 임시 인터페이스를 통해 조회한다. |
+| M1 | 임시 설정 구현체 | application config, environment variable, test fixture 기반 구현체를 제공하고 뒤 Phase에서 bootstrap 결과 기반 구현체로 교체 가능하게 한다. |
+| M1 | Metadata DB 클라이언트 | 인터페이스에서 조회한 contact points, datacenter, keyspace, auth, TLS 정보로 Cassandra session/client를 생성한다. |
+| M1 | Metadata 상태 API | `/api/metadata/status`에서 설정 source, 연결 가능 여부, keyspace, schema version placeholder를 반환한다. |
 | M2. Metadata Cassandra 초기화 | `cassdio_meta` 생성 | NetworkTopologyStrategy 기반 keyspace를 생성하고 개발 환경 replication 예외를 지원한다. |
 | M2 | Migration 구조 | Cassandra CQL migration table과 schema version 추적을 구현한다. |
 | M2 | Bootstrap Lock | `bootstrap_locks` 테이블로 owner, status, ttl, heartbeat를 관리한다. |

@@ -106,7 +106,7 @@ CREATE TABLE cassdio_meta.schema_migrations (
 
 ## 🔗 관련 문서
 
-- [Milestone 1: 최초 실행 Bootstrap 설계 구현](./milestone-1.md)
+- [Milestone 1: Metadata DB 접근 기반 구현](./milestone-1.md)
 - [Milestone 3: 초기 기본 데이터 생성](./milestone-3.md)
 
 ---
