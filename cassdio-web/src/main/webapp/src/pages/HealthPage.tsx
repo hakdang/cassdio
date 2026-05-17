@@ -1,23 +1,17 @@
 import { StatusPanel } from '../components/StatusPanel';
-import { PageHeader } from '../components/common/PageHeader';
 import { useHealth } from '../hooks/useHealth';
 
 export function HealthPage() {
   const { data, loading, error, refresh } = useHealth();
 
   return (
-    <section>
-      <PageHeader
-        title="Workspace Health"
-        description="Monitor the Cassdio web API status and service metadata."
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/' },
-          { label: 'Health' },
-        ]}
-      />
-      <div className="p-4 sm:p-6 lg:p-8">
-        <StatusPanel health={data} loading={loading} error={error} onRefresh={refresh} />
-      </div>
-    </section>
+    <main className="app-shell">
+      <section className="page-header">
+        <p className="eyebrow">Cassdio</p>
+        <h1>Cassandra studio workspace</h1>
+        <p className="summary">A clean starting point for the Cassdio API and client.</p>
+      </section>
+      <StatusPanel health={data} loading={loading} error={error} onRefresh={refresh} />
+    </main>
   );
 }
