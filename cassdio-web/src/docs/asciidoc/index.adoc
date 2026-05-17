@@ -1,0 +1,65 @@
+= Cassdio API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:snippets: ../../../build/generated-snippets
+
+== Documentation Policy
+
+API 문서는 Spring REST Docs 테스트가 생성한 snippets만 조립한다.
+새 API는 정상 응답 테스트와 필요한 validation/auth 실패 테스트를 함께 추가해야 문서에 포함된다.
+
+== Common Response
+
+=== Success
+
+[source,json]
+----
+{
+  "code": "200",
+  "message": "Success",
+  "data": {},
+  "timestamp": 1234567890
+}
+----
+
+=== Error
+
+[source,json]
+----
+{
+  "code": "E001",
+  "message": "Invalid request",
+  "errors": [],
+  "traceId": "trace-id",
+  "timestamp": 1234567890
+}
+----
+
+== Health
+
+=== GET /api/health
+
+include::{snippets}/health/http-response.adoc[]
+include::{snippets}/health/response-fields.adoc[]
+
+=== GET /api/version
+
+include::{snippets}/version/http-response.adoc[]
+include::{snippets}/version/response-fields.adoc[]
+
+== Common Errors
+
+=== Validation Failure
+
+include::{snippets}/error-validation/http-request.adoc[]
+include::{snippets}/error-validation/request-fields.adoc[]
+include::{snippets}/error-validation/http-response.adoc[]
+include::{snippets}/error-validation/response-fields.adoc[]
+
+=== Unauthorized
+
+include::{snippets}/error-unauthorized/http-response.adoc[]
+include::{snippets}/error-unauthorized/response-fields.adoc[]
