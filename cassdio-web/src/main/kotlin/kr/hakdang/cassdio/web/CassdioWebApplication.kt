@@ -1,13 +1,9 @@
 package kr.hakdang.cassdio.web
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration
 import org.springframework.boot.runApplication
 
-@SpringBootApplication(
-    scanBasePackages = ["kr.hakdang.cassdio"],
-    exclude = [CassandraAutoConfiguration::class],
-)
+@SpringBootApplication(scanBasePackages = ["kr.hakdang.cassdio"])
 class CassdioWebApplication
 
 fun main(args: Array<String>) {

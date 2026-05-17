@@ -1,6 +1,5 @@
 package kr.hakdang.cassdio.web.controller
 
-import kr.hakdang.cassdio.core.api.ApiResponse
 import kr.hakdang.cassdio.web.dto.HealthResponse
 import kr.hakdang.cassdio.web.dto.VersionResponse
 import org.springframework.beans.factory.annotation.Value
@@ -15,20 +14,16 @@ class HealthController(
     @Value("\${cassdio.version:0.1.0}") private val version: String,
 ) {
     @GetMapping("/health")
-    fun health(): ApiResponse<HealthResponse> =
-        ApiResponse.success(
-            HealthResponse(
-                status = "UP",
-                service = applicationName,
-            ),
+    fun health(): HealthResponse =
+        HealthResponse(
+            status = "UP",
+            service = applicationName,
         )
 
     @GetMapping("/version")
-    fun version(): ApiResponse<VersionResponse> =
-        ApiResponse.success(
-            VersionResponse(
-                name = applicationName,
-                version = version,
-            ),
+    fun version(): VersionResponse =
+        VersionResponse(
+            name = applicationName,
+            version = version,
         )
 }
