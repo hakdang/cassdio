@@ -1,8 +1,8 @@
 package kr.hakdang.cassdio.core.metadata.bootstrap
 
+import kr.hakdang.cassdio.core.metadata.cluster.InitialManagedClusterRegistrationService
 import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
-import kr.hakdang.cassdio.core.metadata.cluster.InitialManagedClusterRegistrationService
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Duration

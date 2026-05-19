@@ -83,27 +83,31 @@ class ClusterConnectionService(
             clientFactory.create(request).use { client ->
                 cassandraVersion =
                     runCheck(checks, "cassandra_version", "Cassandra version was read.") {
-                        client.queryOne("SELECT release_version FROM system.local")
+                        client
+                            .queryOne("SELECT release_version FROM system.local")
                             ?.string("release_version")
                             ?: error("system.local did not return release_version.")
                     }
 
                 runCheck(checks, "system_keyspace_read", "System schema is readable.") {
-                    client.queryOne("SELECT keyspace_name FROM system_schema.keyspaces LIMIT 1")
+                    client
+                        .queryOne("SELECT keyspace_name FROM system_schema.keyspaces LIMIT 1")
                         ?.string("keyspace_name")
                         ?: error("system_schema.keyspaces did not return a row.")
                 }
 
                 keyspaceCount =
                     runCheck(checks, "keyspace_count", "Keyspace count was collected.") {
-                        client.queryOne("SELECT COUNT(*) AS keyspace_count FROM system_schema.keyspaces")
+                        client
+                            .queryOne("SELECT COUNT(*) AS keyspace_count FROM system_schema.keyspaces")
                             ?.number("keyspace_count")
                             ?: error("Keyspace count could not be collected.")
                     }
 
                 tableCount =
                     runCheck(checks, "table_count", "Table count was collected.") {
-                        client.queryOne("SELECT COUNT(*) AS table_count FROM system_schema.tables")
+                        client
+                            .queryOne("SELECT COUNT(*) AS table_count FROM system_schema.tables")
                             ?.number("table_count")
                             ?: error("Table count could not be collected.")
                     }
@@ -138,8 +142,8 @@ class ClusterConnectionService(
         name: String,
         successMessage: String,
         block: () -> T,
-    ): T {
-        return runCatching(block)
+    ): T =
+        runCatching(block)
             .onSuccess {
                 checks += ClusterConnectionCheck(name = name, success = true, message = successMessage)
             }.getOrElse { error ->
@@ -151,7 +155,6 @@ class ClusterConnectionService(
                     )
                 throw error
             }
-    }
 
     private fun CqlRow.number(name: String): Int? = string(name)?.toLongOrNull()?.toInt()
 }

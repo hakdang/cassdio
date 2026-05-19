@@ -9,9 +9,9 @@ import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterProbeClient
 import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterProbeClientFactory
 import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterRegistrationRequest
 import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterRepository
-import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.InitialManagedClusterProperties
 import kr.hakdang.cassdio.core.metadata.config.ManagedClusterEnvironment
+import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfig
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigSource
@@ -417,12 +417,32 @@ class MetadataBootstrapTests {
 
         assertTrue(result.registered)
         assertTrue(executor.queried.any { it.contains("managed_clusters_by_name") })
-        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_clusters") && it.contains("'Local Dev'") })
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.managed_clusters") &&
+                    it.contains("'Local Dev'")
+            },
+        )
         assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_cluster_credentials") })
         assertTrue(executor.executed.none { it.contains("cluster-password") })
-        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_cluster_health_snapshots") && it.contains("'HEALTHY'") })
-        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.role_assignments") && it.contains("'CLUSTER'") })
-        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.audit_logs") && it.contains("'INITIAL_CLUSTER_REGISTERED'") })
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.managed_cluster_health_snapshots") &&
+                    it.contains("'HEALTHY'")
+            },
+        )
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.role_assignments") &&
+                    it.contains("'CLUSTER'")
+            },
+        )
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.audit_logs") &&
+                    it.contains("'INITIAL_CLUSTER_REGISTERED'")
+            },
+        )
     }
 
     private fun testConfigProvider(): MetadataDbConfigProvider =
