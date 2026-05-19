@@ -31,7 +31,7 @@ export function LoginPage() {
           </span>
           <div>
             <h1 className="text-xl font-semibold text-console-ink">Sign in to Cassdio</h1>
-            <p className="text-sm text-console-muted">Use the placeholder session for Phase 1.</p>
+            <p className="text-sm text-console-muted">Use your Cassdio member account.</p>
           </div>
         </div>
         <form className="space-y-4" onSubmit={submit}>

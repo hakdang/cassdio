@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 import { ConsolePage } from './pages/ConsolePage';
+import { AdminRolesPage } from './pages/AdminRolesPage';
+import { AdminUsersPage } from './pages/AdminUsersPage';
 import { HealthPage } from './pages/HealthPage';
 import { LoginPage } from './pages/LoginPage';
 
@@ -42,8 +44,9 @@ export function App() {
           />
           <Route
             path="/admin/*"
-            element={<ConsolePage section="Admin" title="Users" description="Manage operators and console settings." />}
+            element={<AdminUsersPage />}
           />
+          <Route path="/admin/roles" element={<AdminRolesPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate replace to="/" />} />
