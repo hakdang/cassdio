@@ -28,10 +28,10 @@
 - TLS 사용 여부 및 관련 옵션
 
 **체크리스트**:
-- [ ] MetadataDbConfigProvider 인터페이스 정의
-- [ ] MetadataDbConfig 값 객체 정의
-- [ ] 민감 정보 마스킹/노출 기준 정의
-- [ ] 단위 테스트 작성
+- [x] MetadataDbConfigProvider 인터페이스 정의
+- [x] MetadataDbConfig 값 객체 정의
+- [x] 민감 정보 마스킹/노출 기준 정의
+- [x] 단위 테스트 작성
 
 ---
 
@@ -44,10 +44,10 @@
 - 테스트용 in-memory/fake 구현체
 
 **체크리스트**:
-- [ ] Application property binding 구현
-- [ ] 기본값 및 필수값 validation
-- [ ] Test fixture 구현
-- [ ] 설정 누락 시 명확한 에러 반환
+- [x] Application property binding 구현
+- [x] 기본값 및 필수값 validation
+- [x] Test fixture 구현
+- [x] 설정 누락 시 명확한 에러 반환
 
 ---
 
@@ -61,10 +61,12 @@
 - timeout 및 retry 기본값 적용
 
 **체크리스트**:
-- [ ] MetadataCassandraClientFactory 구현
-- [ ] 연결 lifecycle 관리
-- [ ] 설정 변경 시 재연결 전략 초안 정의
-- [ ] 연결 실패 예외 모델 정의
+- [x] MetadataCassandraClientFactory 구현
+- [x] 연결 lifecycle 관리
+- [x] 설정 변경 시 재연결 전략 초안 정의
+- [x] 연결 실패 예외 모델 정의
+
+> 구현명은 `CassandraCqlExecutor`이며, `MetadataDbConfigProvider`에서 조회한 설정으로 `CqlSession`을 생성하고 설정 변경 시 기존 session을 닫은 뒤 재연결한다.
 
 ---
 
@@ -83,11 +85,11 @@
 ```
 
 **체크리스트**:
-- [ ] /api/metadata/status API 구현
-- [ ] 연결 가능 여부 확인
-- [ ] 설정 source 표시
-- [ ] 민감 정보 응답 제외
-- [ ] API 테스트 작성
+- [x] /api/metadata/status API 구현
+- [x] 연결 가능 여부 확인
+- [x] 설정 source 표시
+- [x] 민감 정보 응답 제외
+- [x] API 테스트 작성
 
 ---
 
@@ -100,10 +102,10 @@
 - 뒤 Phase의 bootstrap 구현체 교체를 고려해 인터페이스 계약을 작게 유지한다.
 
 **체크리스트**:
-- [ ] 서비스 의존성 주입 패턴 정리
-- [ ] 샘플 service 또는 repository 적용
-- [ ] 테스트에서 fake provider 사용
-- [ ] 구현체 교체 시나리오 문서화
+- [x] 서비스 의존성 주입 패턴 정리
+- [x] 샘플 service 또는 repository 적용
+- [x] 테스트에서 fake provider 사용
+- [x] 구현체 교체 시나리오 문서화
 
 ---
 
@@ -120,12 +122,12 @@
 
 ## 체크리스트
 
-- [ ] Feature 1 완료
-- [ ] Feature 2 완료
-- [ ] Feature 3 완료
-- [ ] Feature 4 완료
-- [ ] Feature 5 완료
-- [ ] 인터페이스 교체 가능성 검증
+- [x] Feature 1 완료
+- [x] Feature 2 완료
+- [x] Feature 3 완료
+- [x] Feature 4 완료
+- [x] Feature 5 완료
+- [x] 인터페이스 교체 가능성 검증
 
 ## 관련 문서
 
