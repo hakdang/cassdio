@@ -512,7 +512,12 @@ class MetadataBootstrapTests {
             RecordingCqlExecutor(
                 queryHandler = { statement ->
                     when {
-                        statement.contains("managed_clusters_by_name") -> CqlRow(mapOf("cluster_id" to "00000000-0000-0000-0000-000000000001"))
+                        statement.contains("managed_clusters_by_name") ->
+                            CqlRow(
+                                mapOf(
+                                    "cluster_id" to "00000000-0000-0000-0000-000000000001",
+                                ),
+                            )
                         else -> null
                     }
                 },
