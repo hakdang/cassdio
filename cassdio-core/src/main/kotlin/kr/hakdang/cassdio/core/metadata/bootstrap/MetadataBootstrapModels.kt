@@ -47,6 +47,7 @@ data class InstallationState(
     val bootstrapCompletedAt: Instant?,
     val schemaVersion: String?,
     val cassdioVersion: String,
+    val initialSettings: Map<String, String>,
 )
 
 data class BootstrapResult(

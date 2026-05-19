@@ -15,10 +15,12 @@
 - Durable writes 설정
 
 **체크리스트**:
-- [ ] KeyspaceCreationService 구현
-- [ ] CQL 스크립트 작성
-- [ ] 기존 keyspace 확인 로직
-- [ ] 생성 실패 시 롤백 처리
+- [x] KeyspaceCreationService 구현
+- [x] CQL 스크립트 작성
+- [x] 기존 keyspace 확인 로직
+- [x] 생성 실패 시 롤백 처리
+
+> Cassandra DDL은 transaction rollback을 제공하지 않으므로, `CREATE KEYSPACE IF NOT EXISTS` 기반 idempotent 생성과 bootstrap 실패 시 installation state 미완료/lock failed 기록으로 재시도 가능하게 처리한다.
 
 ---
 
@@ -37,11 +39,13 @@ CREATE TABLE cassdio_meta.schema_migrations (
 ```
 
 **체크리스트**:
-- [ ] SchemaMigration 테이블 정의
-- [ ] Migration 스크립트 관리 구조
-- [ ] Migration 실행 엔진
-- [ ] Migration 이력 저장
+- [x] SchemaMigration 테이블 정의
+- [x] Migration 스크립트 관리 구조
+- [x] Migration 실행 엔진
+- [x] Migration 이력 저장
 - [ ] Rollback 지원 (선택사항)
+
+> Rollback은 Cassandra schema migration 운영 특성상 선택사항으로 남긴다. 실패 migration은 `success = false`로 기록되고 재시도 시 다시 실행 가능하다.
 
 ---
 
@@ -54,10 +58,10 @@ CREATE TABLE cassdio_meta.schema_migrations (
 - 타임아웃 및 자동 해제 메커니즘
 
 **체크리스트**:
-- [ ] BootstrapLock 테이블 정의
-- [ ] LWT 기반 lock 획득 로직
-- [ ] 타임아웃 처리
-- [ ] 장애 시 lock 해제 메커니즘
+- [x] BootstrapLock 테이블 정의
+- [x] LWT 기반 lock 획득 로직
+- [x] 타임아웃 처리
+- [x] 장애 시 lock 해제 메커니즘
 
 ---
 
@@ -72,10 +76,10 @@ CREATE TABLE cassdio_meta.schema_migrations (
 - 초기 설정값들
 
 **체크리스트**:
-- [ ] InstallationState 테이블 정의
-- [ ] 상태 저장 로직
-- [ ] 상태 조회 API
-- [ ] 상태 업데이트 로직
+- [x] InstallationState 테이블 정의
+- [x] 상태 저장 로직
+- [x] 상태 조회 API
+- [x] 상태 업데이트 로직
 
 ---
 
@@ -88,21 +92,23 @@ CREATE TABLE cassdio_meta.schema_migrations (
 - Idempotency key 활용
 
 **체크리스트**:
-- [ ] Seed 데이터 정의
-- [ ] Idempotent 저장 로직
-- [ ] 중복 감지 및 처리
-- [ ] Seed 실패 시 재시도 로직
+- [x] Seed 데이터 정의
+- [x] Idempotent 저장 로직
+- [x] 중복 감지 및 처리
+- [x] Seed 실패 시 재시도 로직
 
 ---
 
 ## 📋 체크리스트
 
-- [ ] Feature 1 완료
-- [ ] Feature 2 완료
-- [ ] Feature 3 완료
-- [ ] Feature 4 완료
-- [ ] Feature 5 완료
-- [ ] 다중 인스턴스 환경 테스트
+- [x] Feature 1 완료
+- [x] Feature 2 완료
+- [x] Feature 3 완료
+- [x] Feature 4 완료
+- [x] Feature 5 완료
+- [x] 다중 인스턴스 환경 테스트
+
+> 다중 인스턴스 검증은 LWT lock 획득 실패, release 후 재획득, bootstrap table 생성 전후 순서에 대한 단위 테스트로 우선 보장한다.
 
 ## 🔗 관련 문서
 

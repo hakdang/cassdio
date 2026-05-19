@@ -15,7 +15,7 @@ class InstallationStateRepository(
         val keyspace = configProvider.getConfig().keyspace
         val row =
             cqlExecutor.queryOne(
-                "SELECT installation_id, bootstrap_completed_at, schema_version, cassdio_version " +
+                "SELECT installation_id, bootstrap_completed_at, schema_version, cassdio_version, initial_settings " +
                     "FROM $keyspace.installation_state WHERE id = 'default'",
             ) ?: return null
 
@@ -24,6 +24,7 @@ class InstallationStateRepository(
             bootstrapCompletedAt = row.string("bootstrap_completed_at")?.let(Instant::parse),
             schemaVersion = row.string("schema_version"),
             cassdioVersion = row.string("cassdio_version") ?: "unknown",
+            initialSettings = row.stringMap("initial_settings").orEmpty(),
         )
     }
 
@@ -32,6 +33,7 @@ class InstallationStateRepository(
         bootstrapCompletedAt: Instant?,
         schemaVersion: String?,
         cassdioVersion: String,
+        initialSettings: Map<String, String>,
     ) {
         val keyspace = configProvider.getConfig().keyspace
         val completedAtLiteral = bootstrapCompletedAt?.timestampLiteral() ?: "null"
@@ -40,13 +42,14 @@ class InstallationStateRepository(
         cqlExecutor.execute(
             """
             INSERT INTO $keyspace.installation_state
-            (id, installation_id, bootstrap_completed_at, schema_version, cassdio_version, updated_at)
+            (id, installation_id, bootstrap_completed_at, schema_version, cassdio_version, initial_settings, updated_at)
             VALUES (
               'default',
               $installationId,
               $completedAtLiteral,
               $schemaVersionLiteral,
               ${cassdioVersion.cqlLiteral()},
+              ${initialSettings.cqlMapLiteral()},
               ${Instant.now().timestampLiteral()}
             )
             """.trimIndent(),

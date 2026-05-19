@@ -14,8 +14,14 @@ class SeedService(
             .seeds()
             .filterNot { seedHistoryRepository.isApplied(it.idempotencyKey) }
             .map { seed ->
-                seed.statements.forEach(cqlExecutor::execute)
-                seedHistoryRepository.record(seed)
+                runCatching {
+                    seed.statements.forEach(cqlExecutor::execute)
+                }.onSuccess {
+                    seedHistoryRepository.record(seed, success = true)
+                }.onFailure { error ->
+                    seedHistoryRepository.record(seed, success = false)
+                    throw MetadataBootstrapException("Failed to execute metadata seed ${seed.idempotencyKey}.", error)
+                }
                 seed.idempotencyKey
             }
 }

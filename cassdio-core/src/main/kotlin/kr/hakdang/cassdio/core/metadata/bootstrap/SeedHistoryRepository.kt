@@ -21,7 +21,10 @@ class SeedHistoryRepository(
         return row?.boolean("success") == true
     }
 
-    fun record(seed: SeedDefinition) {
+    fun record(
+        seed: SeedDefinition,
+        success: Boolean,
+    ) {
         val keyspace = configProvider.getConfig().keyspace
         cqlExecutor.execute(
             """
@@ -31,7 +34,7 @@ class SeedHistoryRepository(
               ${seed.idempotencyKey.cqlLiteral()},
               ${seed.description.cqlLiteral()},
               ${Instant.now().timestampLiteral()},
-              true
+              ${success.cqlLiteral()}
             )
             """.trimIndent(),
         )
