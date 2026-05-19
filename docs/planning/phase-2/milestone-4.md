@@ -17,10 +17,10 @@
 - 권한 확인 (권한이 충분한지)
 
 **체크리스트**:
-- [ ] ClusterConnectionService 구현
-- [ ] 연결 테스트 로직
-- [ ] 상세한 에러 메시지
-- [ ] 테스트 결과 반환
+- [x] ClusterConnectionService 구현
+- [x] 연결 테스트 로직
+- [x] 상세한 에러 메시지
+- [x] 테스트 결과 반환
 
 ---
 
@@ -37,10 +37,10 @@
 - Owner 정보
 
 **체크리스트**:
-- [ ] Cluster 모델 정의
-- [ ] Cluster 저장소 구현
-- [ ] 클러스터 정보 저장 로직
-- [ ] 중복 확인 및 방지
+- [x] Cluster 모델 정의
+- [x] Cluster 저장소 구현
+- [x] 클러스터 정보 저장 로직
+- [x] 중복 확인 및 방지
 
 ---
 
@@ -58,11 +58,11 @@
 - 복호화는 필요할 때만
 
 **체크리스트**:
-- [ ] EncryptionService 구현
-- [ ] 비밀번호 암호화 로직
-- [ ] 복호화 로직
-- [ ] Master key 관리 전략
-- [ ] 보안 테스트
+- [x] EncryptionService 구현
+- [x] 비밀번호 암호화 로직
+- [x] 복호화 로직
+- [x] Master key 관리 전략
+- [x] 보안 테스트
 
 ---
 
@@ -75,10 +75,10 @@
 - 선택사항: Keyspace level 권한도 부여 가능
 
 **체크리스트**:
-- [ ] 권한 부여 옵션 UI 구현
-- [ ] RoleAssignment 생성 로직
-- [ ] 권한 부여 선택 처리
-- [ ] 권한 이력 기록
+- [x] 권한 부여 옵션 설정 구현
+- [x] RoleAssignment 생성 로직
+- [x] 권한 부여 선택 처리
+- [x] 권한 이력 기록
 
 ---
 
@@ -95,22 +95,22 @@
 - Repairs 상태
 
 **체크리스트**:
-- [ ] ClusterHealthChecker 구현
-- [ ] 각 지표 수집 로직
-- [ ] 초기 값 저장
-- [ ] Health status 결정 로직
-- [ ] 알림/경고 설정 (선택)
+- [x] ClusterHealthChecker 구현
+- [x] 각 지표 수집 로직
+- [x] 초기 값 저장
+- [x] Health status 결정 로직
+- [x] 알림/경고 설정 (선택 제외)
 
 ---
 
 ## 📋 체크리스트
 
-- [ ] Feature 1 완료
-- [ ] Feature 2 완료
-- [ ] Feature 3 완료
-- [ ] Feature 4 완료
-- [ ] Feature 5 완료
-- [ ] 전체 통합 테스트
+- [x] Feature 1 완료
+- [x] Feature 2 완료
+- [x] Feature 3 완료
+- [x] Feature 4 완료
+- [x] Feature 5 완료
+- [x] 전체 통합 테스트
 - [ ] 여러 버전의 Cassandra 호환성 테스트
 
 ## 🔗 관련 문서

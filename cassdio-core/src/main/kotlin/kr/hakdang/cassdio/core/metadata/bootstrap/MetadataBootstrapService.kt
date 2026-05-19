@@ -2,6 +2,7 @@ package kr.hakdang.cassdio.core.metadata.bootstrap
 
 import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
+import kr.hakdang.cassdio.core.metadata.cluster.InitialManagedClusterRegistrationService
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Duration
@@ -19,6 +20,7 @@ class MetadataBootstrapService(
     private val installationStateRepository: InstallationStateRepository,
     private val migrationCatalog: MetadataMigrationCatalog,
     private val configProvider: MetadataDbConfigProvider,
+    private val initialManagedClusterRegistrationService: InitialManagedClusterRegistrationService? = null,
     private val clock: Clock = Clock.systemUTC(),
 ) {
     fun bootstrap(): BootstrapResult {
@@ -37,6 +39,7 @@ class MetadataBootstrapService(
             val installationId = installationStateRepository.find()?.installationId ?: UUID.randomUUID()
             val executedMigrations = migrationService.migrate()
             val executedSeeds = seedService.seed()
+            initialManagedClusterRegistrationService?.registerIfConfigured()
             val schemaVersion = migrationCatalog.migrations().maxOfOrNull { it.version }
 
             installationStateRepository.upsert(
