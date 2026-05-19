@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
@@ -18,16 +20,19 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.web.servlet.LocaleResolver
+import org.springframework.web.servlet.i18n.FixedLocaleResolver
+import java.util.Locale
 
 @WebMvcTest(
     controllers = [CommonErrorDocumentationController::class],
     properties = [
-        "spring.web.locale=en",
+        "spring.web.locale=ko",
         "spring.web.locale-resolver=fixed",
     ],
 )
 @AutoConfigureRestDocs
-@Import(GlobalExceptionHandler::class, ErrorMessageResolver::class)
+@Import(GlobalExceptionHandler::class, ErrorMessageResolver::class, CommonErrorDocumentationTestConfig::class)
 class CommonErrorDocumentationTests(
     @Autowired private val mockMvc: MockMvc,
 ) {
@@ -36,7 +41,7 @@ class CommonErrorDocumentationTests(
         mockMvc
             .post("/api/test/validation") {
                 contentType = MediaType.APPLICATION_JSON
-                header("Accept-Language", "en")
+                header("Accept-Language", "ko")
                 content = """{"name":""}"""
             }.andExpect {
                 status { isBadRequest() }
@@ -103,4 +108,10 @@ class CommonErrorDocumentationTests(
             fieldWithPath("traceId").description("추적 ID"),
             fieldWithPath("timestamp").description("응답 생성 시각(epoch seconds)"),
         )
+}
+
+@TestConfiguration
+class CommonErrorDocumentationTestConfig {
+    @Bean
+    fun localeResolver(): LocaleResolver = FixedLocaleResolver(Locale.KOREAN)
 }

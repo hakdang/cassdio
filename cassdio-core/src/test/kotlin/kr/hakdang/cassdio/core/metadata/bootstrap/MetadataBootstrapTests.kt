@@ -1,12 +1,25 @@
 package kr.hakdang.cassdio.core.metadata.bootstrap
 
 import com.datastax.oss.driver.api.core.CqlSession
+import kr.hakdang.cassdio.core.metadata.cluster.AesGcmEncryptionService
+import kr.hakdang.cassdio.core.metadata.cluster.ClusterConnectionService
+import kr.hakdang.cassdio.core.metadata.cluster.ClusterHealthChecker
+import kr.hakdang.cassdio.core.metadata.cluster.InitialManagedClusterRegistrationService
+import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterProbeClient
+import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterProbeClientFactory
+import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterRegistrationRequest
+import kr.hakdang.cassdio.core.metadata.cluster.ManagedClusterRepository
+import kr.hakdang.cassdio.core.metadata.config.InitialManagedClusterProperties
+import kr.hakdang.cassdio.core.metadata.config.ManagedClusterEnvironment
 import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfig
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigSource
+import kr.hakdang.cassdio.core.metadata.config.MetadataEncryptionProperties
+import kr.hakdang.cassdio.core.metadata.config.MetadataSeedProperties
 import kr.hakdang.cassdio.core.metadata.config.ReplicationProperties
 import kr.hakdang.cassdio.core.metadata.config.ReplicationStrategy
+import kr.hakdang.cassdio.core.metadata.config.SuperAdminProperties
 import kr.hakdang.cassdio.core.metadata.cql.CassandraCqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlRow
@@ -91,9 +104,80 @@ class MetadataBootstrapTests {
 
         val executed = service.migrate()
 
-        assertEquals(listOf("202602010001"), executed)
+        assertEquals(listOf("202602010001", "202605190001", "202605190002"), executed)
         assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.bootstrap_locks") })
+        assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.workspaces") })
+        assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.managed_clusters") })
         assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.schema_migrations") })
+    }
+
+    @Test
+    fun `metadata seed catalog creates phase 2 milestone 3 default data`() {
+        val catalog =
+            MetadataSeedCatalog(
+                configProvider = testConfigProvider(),
+                bootstrapProperties =
+                    MetadataBootstrapProperties(
+                        seed =
+                            MetadataSeedProperties(
+                                superAdmin =
+                                    SuperAdminProperties(
+                                        email = "root@example.com",
+                                        initialPassword = "plain-password",
+                                    ),
+                            ),
+                    ),
+                passwordHashService = StaticPasswordHashService("bcrypt-hash"),
+            )
+
+        val seeds = catalog.seeds()
+        val statements = seeds.flatMap { it.statements }
+
+        assertEquals(
+            listOf(
+                "phase-2-m3-default-workspace",
+                "phase-2-m3-super-admin-member",
+                "phase-2-m3-system-roles",
+                "phase-2-m3-super-admin-role-assignment",
+                "phase-2-m3-default-query-policies",
+                "phase-2-m3-default-workflow-policies",
+                "phase-2-m3-bootstrap-audit-log",
+            ),
+            seeds.map { it.idempotencyKey },
+        )
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.workspaces") })
+        assertTrue(statements.any { it.contains("'MANUAL_APPROVAL'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.members") })
+        assertTrue(statements.any { it.contains("'root@example.com'") })
+        assertTrue(statements.any { it.contains("'bcrypt-hash'") })
+        assertTrue(statements.none { it.contains("plain-password") })
+        assertTrue(statements.any { it.contains("'Super Admin'") && it.contains("'*'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.role_assignments") })
+        assertTrue(statements.any { it.contains("'APPLICATION'") && it.contains("'BOOTSTRAP'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.query_policies") && it.contains("'SELECT'") })
+        assertTrue(statements.any { it.contains("'limit.required': 'true'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.workflow_policies") && it.contains("'TABLE_CREATION'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.audit_logs") && it.contains("'BOOTSTRAP_COMPLETED'") })
+    }
+
+    @Test
+    fun `metadata seed catalog validates super admin email`() {
+        val catalog =
+            MetadataSeedCatalog(
+                configProvider = testConfigProvider(),
+                bootstrapProperties =
+                    MetadataBootstrapProperties(
+                        seed =
+                            MetadataSeedProperties(
+                                superAdmin = SuperAdminProperties(email = "invalid-email"),
+                            ),
+                    ),
+                passwordHashService = StaticPasswordHashService("bcrypt-hash"),
+            )
+
+        assertFailsWith<IllegalArgumentException> {
+            catalog.seeds()
+        }
     }
 
     @Test
@@ -269,6 +353,98 @@ class MetadataBootstrapTests {
         verifyNoMoreInteractions(secondSession)
     }
 
+    @Test
+    fun `encryption service encrypts and decrypts managed cluster secrets`() {
+        val service =
+            AesGcmEncryptionService(
+                MetadataBootstrapProperties(
+                    encryption = MetadataEncryptionProperties(masterKey = "test-master-key"),
+                ),
+            )
+
+        val encrypted = service.encrypt("secret-password")
+
+        assertTrue(encrypted != null)
+        assertTrue(!encrypted.contains("secret-password"))
+        assertEquals("secret-password", service.decrypt(encrypted))
+    }
+
+    @Test
+    fun `initial managed cluster registration tests connection stores metadata and grants dba`() {
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = { statement ->
+                    when {
+                        statement.contains("managed_clusters_by_name") -> null
+                        else -> null
+                    }
+                },
+            )
+        val properties =
+            MetadataBootstrapProperties(
+                encryption = MetadataEncryptionProperties(masterKey = "test-master-key"),
+                initialCluster =
+                    InitialManagedClusterProperties(
+                        enabled = true,
+                        name = "Local Dev",
+                        environment = ManagedClusterEnvironment.DEV,
+                        contactPoints = listOf("127.0.0.1"),
+                        username = "cluster-user",
+                        password = "cluster-password",
+                        grantDbaToSuperAdmin = true,
+                    ),
+            )
+        val service =
+            InitialManagedClusterRegistrationService(
+                properties = properties,
+                connectionService =
+                    ClusterConnectionService(
+                        StaticManagedClusterProbeClientFactory(
+                            mapOf(
+                                "release_version" to "4.1.0",
+                                "keyspace_name" to "system",
+                                "keyspace_count" to 5L,
+                                "table_count" to 12L,
+                            ),
+                        ),
+                    ),
+                encryptionService = AesGcmEncryptionService(properties),
+                healthChecker = ClusterHealthChecker(),
+                repository = ManagedClusterRepository(testConfigProvider(), executor),
+            )
+
+        val result = service.registerIfConfigured()
+
+        assertTrue(result.registered)
+        assertTrue(executor.queried.any { it.contains("managed_clusters_by_name") })
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.managed_clusters") &&
+                    it.contains("'Local Dev'")
+            },
+        )
+        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_cluster_credentials") })
+        assertTrue(executor.executed.none { it.contains("cluster-password") })
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.managed_cluster_health_snapshots") &&
+                    it.contains("'HEALTHY'")
+            },
+        )
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.role_assignments") &&
+                    it.contains("'CLUSTER'")
+            },
+        )
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.audit_logs") &&
+                    it.contains("'INITIAL_CLUSTER_REGISTERED'")
+            },
+        )
+    }
+
     private fun testConfigProvider(): MetadataDbConfigProvider =
         MetadataDbConfigProvider {
             MetadataDbConfig(
@@ -305,4 +481,28 @@ private class StaticSeedCatalog(
     private val seeds: List<SeedDefinition>,
 ) : MetadataSeedCatalog() {
     override fun seeds(): List<SeedDefinition> = seeds
+}
+
+private class StaticPasswordHashService(
+    private val hash: String,
+) : PasswordHashService {
+    override fun hash(rawPassword: String): String = hash
+}
+
+private class StaticManagedClusterProbeClientFactory(
+    private val values: Map<String, Any?>,
+) : ManagedClusterProbeClientFactory {
+    override fun create(request: ManagedClusterRegistrationRequest): ManagedClusterProbeClient =
+        object : ManagedClusterProbeClient {
+            override fun queryOne(statement: String): CqlRow? =
+                when {
+                    statement.contains("system.local") -> CqlRow(mapOf("release_version" to values["release_version"]))
+                    statement.contains("system_schema.keyspaces LIMIT") -> CqlRow(mapOf("keyspace_name" to values["keyspace_name"]))
+                    statement.contains("keyspace_count") -> CqlRow(mapOf("keyspace_count" to values["keyspace_count"]))
+                    statement.contains("table_count") -> CqlRow(mapOf("table_count" to values["table_count"]))
+                    else -> null
+                }
+
+            override fun close() = Unit
+        }
 }
