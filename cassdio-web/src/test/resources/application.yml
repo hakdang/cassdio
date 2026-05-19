@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cassdio-web
+
+logging:
+  level:
+    root: INFO
+    kr.hakdang.cassdio: DEBUG

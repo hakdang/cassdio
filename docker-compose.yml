@@ -1,0 +1,21 @@
+services:
+  cassandra:
+    image: cassandra:${CASSANDRA_VERSION:-5.0}
+    container_name: cassdio-cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      CASSANDRA_CLUSTER_NAME: cassdio-local
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+      - ./docker/init:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  cassandra-data:

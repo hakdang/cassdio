@@ -1,3 +1,8 @@
-cassdio:
-  test-cassandra:
-    keyspace: "testdb"
+spring:
+  application:
+    name: cassdio-core
+
+logging:
+  level:
+    root: INFO
+    kr.hakdang.cassdio: DEBUG

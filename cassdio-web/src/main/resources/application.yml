@@ -1,28 +1,19 @@
-spring.profiles.default: release
-spring.config:
-  import:
-    - classpath:/application-core.yml
-server:
-  port: 20000
-  shutdown: graceful
-  servlet:
-    encoding:
-      charset: UTF-8
-      force: true
-  tomcat:
-    threads:
-      max: 500
-
 spring:
-  main:
-    web-application-type: servlet
+  application:
+    name: cassdio-web
 
----
-spring.config:
-  activate:
-    on-profile:
-      - local
-      - test
+cassdio:
+  version: 0.1.0
 
-logging.level:
-  org.springframework.cache: TRACE
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true

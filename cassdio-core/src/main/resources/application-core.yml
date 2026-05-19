@@ -1,4 +1,3 @@
-cassdio:
-  system:
-    database:
-      path: ${user.home}/.cassdio
+spring:
+  application:
+    name: cassdio-core
