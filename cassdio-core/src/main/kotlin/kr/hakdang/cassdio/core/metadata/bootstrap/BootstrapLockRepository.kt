@@ -33,18 +33,61 @@ class BootstrapLockRepository(
             return BootstrapLock(name, owner, BootstrapLockStatus.RUNNING, now, expiresAt)
         }
 
-        val current =
-            cqlExecutor.queryOne(
-                "SELECT owner, status, expires_at FROM $keyspace.bootstrap_locks " +
-                    "WHERE name = ${name.cqlLiteral()}",
-            )
-        val expired = current?.string("expires_at")?.let { Instant.parse(it).isBefore(now) } ?: false
+        val current = currentLock(name)
+        if (current != null && current.status != BootstrapLockStatus.RUNNING) {
+            return replaceInactiveLock(current, owner, now, expiresAt)
+        }
+
+        val expired = current?.expiresAt?.isBefore(now) ?: false
         if (expired) {
-            release(name, current?.string("owner") ?: owner, BootstrapLockStatus.FAILED)
-            return acquire(name, owner, ttl)
+            return replaceInactiveLock(current, owner, now, expiresAt)
         }
 
         throw MetadataBootstrapLockException("Metadata bootstrap lock is already held for $name.")
+    }
+
+    private fun currentLock(name: String): BootstrapLock? {
+        val keyspace = configProvider.getConfig().keyspace
+        val row =
+            cqlExecutor.queryOne(
+                "SELECT owner, status, expires_at FROM $keyspace.bootstrap_locks " +
+                    "WHERE name = ${name.cqlLiteral()}",
+            ) ?: return null
+
+        return BootstrapLock(
+            name = name,
+            owner = row.string("owner") ?: "",
+            status = row.string("status")?.let(BootstrapLockStatus::valueOf) ?: BootstrapLockStatus.RUNNING,
+            heartbeatAt = Instant.EPOCH,
+            expiresAt = row.string("expires_at")?.let(Instant::parse) ?: Instant.EPOCH,
+        )
+    }
+
+    private fun replaceInactiveLock(
+        current: BootstrapLock,
+        owner: String,
+        heartbeatAt: Instant,
+        expiresAt: Instant,
+    ): BootstrapLock {
+        val keyspace = configProvider.getConfig().keyspace
+        val statement =
+            """
+            UPDATE $keyspace.bootstrap_locks
+            SET owner = ${owner.cqlLiteral()},
+                status = ${BootstrapLockStatus.RUNNING.name.cqlLiteral()},
+                heartbeat_at = ${heartbeatAt.timestampLiteral()},
+                expires_at = ${expiresAt.timestampLiteral()}
+            WHERE name = ${current.name.cqlLiteral()}
+            IF owner = ${current.owner.cqlLiteral()}
+               AND status = ${current.status.name.cqlLiteral()}
+            """.trimIndent()
+
+        val applied = cqlExecutor.queryOne(statement)?.boolean("[applied]") ?: false
+        if (!applied) {
+            throw MetadataBootstrapLockException("Metadata bootstrap lock is already held for ${current.name}.")
+        }
+
+        return BootstrapLock(current.name, owner, BootstrapLockStatus.RUNNING, heartbeatAt, expiresAt)
     }
 
     fun heartbeat(lock: BootstrapLock): BootstrapLock {

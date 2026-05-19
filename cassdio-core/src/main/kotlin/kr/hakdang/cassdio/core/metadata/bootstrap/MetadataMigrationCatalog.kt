@@ -41,6 +41,7 @@ class MetadataMigrationCatalog(
                           bootstrap_completed_at TIMESTAMP,
                           schema_version TEXT,
                           cassdio_version TEXT,
+                          initial_settings MAP<TEXT, TEXT>,
                           updated_at TIMESTAMP
                         )
                         """.trimIndent(),

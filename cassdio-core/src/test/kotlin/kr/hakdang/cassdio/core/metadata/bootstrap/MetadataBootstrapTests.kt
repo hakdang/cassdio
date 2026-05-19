@@ -123,6 +123,122 @@ class MetadataBootstrapTests {
     }
 
     @Test
+    fun `bootstrap lock can be acquired again after release`() {
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = { statement ->
+                    when {
+                        statement.contains("IF NOT EXISTS") -> CqlRow(mapOf("[applied]" to false))
+                        statement.contains("SELECT owner") ->
+                            CqlRow(
+                                mapOf(
+                                    "owner" to "previous-instance",
+                                    "status" to "RELEASED",
+                                    "expires_at" to "2026-02-01T00:00:00Z",
+                                ),
+                            )
+                        statement.contains("IF owner") -> CqlRow(mapOf("[applied]" to true))
+                        else -> null
+                    }
+                },
+            )
+        val repository = BootstrapLockRepository(testConfigProvider(), executor)
+
+        val lock = repository.acquire("metadata-bootstrap", "cassdio-web", java.time.Duration.ofMinutes(5))
+
+        assertEquals("cassdio-web", lock.owner)
+        assertEquals(BootstrapLockStatus.RUNNING, lock.status)
+        assertTrue(executor.queried.any { it.contains("IF owner = 'previous-instance'") })
+    }
+
+    @Test
+    fun `bootstrap creates keyspace and bootstrap tables before acquiring lock`() {
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = { statement ->
+                    when {
+                        statement.contains("INSERT INTO cassdio_meta.bootstrap_locks") ->
+                            CqlRow(mapOf("[applied]" to true))
+                        else -> null
+                    }
+                },
+            )
+        val configProvider = testConfigProvider()
+        val migrationCatalog = MetadataMigrationCatalog(configProvider)
+        val service =
+            MetadataBootstrapService(
+                properties = MetadataBootstrapProperties(),
+                keyspaceCreationService =
+                    KeyspaceCreationService(
+                        configProvider = configProvider,
+                        bootstrapProperties = MetadataBootstrapProperties(),
+                        cqlExecutor = executor,
+                    ),
+                schemaDefinitions = MetadataSchemaDefinitions(configProvider, executor),
+                lockRepository = BootstrapLockRepository(configProvider, executor),
+                migrationService =
+                    SchemaMigrationService(
+                        migrationCatalog = migrationCatalog,
+                        migrationRepository = SchemaMigrationRepository(configProvider, executor),
+                        cqlExecutor = executor,
+                    ),
+                seedService = SeedService(MetadataSeedCatalog(), SeedHistoryRepository(configProvider, executor), executor),
+                installationStateRepository = InstallationStateRepository(configProvider, executor),
+                migrationCatalog = migrationCatalog,
+                configProvider = configProvider,
+            )
+
+        service.bootstrap()
+
+        val createKeyspaceIndex = executor.events.indexOfFirst { it.contains("CREATE KEYSPACE IF NOT EXISTS cassdio_meta") }
+        val createLockTableIndex = executor.events.indexOfFirst { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.bootstrap_locks") }
+        val acquireLockIndex = executor.events.indexOfFirst { it.contains("INSERT INTO cassdio_meta.bootstrap_locks") }
+
+        assertTrue(createKeyspaceIndex in 0 until createLockTableIndex)
+        assertTrue(createLockTableIndex in 0 until acquireLockIndex)
+        assertTrue(executor.executed.any { it.contains("initial_settings") })
+        assertTrue(executor.executed.any { it.contains("'metadata.keyspace': 'cassdio_meta'") })
+    }
+
+    @Test
+    fun `seed failure is recorded as unsuccessful so retry can execute it again`() {
+        val seed =
+            SeedDefinition(
+                idempotencyKey = "phase-2-m2-seed",
+                description = "Seed used to verify retry semantics",
+                statements = listOf("INSERT INTO cassdio_meta.seed_target (id) VALUES ('one')"),
+            )
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = { statement ->
+                    when {
+                        statement.contains("SELECT success FROM cassdio_meta.seed_history") ->
+                            CqlRow(mapOf("success" to false))
+                        else -> null
+                    }
+                },
+                executeHandler = { statement ->
+                    if (statement.contains("seed_target")) {
+                        throw IllegalStateException("seed write failed")
+                    }
+                },
+            )
+        val service =
+            SeedService(
+                seedCatalog = StaticSeedCatalog(listOf(seed)),
+                seedHistoryRepository = SeedHistoryRepository(testConfigProvider(), executor),
+                cqlExecutor = executor,
+            )
+
+        assertFailsWith<MetadataBootstrapException> {
+            service.seed()
+        }
+
+        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.seed_history") })
+        assertTrue(executor.executed.any { it.contains("false") })
+    }
+
+    @Test
     fun `cassandra executor reconnects when metadata config changes`() {
         var config =
             MetadataDbConfig(
@@ -166,12 +282,27 @@ class MetadataBootstrapTests {
 
 private class RecordingCqlExecutor(
     private val queryHandler: (String) -> CqlRow? = { null },
+    private val executeHandler: (String) -> Unit = {},
 ) : CqlExecutor {
     val executed = mutableListOf<String>()
+    val queried = mutableListOf<String>()
+    val events = mutableListOf<String>()
 
     override fun execute(statement: String) {
         executed += statement
+        events += statement
+        executeHandler(statement)
     }
 
-    override fun queryOne(statement: String): CqlRow? = queryHandler(statement)
+    override fun queryOne(statement: String): CqlRow? {
+        queried += statement
+        events += statement
+        return queryHandler(statement)
+    }
+}
+
+private class StaticSeedCatalog(
+    private val seeds: List<SeedDefinition>,
+) : MetadataSeedCatalog() {
+    override fun seeds(): List<SeedDefinition> = seeds
 }

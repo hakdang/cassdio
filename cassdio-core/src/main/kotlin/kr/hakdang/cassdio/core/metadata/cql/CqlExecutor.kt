@@ -14,4 +14,7 @@ data class CqlRow(
     fun boolean(name: String): Boolean? = values[name] as? Boolean
 
     fun int(name: String): Int? = values[name] as? Int
+
+    @Suppress("UNCHECKED_CAST")
+    fun stringMap(name: String): Map<String, String>? = values[name] as? Map<String, String>
 }

@@ -1,6 +1,7 @@
 package kr.hakdang.cassdio.core.metadata.bootstrap
 
 import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
+import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Duration
@@ -17,10 +18,14 @@ class MetadataBootstrapService(
     private val seedService: SeedService,
     private val installationStateRepository: InstallationStateRepository,
     private val migrationCatalog: MetadataMigrationCatalog,
+    private val configProvider: MetadataDbConfigProvider,
     private val clock: Clock = Clock.systemUTC(),
 ) {
     fun bootstrap(): BootstrapResult {
         val startedAt = Instant.now(clock)
+        keyspaceCreationService.ensureKeyspace()
+        schemaDefinitions.ensureBootstrapTables()
+
         val lock =
             lockRepository.acquire(
                 name = LOCK_NAME,
@@ -29,9 +34,6 @@ class MetadataBootstrapService(
             )
 
         return runCatching {
-            keyspaceCreationService.ensureKeyspace()
-            schemaDefinitions.ensureBootstrapTables()
-
             val installationId = installationStateRepository.find()?.installationId ?: UUID.randomUUID()
             val executedMigrations = migrationService.migrate()
             val executedSeeds = seedService.seed()
@@ -42,6 +44,7 @@ class MetadataBootstrapService(
                 bootstrapCompletedAt = Instant.now(clock),
                 schemaVersion = schemaVersion,
                 cassdioVersion = properties.cassdioVersion,
+                initialSettings = initialSettingsSnapshot(),
             )
             lockRepository.release(lock.name, lock.owner, BootstrapLockStatus.RELEASED)
 
@@ -60,5 +63,29 @@ class MetadataBootstrapService(
 
     companion object {
         const val LOCK_NAME = "metadata-bootstrap"
+    }
+
+    private fun initialSettingsSnapshot(): Map<String, String> {
+        val config = configProvider.getConfig()
+
+        return buildMap {
+            put("metadata.source", config.source.name)
+            put("metadata.contact_points", config.contactPoints.joinToString(","))
+            put("metadata.port", config.port.toString())
+            put("metadata.local_datacenter", config.localDatacenter)
+            put("metadata.keyspace", config.keyspace)
+            put("metadata.tls_enabled", config.tlsEnabled.toString())
+            put("bootstrap.replication_strategy", properties.replication.strategy.name)
+            put("bootstrap.replication_factor", properties.replication.factor.toString())
+            put("bootstrap.durable_writes", properties.durableWrites.toString())
+            if (properties.replication.datacenters.isNotEmpty()) {
+                put(
+                    "bootstrap.replication_datacenters",
+                    properties.replication.datacenters.entries.joinToString(",") { (datacenter, factor) ->
+                        "$datacenter=$factor"
+                    },
+                )
+            }
+        }
     }
 }
