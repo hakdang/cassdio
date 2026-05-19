@@ -2,6 +2,7 @@ package kr.hakdang.cassdio.core.metadata.bootstrap
 
 import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.time.Clock
 import java.time.Instant
@@ -419,4 +420,14 @@ open class MetadataSeedCatalog(
         val DEFAULT_POLICIES_CREATED_EVENT_ID: UUID = UUID.fromString("00000000-0000-2003-8000-000000000505")
         val BOOTSTRAP_COMPLETED_EVENT_ID: UUID = UUID.fromString("00000000-0000-2003-8000-000000000506")
     }
+}
+
+interface PasswordHashService {
+    fun hash(rawPassword: String): String
+}
+
+class BCryptPasswordHashService(
+    private val encoder: BCryptPasswordEncoder = BCryptPasswordEncoder(),
+) : PasswordHashService {
+    override fun hash(rawPassword: String): String = encoder.encode(rawPassword)
 }
