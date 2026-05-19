@@ -5,8 +5,10 @@ import kr.hakdang.cassdio.core.metadata.config.MetadataBootstrapProperties
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfig
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigProvider
 import kr.hakdang.cassdio.core.metadata.config.MetadataDbConfigSource
+import kr.hakdang.cassdio.core.metadata.config.MetadataSeedProperties
 import kr.hakdang.cassdio.core.metadata.config.ReplicationProperties
 import kr.hakdang.cassdio.core.metadata.config.ReplicationStrategy
+import kr.hakdang.cassdio.core.metadata.config.SuperAdminProperties
 import kr.hakdang.cassdio.core.metadata.cql.CassandraCqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlRow
@@ -91,9 +93,79 @@ class MetadataBootstrapTests {
 
         val executed = service.migrate()
 
-        assertEquals(listOf("202602010001"), executed)
+        assertEquals(listOf("202602010001", "202605190001"), executed)
         assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.bootstrap_locks") })
+        assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.workspaces") })
         assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.schema_migrations") })
+    }
+
+    @Test
+    fun `metadata seed catalog creates phase 2 milestone 3 default data`() {
+        val catalog =
+            MetadataSeedCatalog(
+                configProvider = testConfigProvider(),
+                bootstrapProperties =
+                    MetadataBootstrapProperties(
+                        seed =
+                            MetadataSeedProperties(
+                                superAdmin =
+                                    SuperAdminProperties(
+                                        email = "root@example.com",
+                                        initialPassword = "plain-password",
+                                    ),
+                            ),
+                    ),
+                passwordHashService = StaticPasswordHashService("bcrypt-hash"),
+            )
+
+        val seeds = catalog.seeds()
+        val statements = seeds.flatMap { it.statements }
+
+        assertEquals(
+            listOf(
+                "phase-2-m3-default-workspace",
+                "phase-2-m3-super-admin-member",
+                "phase-2-m3-system-roles",
+                "phase-2-m3-super-admin-role-assignment",
+                "phase-2-m3-default-query-policies",
+                "phase-2-m3-default-workflow-policies",
+                "phase-2-m3-bootstrap-audit-log",
+            ),
+            seeds.map { it.idempotencyKey },
+        )
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.workspaces") })
+        assertTrue(statements.any { it.contains("'MANUAL_APPROVAL'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.members") })
+        assertTrue(statements.any { it.contains("'root@example.com'") })
+        assertTrue(statements.any { it.contains("'bcrypt-hash'") })
+        assertTrue(statements.none { it.contains("plain-password") })
+        assertTrue(statements.any { it.contains("'Super Admin'") && it.contains("'*'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.role_assignments") })
+        assertTrue(statements.any { it.contains("'APPLICATION'") && it.contains("'BOOTSTRAP'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.query_policies") && it.contains("'SELECT'") })
+        assertTrue(statements.any { it.contains("'limit.required': 'true'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.workflow_policies") && it.contains("'TABLE_CREATION'") })
+        assertTrue(statements.any { it.contains("INSERT INTO cassdio_meta.audit_logs") && it.contains("'BOOTSTRAP_COMPLETED'") })
+    }
+
+    @Test
+    fun `metadata seed catalog validates super admin email`() {
+        val catalog =
+            MetadataSeedCatalog(
+                configProvider = testConfigProvider(),
+                bootstrapProperties =
+                    MetadataBootstrapProperties(
+                        seed =
+                            MetadataSeedProperties(
+                                superAdmin = SuperAdminProperties(email = "invalid-email"),
+                            ),
+                    ),
+                passwordHashService = StaticPasswordHashService("bcrypt-hash"),
+            )
+
+        assertFailsWith<IllegalArgumentException> {
+            catalog.seeds()
+        }
     }
 
     @Test
@@ -305,4 +377,10 @@ private class StaticSeedCatalog(
     private val seeds: List<SeedDefinition>,
 ) : MetadataSeedCatalog() {
     override fun seeds(): List<SeedDefinition> = seeds
+}
+
+private class StaticPasswordHashService(
+    private val hash: String,
+) : PasswordHashService {
+    override fun hash(rawPassword: String): String = hash
 }
