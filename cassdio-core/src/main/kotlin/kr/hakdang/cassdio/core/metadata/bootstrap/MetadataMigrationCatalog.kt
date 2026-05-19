@@ -84,6 +84,10 @@ class MetadataMigrationCatalog(
                           password_hash TEXT,
                           password_algorithm TEXT,
                           mfa_status TEXT,
+                          locale TEXT,
+                          timezone TEXT,
+                          last_login_at TIMESTAMP,
+                          password_changed_at TIMESTAMP,
                           status TEXT,
                           auth_provider TEXT,
                           created_at TIMESTAMP,
@@ -213,6 +217,54 @@ class MetadataMigrationCatalog(
                           repairs_status TEXT,
                           checked_at TIMESTAMP,
                           PRIMARY KEY (cluster_id, snapshot_id)
+                        )
+                        """.trimIndent(),
+                    ),
+            ),
+            MetadataMigration(
+                version = "202605190003",
+                description = "Create identity session and permission binding schema",
+                statements =
+                    listOf(
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.workspace_members (
+                          workspace_id UUID,
+                          member_id UUID,
+                          membership_status TEXT,
+                          default_workspace BOOLEAN,
+                          joined_at TIMESTAMP,
+                          invited_by UUID,
+                          last_selected_at TIMESTAMP,
+                          PRIMARY KEY (workspace_id, member_id)
+                        )
+                        """.trimIndent(),
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.member_sessions (
+                          session_id UUID PRIMARY KEY,
+                          member_id UUID,
+                          refresh_token_hash TEXT,
+                          token_family_id UUID,
+                          previous_token_hash TEXT,
+                          device_name TEXT,
+                          ip_address TEXT,
+                          user_agent_hash TEXT,
+                          status TEXT,
+                          expires_at TIMESTAMP,
+                          rotated_at TIMESTAMP,
+                          revoked_at TIMESTAMP,
+                          created_at TIMESTAMP
+                        )
+                        """.trimIndent(),
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.permission_bindings (
+                          binding_id UUID PRIMARY KEY,
+                          role_id UUID,
+                          action TEXT,
+                          resource_pattern TEXT,
+                          effect TEXT,
+                          condition TEXT,
+                          expires_at TIMESTAMP,
+                          created_at TIMESTAMP
                         )
                         """.trimIndent(),
                     ),
