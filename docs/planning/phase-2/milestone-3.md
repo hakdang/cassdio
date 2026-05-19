@@ -15,10 +15,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Signup mode: MANUAL_APPROVAL (기본값)
 
 **체크리스트**:
-- [ ] WorkspaceSeed 구현
-- [ ] Default workspace 생성 로직
-- [ ] Signup mode 설정
-- [ ] Workspace owner 설정
+- [x] WorkspaceSeed 구현
+- [x] Default workspace 생성 로직
+- [x] Signup mode 설정
+- [x] Workspace owner 설정
 
 ---
 
@@ -33,10 +33,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Auth provider: LOCAL
 
 **체크리스트**:
-- [ ] Member 모델 정의
-- [ ] 비밀번호 해싱 로직 (bcrypt)
-- [ ] Super Admin Member 생성
-- [ ] 이메일 검증 (선택사항)
+- [x] Member 모델 정의
+- [x] 비밀번호 해싱 로직 (bcrypt)
+- [x] Super Admin Member 생성
+- [x] 이메일 검증 (선택사항)
 
 ---
 
@@ -51,10 +51,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Data Analyst: 제한된 DML 권한
 
 **체크리스트**:
-- [ ] Role 모델 정의
-- [ ] 각 role별 기본 권한 설정
-- [ ] Role description 작성
-- [ ] 기본 role 생성 로직
+- [x] Role 모델 정의
+- [x] 각 role별 기본 권한 설정
+- [x] Role description 작성
+- [x] 기본 role 생성 로직
 
 ---
 
@@ -67,10 +67,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Effective from: 초기화 시점
 
 **체크리스트**:
-- [ ] RoleAssignment 모델 정의
-- [ ] Super Admin Member에게 role 할당
-- [ ] Scope 설정
-- [ ] 할당 이력 기록
+- [x] RoleAssignment 모델 정의
+- [x] Super Admin Member에게 role 할당
+- [x] Scope 설정
+- [x] 할당 이력 기록
 
 ---
 
@@ -84,10 +84,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Admin CQL: 차단
 
 **체크리스트**:
-- [ ] QueryPolicy 모델 정의
-- [ ] 정책별 규칙 설정
-- [ ] 정책 설명 및 예제
-- [ ] 기본 정책 생성
+- [x] QueryPolicy 모델 정의
+- [x] 정책별 규칙 설정
+- [x] 정책 설명 및 예제
+- [x] 기본 정책 생성
 
 ---
 
@@ -102,10 +102,10 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Table creation: Keyspace owner + DBA 승인
 
 **체크리스트**:
-- [ ] WorkflowPolicy 모델 정의
-- [ ] 각 정책별 승인 단계 설정
-- [ ] 우선순위 설정
-- [ ] 정책 생성 로직
+- [x] WorkflowPolicy 모델 정의
+- [x] 각 정책별 승인 단계 설정
+- [x] 우선순위 설정
+- [x] 정책 생성 로직
 
 ---
 
@@ -121,23 +121,23 @@ Cassdio 초기화 시 필요한 기본 데이터들을 자동으로 생성합니
 - Bootstrap completed
 
 **체크리스트**:
-- [ ] AuditLog 모델 정의
-- [ ] 각 단계별 audit 이벤트 기록
-- [ ] Actor를 "System" 으로 설정
-- [ ] 상세 정보 저장
+- [x] AuditLog 모델 정의
+- [x] 각 단계별 audit 이벤트 기록
+- [x] Actor를 "System" 으로 설정
+- [x] 상세 정보 저장
 
 ---
 
 ## 📋 체크리스트
 
-- [ ] Feature 1 완료
-- [ ] Feature 2 완료
-- [ ] Feature 3 완료
-- [ ] Feature 4 완료
-- [ ] Feature 5 완료
-- [ ] Feature 6 완료
-- [ ] Feature 7 완료
-- [ ] 전체 seed 데이터 생성 테스트
+- [x] Feature 1 완료
+- [x] Feature 2 완료
+- [x] Feature 3 완료
+- [x] Feature 4 완료
+- [x] Feature 5 완료
+- [x] Feature 6 완료
+- [x] Feature 7 완료
+- [x] 전체 seed 데이터 생성 테스트
 
 ## 🔗 관련 문서
 
