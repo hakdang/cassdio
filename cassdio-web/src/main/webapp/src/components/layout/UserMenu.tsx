@@ -46,7 +46,7 @@ export function UserMenu() {
           className="absolute right-0 z-dropdown mt-2 w-64 overflow-hidden rounded-console border border-console-line bg-console-surface shadow-console"
         >
           <div className="border-b border-console-line px-4 py-3">
-            <p className="text-sm font-semibold text-console-ink">Cassdio Operator</p>
+            <p className="text-sm font-semibold text-console-ink">{session?.displayName ?? 'Cassdio Operator'}</p>
             <p className="truncate text-xs text-console-muted">{session?.email ?? 'operator@cassdio.local'}</p>
           </div>
           <button className="menu-item" role="menuitem" type="button">

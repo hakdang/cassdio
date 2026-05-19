@@ -1,8 +1,12 @@
+import axios from 'axios';
+
 const AUTH_STORAGE_KEY = 'cassdio.session';
 
 export type AuthSession = {
   email: string;
   accessToken: string;
+  displayName?: string;
+  memberId?: string;
 };
 
 export type LoginInput = {
@@ -25,16 +29,63 @@ export const authService = {
       throw new Error('Email and password are required.');
     }
 
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/auth/login`,
+      { email, password },
+      {
+        withCredentials: true,
+        headers: { Accept: 'application/json' },
+      },
+    );
+    const payload = response.data.data;
     const session: AuthSession = {
-      email,
-      accessToken: `phase-1-placeholder-token:${email}`,
+      email: payload.member.email,
+      displayName: payload.member.displayName,
+      memberId: payload.member.memberId,
+      accessToken: payload.accessToken,
     };
 
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
     return session;
   },
 
-  logout() {
+  async refresh(): Promise<AuthSession> {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/auth/refresh`,
+      {},
+      {
+        withCredentials: true,
+        headers: { Accept: 'application/json' },
+      },
+    );
+    const payload = response.data.data;
+    const session: AuthSession = {
+      email: payload.member.email,
+      displayName: payload.member.displayName,
+      memberId: payload.member.memberId,
+      accessToken: payload.accessToken,
+    };
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    return session;
+  },
+
+  async logout() {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+          headers: this.getAccessToken() ? { Authorization: `Bearer ${this.getAccessToken()}` } : undefined,
+        },
+      );
+    } catch {
+      // Local logout must still complete if the server session is already gone.
+    }
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  },
+
+  clear() {
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
   },
 

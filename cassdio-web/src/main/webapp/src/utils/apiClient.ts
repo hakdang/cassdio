@@ -57,6 +57,7 @@ export function createApiClient(settings: ApiClientSettings = runtimeSettings): 
   const client = axios.create({
     baseURL: runtimeSettings.baseUrl,
     timeout: runtimeSettings.defaultTimeoutMs,
+    withCredentials: true,
     headers: {
       Accept: 'application/json',
     },
@@ -80,8 +81,17 @@ export function createApiClient(settings: ApiClientSettings = runtimeSettings): 
   client.interceptors.response.use(
     (response) => response,
     async (error: AxiosError<ApiErrorResponse>) => {
-      if (error.response?.status === 401) {
-        authService.logout();
+      const originalRequest = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const session = await authService.refresh();
+          originalRequest.headers = AxiosHeaders.from(originalRequest.headers);
+          originalRequest.headers.set('Authorization', `Bearer ${session.accessToken}`);
+          return client(originalRequest);
+        } catch {
+          authService.clear();
+        }
       }
 
       throw mapError(error);

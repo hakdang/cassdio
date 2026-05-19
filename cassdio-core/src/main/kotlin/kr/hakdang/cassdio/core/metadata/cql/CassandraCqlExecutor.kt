@@ -34,6 +34,12 @@ class CassandraCqlExecutor(
             .one()
             ?.toCqlRow()
 
+    override fun query(statement: String): List<CqlRow> =
+        session()
+            .execute(statement)
+            .map { it.toCqlRow() }
+            .toList()
+
     override fun close() {
         session?.close()
         session = null

@@ -13,6 +13,7 @@ import {
   SearchCode,
   Settings,
   ShieldCheck,
+  UserCog,
   Table2,
   TerminalSquare,
   Users,
@@ -82,6 +83,7 @@ export const sidebarSections: Record<GnbKey, SidebarSection[]> = {
       title: 'Administration',
       items: [
         { label: 'Users', path: '/admin', icon: Users },
+        { label: 'Roles', path: '/admin/roles', icon: UserCog },
         { label: 'Settings', path: '/admin/settings', icon: Settings },
       ],
     },
