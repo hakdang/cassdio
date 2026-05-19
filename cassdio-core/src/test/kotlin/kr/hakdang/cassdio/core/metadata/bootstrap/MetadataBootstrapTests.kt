@@ -23,15 +23,76 @@ import kr.hakdang.cassdio.core.metadata.config.SuperAdminProperties
 import kr.hakdang.cassdio.core.metadata.cql.CassandraCqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlExecutor
 import kr.hakdang.cassdio.core.metadata.cql.CqlRow
+import kr.hakdang.cassdio.core.metadata.cql.MetadataCqlUnavailableException
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoMoreInteractions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class MetadataBootstrapTests {
+    @Test
+    fun `metadata db config masks password and validates connection fields`() {
+        val config =
+            MetadataDbConfig(
+                contactPoints = listOf("10.0.0.1", "10.0.0.2"),
+                port = 9042,
+                localDatacenter = "dc1",
+                keyspace = "cassdio_meta",
+                username = "cassdio",
+                password = "plain-secret",
+                tlsEnabled = true,
+                source = MetadataDbConfigSource.TEST_FIXTURE,
+            )
+
+        val masked = config.masked()
+
+        config.validate()
+        assertEquals("plain-secret", config.password)
+        assertEquals("******", masked.password)
+        assertEquals("cassdio", masked.username)
+        assertEquals(MetadataDbConfigSource.TEST_FIXTURE, masked.source)
+        assertFailsWith<IllegalArgumentException> {
+            config.copy(contactPoints = listOf("127.0.0.1", " ")).validate()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            config.copy(port = 0).validate()
+        }
+        assertFailsWith<IllegalArgumentException> {
+            config.copy(keyspace = "1_invalid").validate()
+        }
+    }
+
+    @Test
+    fun `metadata status reports disconnected without reading installation state`() {
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = {
+                    throw MetadataCqlUnavailableException("metadata store unavailable")
+                },
+            )
+        val service =
+            MetadataStatusService(
+                configProvider = testConfigProvider(),
+                cqlExecutor = executor,
+                installationStateRepository = InstallationStateRepository(testConfigProvider(), executor),
+            )
+
+        val status = service.status()
+
+        assertTrue(status.configured)
+        assertEquals("APPLICATION_CONFIG", status.source)
+        assertEquals("cassdio_meta", status.keyspace)
+        assertFalse(status.connected)
+        assertFalse(status.bootstrapCompleted)
+        assertEquals(null, status.schemaVersion)
+        assertEquals(null, status.installationId)
+        assertEquals(listOf("SELECT release_version FROM system.local"), executor.queried)
+    }
+
     @Test
     fun `keyspace creation uses network topology replication`() {
         val executor = RecordingCqlExecutor()
@@ -441,6 +502,125 @@ class MetadataBootstrapTests {
             executor.executed.any {
                 it.contains("INSERT INTO cassdio_meta.audit_logs") &&
                     it.contains("'INITIAL_CLUSTER_REGISTERED'")
+            },
+        )
+    }
+
+    @Test
+    fun `initial managed cluster registration skips when cluster name already exists`() {
+        val executor =
+            RecordingCqlExecutor(
+                queryHandler = { statement ->
+                    when {
+                        statement.contains("managed_clusters_by_name") -> CqlRow(mapOf("cluster_id" to "00000000-0000-0000-0000-000000000001"))
+                        else -> null
+                    }
+                },
+            )
+        val service =
+            InitialManagedClusterRegistrationService(
+                properties =
+                    MetadataBootstrapProperties(
+                        initialCluster =
+                            InitialManagedClusterProperties(
+                                enabled = true,
+                                name = "Local Dev",
+                            ),
+                    ),
+                connectionService = ClusterConnectionService(StaticManagedClusterProbeClientFactory(emptyMap())),
+                encryptionService = AesGcmEncryptionService(MetadataBootstrapProperties()),
+                healthChecker = ClusterHealthChecker(),
+                repository = ManagedClusterRepository(testConfigProvider(), executor),
+            )
+
+        val result = service.registerIfConfigured()
+
+        assertFalse(result.registered)
+        assertEquals(null, result.clusterId)
+        assertTrue(result.message.contains("already exists"))
+        assertEquals(1, executor.queried.size)
+        assertTrue(executor.executed.isEmpty())
+    }
+
+    @Test
+    fun `initial managed cluster registration fails before storing metadata when connection check fails`() {
+        val executor = RecordingCqlExecutor()
+        val service =
+            InitialManagedClusterRegistrationService(
+                properties =
+                    MetadataBootstrapProperties(
+                        initialCluster =
+                            InitialManagedClusterProperties(
+                                enabled = true,
+                                name = "Broken Cluster",
+                            ),
+                    ),
+                connectionService = ClusterConnectionService(StaticManagedClusterProbeClientFactory(emptyMap())),
+                encryptionService = AesGcmEncryptionService(MetadataBootstrapProperties()),
+                healthChecker = ClusterHealthChecker(),
+                repository = ManagedClusterRepository(testConfigProvider(), executor),
+            )
+
+        val error =
+            assertFailsWith<MetadataBootstrapException> {
+                service.registerIfConfigured()
+            }
+
+        assertTrue(error.message.orEmpty().contains("Initial managed cluster connection failed"))
+        assertTrue(executor.executed.isEmpty())
+    }
+
+    @Test
+    fun `initial managed cluster registration can store cluster without dba assignment`() {
+        val executor = RecordingCqlExecutor()
+        val properties =
+            MetadataBootstrapProperties(
+                encryption = MetadataEncryptionProperties(masterKey = "test-master-key"),
+                initialCluster =
+                    InitialManagedClusterProperties(
+                        enabled = true,
+                        name = "Read Only Cluster",
+                        environment = ManagedClusterEnvironment.STAGING,
+                        contactPoints = listOf("127.0.0.1"),
+                        username = "cluster-user",
+                        password = "cluster-password",
+                        grantDbaToSuperAdmin = false,
+                    ),
+            )
+        val service =
+            InitialManagedClusterRegistrationService(
+                properties = properties,
+                connectionService =
+                    ClusterConnectionService(
+                        StaticManagedClusterProbeClientFactory(
+                            mapOf(
+                                "release_version" to "4.0.0",
+                                "keyspace_name" to "system",
+                                "keyspace_count" to 3L,
+                                "table_count" to 7L,
+                            ),
+                        ),
+                    ),
+                encryptionService = AesGcmEncryptionService(properties),
+                healthChecker = ClusterHealthChecker(),
+                repository = ManagedClusterRepository(testConfigProvider(), executor),
+            )
+
+        val result = service.registerIfConfigured()
+
+        assertTrue(result.registered)
+        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_clusters") })
+        assertTrue(executor.executed.any { it.contains("INSERT INTO cassdio_meta.managed_cluster_credentials") })
+        assertFalse(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.role_assignments") &&
+                    it.contains("'CLUSTER'")
+            },
+        )
+        assertTrue(
+            executor.executed.any {
+                it.contains("INSERT INTO cassdio_meta.audit_logs") &&
+                    it.contains("'dba_granted': 'false'")
             },
         )
     }
