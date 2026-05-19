@@ -11,6 +11,8 @@ data class MetadataBootstrapProperties(
     var durableWrites: Boolean = true,
     var lockTtlSeconds: Long = 300,
     var seed: MetadataSeedProperties = MetadataSeedProperties(),
+    var encryption: MetadataEncryptionProperties = MetadataEncryptionProperties(),
+    var initialCluster: InitialManagedClusterProperties = InitialManagedClusterProperties(),
 )
 
 data class ReplicationProperties(
@@ -42,3 +44,27 @@ data class SuperAdminProperties(
     var email: String = "admin@cassdio.local",
     var initialPassword: String = "ChangeMe!2026",
 )
+
+data class MetadataEncryptionProperties(
+    var masterKey: String? = null,
+)
+
+data class InitialManagedClusterProperties(
+    var enabled: Boolean = false,
+    var name: String = "Initial Cluster",
+    var environment: ManagedClusterEnvironment = ManagedClusterEnvironment.DEV,
+    var contactPoints: List<String> = listOf("127.0.0.1"),
+    var port: Int = 9042,
+    var localDatacenter: String = "datacenter1",
+    var username: String? = null,
+    var password: String? = null,
+    var tlsEnabled: Boolean = false,
+    var ownerMemberId: String? = null,
+    var grantDbaToSuperAdmin: Boolean = true,
+)
+
+enum class ManagedClusterEnvironment {
+    DEV,
+    STAGING,
+    PROD,
+}
