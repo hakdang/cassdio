@@ -203,8 +203,6 @@ fun ClusterConnectionTestResult.toResponse(): ClusterConnectionTestResponse =
         checks = checks.map { it.toResponse() },
     )
 
-private fun ClusterConnectionCheck.toResponse(): ClusterConnectionCheckResponse =
-    ClusterConnectionCheckResponse(name, success, message)
+private fun ClusterConnectionCheck.toResponse(): ClusterConnectionCheckResponse = ClusterConnectionCheckResponse(name, success, message)
 
-fun ClusterSessionClearResult.toResponse(): ClusterSessionClearResponse =
-    ClusterSessionClearResponse(clearedCount, clusterIds, clearedAt)
+fun ClusterSessionClearResult.toResponse(): ClusterSessionClearResponse = ClusterSessionClearResponse(clearedCount, clusterIds, clearedAt)
