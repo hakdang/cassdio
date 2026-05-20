@@ -67,4 +67,6 @@ enum class ManagedClusterEnvironment {
     DEV,
     STAGING,
     PROD,
+    DR,
+    SANDBOX,
 }

@@ -66,6 +66,7 @@ class InitialManagedClusterRegistrationService(
                 clusterId = clusterId,
                 usernameCiphertext = encryptionService.encrypt(request.username),
                 passwordCiphertext = encryptionService.encrypt(request.password),
+                secretReferenceCiphertext = encryptionService.encrypt(request.secretReference),
                 tlsEnabled = request.tlsEnabled,
                 sslSettingsCiphertext = encryptionService.encrypt("tlsEnabled=${request.tlsEnabled}"),
                 createdAt = now,
