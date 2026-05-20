@@ -183,8 +183,7 @@ data class SchemaChangeResponse(
 fun SchemaKeyspace.toResponse(): SchemaKeyspaceResponse =
     SchemaKeyspaceResponse(name, durableWrites, replication, system, queryable, tableCount, userTypeCount, describeCql)
 
-fun SchemaTablePage.toResponse(): SchemaTablePageResponse =
-    SchemaTablePageResponse(keyspaceName, items.map { it.toResponse() }, nextCursor)
+fun SchemaTablePage.toResponse(): SchemaTablePageResponse = SchemaTablePageResponse(keyspaceName, items.map { it.toResponse() }, nextCursor)
 
 fun SchemaTableSummary.toResponse(): SchemaTableSummaryResponse =
     SchemaTableSummaryResponse(keyspaceName, name, kind.name, comment, catalog?.toResponse())
@@ -219,10 +218,33 @@ fun SchemaUserTypeField.toResponse(): SchemaUserTypeFieldResponse = SchemaUserTy
 fun SchemaUserTypeLink.toResponse(): SchemaUserTypeLinkResponse = SchemaUserTypeLinkResponse(keyspaceName, typeName)
 
 fun TableCatalogMetadata.toResponse(): TableCatalogResponse =
-    TableCatalogResponse(clusterId, keyspaceName, tableName, owner, escalationContact, description, dataFreshness, retentionPolicy, accessPattern, tags, updatedAt)
+    TableCatalogResponse(
+        clusterId,
+        keyspaceName,
+        tableName,
+        owner,
+        escalationContact,
+        description,
+        dataFreshness,
+        retentionPolicy,
+        accessPattern,
+        tags,
+        updatedAt,
+    )
 
 fun ColumnCatalogMetadata.toResponse(): ColumnCatalogResponse =
-    ColumnCatalogResponse(clusterId, keyspaceName, tableName, columnName, description, sensitive, maskingPolicy, exportPolicy, tags, updatedAt)
+    ColumnCatalogResponse(
+        clusterId,
+        keyspaceName,
+        tableName,
+        columnName,
+        description,
+        sensitive,
+        maskingPolicy,
+        exportPolicy,
+        tags,
+        updatedAt,
+    )
 
 fun UpdateTableCatalogRequest.toCoreRequest(): TableCatalogUpdate =
     TableCatalogUpdate(owner, escalationContact, description, dataFreshness, retentionPolicy, accessPattern, tags)
@@ -236,4 +258,16 @@ fun SchemaDangerousActionResult.toResponse(): SchemaDangerousActionResponse =
     SchemaDangerousActionResponse(accepted, workflowRequired, message, change?.toResponse())
 
 fun SchemaChangeRecord.toResponse(): SchemaChangeResponse =
-    SchemaChangeResponse(changeId, clusterId, keyspaceName, tableName, changeType.name, actor, beforeCql, afterCql, diff, details, createdAt)
+    SchemaChangeResponse(
+        changeId,
+        clusterId,
+        keyspaceName,
+        tableName,
+        changeType.name,
+        actor,
+        beforeCql,
+        afterCql,
+        diff,
+        details,
+        createdAt,
+    )
