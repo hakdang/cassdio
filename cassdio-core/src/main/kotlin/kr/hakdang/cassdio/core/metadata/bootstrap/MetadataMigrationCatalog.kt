@@ -278,6 +278,60 @@ class MetadataMigrationCatalog(
                         """.trimIndent(),
                     ),
             ),
+            MetadataMigration(
+                version = "202605200002",
+                description = "Create schema explorer catalog and history schema",
+                statements =
+                    listOf(
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.schema_table_catalog (
+                          cluster_id UUID,
+                          keyspace_name TEXT,
+                          table_name TEXT,
+                          owner TEXT,
+                          escalation_contact TEXT,
+                          description TEXT,
+                          data_freshness TEXT,
+                          retention_policy TEXT,
+                          access_pattern TEXT,
+                          tags SET<TEXT>,
+                          updated_at TIMESTAMP,
+                          PRIMARY KEY ((cluster_id, keyspace_name), table_name)
+                        )
+                        """.trimIndent(),
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.schema_column_catalog (
+                          cluster_id UUID,
+                          keyspace_name TEXT,
+                          table_name TEXT,
+                          column_name TEXT,
+                          description TEXT,
+                          sensitive BOOLEAN,
+                          masking_policy TEXT,
+                          export_policy TEXT,
+                          tags SET<TEXT>,
+                          updated_at TIMESTAMP,
+                          PRIMARY KEY ((cluster_id, keyspace_name, table_name), column_name)
+                        )
+                        """.trimIndent(),
+                        """
+                        CREATE TABLE IF NOT EXISTS $keyspace.schema_change_history (
+                          cluster_id UUID,
+                          keyspace_name TEXT,
+                          table_name TEXT,
+                          change_id UUID,
+                          change_type TEXT,
+                          actor TEXT,
+                          before_cql TEXT,
+                          after_cql TEXT,
+                          diff LIST<TEXT>,
+                          details MAP<TEXT, TEXT>,
+                          created_at TIMESTAMP,
+                          PRIMARY KEY ((cluster_id, keyspace_name), created_at, change_id)
+                        ) WITH CLUSTERING ORDER BY (created_at DESC)
+                        """.trimIndent(),
+                    ),
+            ),
         )
     }
 }

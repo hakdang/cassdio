@@ -7,6 +7,7 @@ import { AdminUsersPage } from './pages/AdminUsersPage';
 import { ClusterPage } from './pages/ClusterPage';
 import { HealthPage } from './pages/HealthPage';
 import { LoginPage } from './pages/LoginPage';
+import { SchemaPage } from './pages/SchemaPage';
 
 export function App() {
   return (
@@ -37,7 +38,7 @@ export function App() {
           />
           <Route
             path="/schema/*"
-            element={<ConsolePage section="Schema" title="Keyspace" description="Inspect keyspaces, tables, indexes, and schema metadata." />}
+            element={<SchemaPage />}
           />
           <Route
             path="/operations/*"
