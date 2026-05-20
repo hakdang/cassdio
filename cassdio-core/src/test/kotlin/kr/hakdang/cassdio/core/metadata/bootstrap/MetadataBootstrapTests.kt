@@ -165,7 +165,7 @@ class MetadataBootstrapTests {
 
         val executed = service.migrate()
 
-        assertEquals(listOf("202602010001", "202605190001", "202605190002", "202605190003"), executed)
+        assertEquals(listOf("202602010001", "202605190001", "202605190002", "202605190003", "202605200001"), executed)
         assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.bootstrap_locks") })
         assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.workspaces") })
         assertTrue(executor.executed.any { it.contains("CREATE TABLE IF NOT EXISTS cassdio_meta.managed_clusters") })

@@ -15,7 +15,17 @@ services:
       retries: 20
     volumes:
       - cassandra-data:/var/lib/cassandra
-      - ./docker/init:/docker-entrypoint-initdb.d:ro
+
+  cassandra-init:
+    image: cassandra:${CASSANDRA_VERSION:-5.0}
+    container_name: cassdio-cassandra-init
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    volumes:
+      - ./docker/init:/docker/init:ro
+    command: ["cqlsh", "cassandra", "9042", "-f", "/docker/init/init.cql"]
+    restart: "no"
 
 volumes:
   cassandra-data:
