@@ -4,6 +4,7 @@ import { AppLayout } from './components/layout/AppLayout';
 import { ConsolePage } from './pages/ConsolePage';
 import { AdminRolesPage } from './pages/AdminRolesPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
+import { ClusterPage } from './pages/ClusterPage';
 import { HealthPage } from './pages/HealthPage';
 import { LoginPage } from './pages/LoginPage';
 
@@ -26,7 +27,7 @@ export function App() {
           <Route path="/health" element={<HealthPage />} />
           <Route
             path="/cluster/*"
-            element={<ConsolePage section="Cluster" title="Cluster List" description="Browse Cassandra clusters and their health state." />}
+            element={<ClusterPage />}
           />
           <Route
             path="/query/*"

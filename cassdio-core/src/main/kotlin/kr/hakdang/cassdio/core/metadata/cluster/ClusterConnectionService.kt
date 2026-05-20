@@ -133,6 +133,7 @@ class ClusterConnectionService(
                 keyspaceCount = keyspaceCount,
                 tableCount = tableCount,
                 checks = checks,
+                failureCode = ClusterConnectionFailureCode.CONNECTION_FAILED,
             )
         }
     }

@@ -197,6 +197,7 @@ class MetadataMigrationCatalog(
                           cluster_id UUID PRIMARY KEY,
                           username_ciphertext TEXT,
                           password_ciphertext TEXT,
+                          secret_reference_ciphertext TEXT,
                           tls_enabled BOOLEAN,
                           ssl_settings_ciphertext TEXT,
                           created_at TIMESTAMP,
@@ -219,6 +220,14 @@ class MetadataMigrationCatalog(
                           PRIMARY KEY (cluster_id, snapshot_id)
                         )
                         """.trimIndent(),
+                    ),
+            ),
+            MetadataMigration(
+                version = "202605200001",
+                description = "Add managed cluster credential secret reference",
+                statements =
+                    listOf(
+                        "ALTER TABLE $keyspace.managed_cluster_credentials ADD IF NOT EXISTS secret_reference_ciphertext TEXT",
                     ),
             ),
             MetadataMigration(
