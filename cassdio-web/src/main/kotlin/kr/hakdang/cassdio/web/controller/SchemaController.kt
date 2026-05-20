@@ -68,7 +68,8 @@ class SchemaController(
         @PathVariable clusterId: UUID,
         @PathVariable keyspaceName: String,
         @PathVariable tableName: String,
-    ): ApiResponse<SchemaTableDetailResponse> = ApiResponse.success(schemaExplorerService.tableDetail(clusterId, keyspaceName, tableName).toResponse())
+    ): ApiResponse<SchemaTableDetailResponse> =
+        ApiResponse.success(schemaExplorerService.tableDetail(clusterId, keyspaceName, tableName).toResponse())
 
     @DeleteMapping("/keyspaces/{keyspaceName}/tables/{tableName}")
     fun dropTable(
@@ -102,7 +103,16 @@ class SchemaController(
         @PathVariable tableName: String,
         @RequestBody request: UpdateTableCatalogRequest,
     ): ApiResponse<TableCatalogResponse> =
-        ApiResponse.success(schemaExplorerService.updateTableCatalog(clusterId, keyspaceName, tableName, request.toCoreRequest(), request.actor).toResponse())
+        ApiResponse.success(
+            schemaExplorerService
+                .updateTableCatalog(
+                    clusterId,
+                    keyspaceName,
+                    tableName,
+                    request.toCoreRequest(),
+                    request.actor,
+                ).toResponse(),
+        )
 
     @PutMapping("/keyspaces/{keyspaceName}/tables/{tableName}/columns/{columnName}/catalog")
     fun updateColumnCatalog(
@@ -112,7 +122,17 @@ class SchemaController(
         @PathVariable columnName: String,
         @RequestBody request: UpdateColumnCatalogRequest,
     ): ApiResponse<ColumnCatalogResponse> =
-        ApiResponse.success(schemaExplorerService.updateColumnCatalog(clusterId, keyspaceName, tableName, columnName, request.toCoreRequest(), request.actor).toResponse())
+        ApiResponse.success(
+            schemaExplorerService
+                .updateColumnCatalog(
+                    clusterId,
+                    keyspaceName,
+                    tableName,
+                    columnName,
+                    request.toCoreRequest(),
+                    request.actor,
+                ).toResponse(),
+        )
 
     @GetMapping("/keyspaces/{keyspaceName}/types")
     fun userTypes(
@@ -126,7 +146,8 @@ class SchemaController(
         @PathVariable clusterId: UUID,
         @PathVariable keyspaceName: String,
         @PathVariable typeName: String,
-    ): ApiResponse<SchemaUserTypeDetailResponse> = ApiResponse.success(schemaExplorerService.userTypeDetail(clusterId, keyspaceName, typeName).toResponse())
+    ): ApiResponse<SchemaUserTypeDetailResponse> =
+        ApiResponse.success(schemaExplorerService.userTypeDetail(clusterId, keyspaceName, typeName).toResponse())
 
     @GetMapping("/keyspaces/{keyspaceName}/history")
     fun history(
