@@ -18,7 +18,10 @@ class ManagedClusterService(
 ) {
     fun list(): List<ManagedClusterDetail> = repository.list().map(::detail)
 
-    fun detail(clusterId: UUID): ManagedClusterDetail = detail(repository.findById(clusterId) ?: throw NotFoundException("Cluster not found."))
+    fun detail(clusterId: UUID): ManagedClusterDetail =
+        detail(
+            repository.findById(clusterId) ?: throw NotFoundException("Cluster not found."),
+        )
 
     fun testConnection(request: ManagedClusterRegistrationRequest): ClusterConnectionTestResult =
         connectionService.testConnection(request).withCompatibilityCheck()

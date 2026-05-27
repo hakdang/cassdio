@@ -44,9 +44,7 @@ class SchemaCatalogRepository(
             .associateBy { it.tableName }
     }
 
-    fun saveTableCatalog(
-        metadata: TableCatalogMetadata,
-    ) {
+    fun saveTableCatalog(metadata: TableCatalogMetadata) {
         val keyspace = configProvider.getConfig().keyspace
         cqlExecutor.execute(
             """
@@ -162,8 +160,7 @@ internal fun String.cqlLiteral(): String = "'${replace("'", "''")}'"
 
 internal fun String?.cqlNullableLiteral(): String = this?.takeIf { it.isNotBlank() }?.cqlLiteral() ?: "null"
 
-internal fun Iterable<String>.cqlSetLiteral(): String =
-    joinToString(separator = ", ", prefix = "{", postfix = "}") { it.cqlLiteral() }
+internal fun Iterable<String>.cqlSetLiteral(): String = joinToString(separator = ", ", prefix = "{", postfix = "}") { it.cqlLiteral() }
 
 internal fun Map<String, String>.cqlMapLiteral(): String =
     entries.joinToString(separator = ", ", prefix = "{", postfix = "}") { (key, value) ->
