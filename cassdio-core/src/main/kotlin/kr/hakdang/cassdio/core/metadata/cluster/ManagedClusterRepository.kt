@@ -259,7 +259,9 @@ internal fun CqlRow.toManagedCluster(): ManagedCluster =
     ManagedCluster(
         clusterId = requireNotNull(uuid("cluster_id")),
         name = requireNotNull(string("name")),
-        environment = kr.hakdang.cassdio.core.metadata.config.ManagedClusterEnvironment.valueOf(string("environment") ?: "DEV"),
+        environment =
+            kr.hakdang.cassdio.core.metadata.config.ManagedClusterEnvironment
+                .valueOf(string("environment") ?: "DEV"),
         contactPoints = stringList("contact_points").orEmpty(),
         port = int("port") ?: 9042,
         localDatacenter = string("local_datacenter") ?: "datacenter1",
