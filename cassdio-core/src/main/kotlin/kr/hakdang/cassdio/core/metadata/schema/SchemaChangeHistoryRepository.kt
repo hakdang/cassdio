@@ -69,5 +69,4 @@ private fun CqlRow.toSchemaChangeRecord(): SchemaChangeRecord =
         createdAt = instant("created_at") ?: Instant.EPOCH,
     )
 
-private fun Iterable<String>.cqlListLiteral(): String =
-    joinToString(separator = ", ", prefix = "[", postfix = "]") { it.cqlLiteral() }
+private fun Iterable<String>.cqlListLiteral(): String = joinToString(separator = ", ", prefix = "[", postfix = "]") { it.cqlLiteral() }

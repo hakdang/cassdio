@@ -6,8 +6,8 @@ import { authService } from '../services/auth';
 export function LoginPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('operator@cassdio.local');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@cassdio.local');
+  const [password, setPassword] = useState('ChangeMe!2026');
   const [error, setError] = useState<string | null>(null);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
