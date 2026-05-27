@@ -121,19 +121,21 @@ class SchemaExplorerService(
         ensureCluster(clusterId)
         val session = sessionManager.getSession(clusterId)
         val tableRow =
-            session.execute(
-                """
-                SELECT * FROM system_schema.tables
-                WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND table_name = ${tableName.cqlLiteral()}
-                """.trimIndent(),
-            ).one()
+            session
+                .execute(
+                    """
+                    SELECT * FROM system_schema.tables
+                    WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND table_name = ${tableName.cqlLiteral()}
+                    """.trimIndent(),
+                ).one()
         val viewRow =
-            tableRow ?: session.execute(
-                """
-                SELECT * FROM system_schema.views
-                WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND view_name = ${tableName.cqlLiteral()}
-                """.trimIndent(),
-            ).one()
+            tableRow ?: session
+                .execute(
+                    """
+                    SELECT * FROM system_schema.views
+                    WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND view_name = ${tableName.cqlLiteral()}
+                    """.trimIndent(),
+                ).one()
         if (viewRow == null) throw NotFoundException("Table not found.")
 
         val columns = listColumns(clusterId, keyspaceName, tableName)
@@ -216,12 +218,13 @@ class SchemaExplorerService(
         ensureCluster(clusterId)
         val session = sessionManager.getSession(clusterId)
         val row =
-            session.execute(
-                """
-                SELECT type_name, field_names, field_types FROM system_schema.types
-                WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND type_name = ${typeName.cqlLiteral()}
-                """.trimIndent(),
-            ).one() ?: throw NotFoundException("UDT type not found.")
+            session
+                .execute(
+                    """
+                    SELECT type_name, field_names, field_types FROM system_schema.types
+                    WHERE keyspace_name = ${keyspaceName.cqlLiteral()} AND type_name = ${typeName.cqlLiteral()}
+                    """.trimIndent(),
+                ).one() ?: throw NotFoundException("UDT type not found.")
         val fields =
             row.stringList("field_names").zip(row.stringList("field_types")).mapIndexed { index, pair ->
                 SchemaUserTypeField(name = pair.first, type = pair.second, position = index)
@@ -285,7 +288,9 @@ class SchemaExplorerService(
         request: ColumnCatalogUpdate,
         actor: String = "System",
     ): ColumnCatalogMetadata {
-        val column = listColumns(clusterId, keyspaceName, tableName).firstOrNull { it.name == columnName } ?: throw NotFoundException("Column not found.")
+        val column =
+            listColumns(clusterId, keyspaceName, tableName).firstOrNull { it.name == columnName }
+                ?: throw NotFoundException("Column not found.")
         val now = Instant.now(clock)
         val metadata =
             ColumnCatalogMetadata(
@@ -374,7 +379,8 @@ class SchemaExplorerService(
         }
         val before = tableDetail(clusterId, keyspaceName, tableName).createStatement
         sessionManager.getSession(clusterId).execute("TRUNCATE ${keyspaceName.cqlIdentifier()}.${tableName.cqlIdentifier()}")
-        val change = recordDangerousChange(clusterId, keyspaceName, tableName, SchemaChangeType.TRUNCATE_TABLE, request.actor, before, before)
+        val change =
+            recordDangerousChange(clusterId, keyspaceName, tableName, SchemaChangeType.TRUNCATE_TABLE, request.actor, before, before)
         return SchemaDangerousActionResult(true, false, "Table truncated.", change)
     }
 
@@ -482,14 +488,27 @@ class SchemaExplorerService(
         options: Map<String, String>,
         kind: SchemaTableKind,
     ): String {
-        val columnLines = columns.joinToString(",\n  ") { "${it.name.cqlIdentifier()} ${it.type}${if (it.kind == SchemaColumnKind.STATIC) " static" else ""}" }
-        val partitionKeys = columns.filter { it.kind == SchemaColumnKind.PARTITION_KEY }.sortedBy { it.position }.map { it.name.cqlIdentifier() }
-        val clusteringKeys = columns.filter { it.kind == SchemaColumnKind.CLUSTERING }.sortedBy { it.position }.map { it.name.cqlIdentifier() }
+        val columnLines =
+            columns.joinToString(",\n  ") {
+                val staticSuffix = if (it.kind == SchemaColumnKind.STATIC) " static" else ""
+                "${it.name.cqlIdentifier()} ${it.type}$staticSuffix"
+            }
+        val partitionKeys =
+            columns
+                .filter { it.kind == SchemaColumnKind.PARTITION_KEY }
+                .sortedBy { it.position }
+                .map { it.name.cqlIdentifier() }
+        val clusteringKeys =
+            columns
+                .filter { it.kind == SchemaColumnKind.CLUSTERING }
+                .sortedBy { it.position }
+                .map { it.name.cqlIdentifier() }
         val partition = if (partitionKeys.size == 1) partitionKeys.single() else partitionKeys.joinToString(", ", "(", ")")
         val primary = (listOf(partition) + clusteringKeys).joinToString(", ")
         val optionCql = options["comment"]?.takeIf { it.isNotBlank() }?.let { "\nWITH comment = ${it.cqlLiteral()}" }.orEmpty()
         val statement = if (kind == SchemaTableKind.TABLE) "CREATE TABLE" else "CREATE MATERIALIZED VIEW"
-        return "$statement ${keyspaceName.cqlIdentifier()}.${tableName.cqlIdentifier()} (\n  $columnLines,\n  PRIMARY KEY ($primary)\n)$optionCql;"
+        val qualifiedName = "${keyspaceName.cqlIdentifier()}.${tableName.cqlIdentifier()}"
+        return "$statement $qualifiedName (\n  $columnLines,\n  PRIMARY KEY ($primary)\n)$optionCql;"
     }
 
     private fun keyspaceCql(
@@ -526,24 +545,54 @@ private fun String.isSystemKeyspace(): Boolean = this == "system" || startsWith(
 
 private fun String.userTypeLink(defaultKeyspace: String): SchemaUserTypeLink? {
     val cleaned = removePrefix("frozen<").removeSuffix(">")
-    val primitivePrefixes = listOf("ascii", "bigint", "blob", "boolean", "counter", "date", "decimal", "double", "duration", "float", "inet", "int", "smallint", "text", "time", "timestamp", "timeuuid", "tinyint", "uuid", "varchar", "varint", "list<", "map<", "set<", "tuple<")
+    val primitivePrefixes =
+        listOf(
+            "ascii",
+            "bigint",
+            "blob",
+            "boolean",
+            "counter",
+            "date",
+            "decimal",
+            "double",
+            "duration",
+            "float",
+            "inet",
+            "int",
+            "smallint",
+            "text",
+            "time",
+            "timestamp",
+            "timeuuid",
+            "tinyint",
+            "uuid",
+            "varchar",
+            "varint",
+            "list<",
+            "map<",
+            "set<",
+            "tuple<",
+        )
     if (primitivePrefixes.any { cleaned.startsWith(it) }) return null
     val parts = cleaned.split('.')
     return if (parts.size == 2) SchemaUserTypeLink(parts[0], parts[1]) else SchemaUserTypeLink(defaultKeyspace, cleaned)
 }
 
-private fun String.cqlIdentifier(): String =
-    if (matches(Regex("[a-z][a-z0-9_]*"))) this else "\"${replace("\"", "\"\"")}\""
+private fun String.cqlIdentifier(): String = if (matches(Regex("[a-z][a-z0-9_]*"))) this else "\"${replace("\"", "\"\"")}\""
 
 private fun Int.encodeCursor(): String = Base64.getUrlEncoder().withoutPadding().encodeToString(toString().toByteArray())
 
-private fun String.decodeCursor(): Int =
-    runCatching { String(Base64.getUrlDecoder().decode(this)).toInt() }.getOrDefault(0)
+private fun String.decodeCursor(): Int = runCatching { String(Base64.getUrlDecoder().decode(this)).toInt() }.getOrDefault(0)
 
 private fun simpleDiff(
     before: String?,
     after: String?,
 ): List<String> {
     if (before == after) return emptyList()
-    return listOfNotNull(before?.let { "- ${it.lineSequence().firstOrNull().orEmpty()}" }, after?.let { "+ ${it.lineSequence().firstOrNull().orEmpty()}" })
+    return listOfNotNull(
+        before?.let {
+            "- ${it.lineSequence().firstOrNull().orEmpty()}"
+        },
+        after?.let { "+ ${it.lineSequence().firstOrNull().orEmpty()}" },
+    )
 }
